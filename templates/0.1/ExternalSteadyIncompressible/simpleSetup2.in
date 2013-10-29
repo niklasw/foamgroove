@@ -1,0 +1,80 @@
+                      flowrate            constant                 0.2;
+            kinematicViscosity                                1.65e-05;
+                       density                                     0.1;
+          turbulentLengthScale                                   0.001;
+           turbulenceIntensity                                     0.1;
+           wallRoughnessHeight                                   0.001;
+        characteristicVelocity                                    43.0;
+                            np                                      40;
+                      initialK                               27.735000;
+                    initialEps                            13145.731716;
+                  initialOmega                             5266.402947;
+               initialVelocity                                 (0 0 0);
+
+
+
+
+
+
+
+
+
+/* START_CONFIG DO NOT EDIT!
+
+[flowrate]
+type: constant
+help: [m^3/s or kg/s]
+class: float
+shortflag: f
+longflag: flowrate
+defaultvalue: 0.1
+
+[kinematicViscosity]
+type: default
+help: [kg m/s^2]
+class: float
+shortflag: v
+longflag: kinematicViscosity
+defaultvalue: 16e-6
+
+[density]
+type: default
+help: [kg/m^3]
+class: float
+shortflag: d
+longflag: density
+defaultvalue: 1.18
+
+[turbulentLengthScale]
+type: default
+help: [m]
+class: float
+shortflag: l
+longflag: turbulentLengthScale
+defaultvalue: 1e-2
+
+[turbulenceIntensity]
+type: default
+help: [m^2/s^2]
+class: float
+shortflag: i
+longflag: turbulenceIntensity
+defaultvalue: 0.1
+
+[characteristicVelocity]
+type: default
+help: [m/s]
+class: float
+shortflag: u
+longflag: characteristicVelocity
+defaultvalue: 10
+
+[initialVelocity]
+type: default
+help: [m/s]
+class: List
+shortflag: U
+longflag: initialVelocity
+defaultvalue: (0 0 0)
+
+END CONFIG */

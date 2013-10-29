@@ -1,0 +1,13 @@
+#!/bin/bash
+directory=$1
+for f in $directory/*; do
+    if [ -f 0/U -a 0/U != .gz ]; then
+        echo $f
+        # Do a test, to see if its expandable
+        expandDictionary $f > /dev/null 2>&1
+        if [ "$?" == "0" ]; then
+            mv $f ${f}.org
+            expandDictionary ${f}.org > $f;
+        fi
+    fi
+done

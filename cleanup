@@ -1,0 +1,4 @@
+
+wclean all
+find . -name "*.pyc" -exec rm {} \;
+

@@ -1,0 +1,123 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * Solver macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+gamg
+{
+    solver          GAMG;
+    tolerance       1e-08;
+    relTol          0.1;
+    smoother        GaussSeidel;
+    nPreSweeps      1;
+    nPostSweeps     2
+    nFinestSweeps   2;
+    cacheAgglomeration true;
+    nCellsInCoarsestLevel 20;
+    agglomerator    faceAreaPair;
+    mergeLevels     1;
+}
+
+pcg
+{
+    solver          PCG;
+    preconditioner  DIC;
+    tolerance       1e-06;
+    relTol          0.1;
+}
+
+smoothSolver
+{
+    solver          smoothSolver;
+    smoother        GaussSeidel;
+    nSweeps         2;
+    tolerance       1e-07;
+    relTol          0.1;
+}
+
+pbicg
+{
+    solver          PBiCG;
+    preconditioner  DILU;
+    tolerance       1e-08;
+    relTol          0.1;
+}
+// * * * End solver macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    p
+    {
+        $gamg;
+    }
+
+    "(U|h|k|omega|epsilon)"
+    {
+        $gamg;
+    }
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors 1;
+    pRefCell        0;
+    pRefValue       0;
+    transonic       no;
+    rhoMin          rhoMin [1 -3 0 0 0] 0.1;
+    rhoMax          rhoMax [1 -3 0 0 0] 2.0;
+
+    residualControl
+    {
+        p               1e-3;
+        U               1e-4;
+        "(k|epsilon|omega)" 1e-3;
+    }
+
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 10;
+}
+
+PIMPLE
+{
+    nOuterCorrectors 2;
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 1;
+    pRefCell        0;
+    pRefValue       0;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p           0.7;
+        rho         0.7;
+    }
+    equations
+    {
+        U           0.7;
+        h           0.8;
+        k           0.7;
+        epsilon     0.7;
+        omega       0.7;
+    }
+}
+
+
+// ************************************************************************* //

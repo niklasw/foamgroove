@@ -1,0 +1,23 @@
+#
+# This is for compiling pdflatex with
+# the scons make system.
+# If scons is installed, just run scons
+# to build the document.
+#
+#
+# Copyright (C) 2012 Magnus Berglund
+#
+
+import os,glob,shutil
+
+cwd = os.getcwd()
+document = 'main.tex'
+
+env = Environment(ENV=os.environ)
+pdfOutput = env.PDF(document)
+
+texes = glob.glob('*/*.tex')
+stys  = glob.glob('*.sty')
+
+Depends(pdfOutput,texes+stys)
+

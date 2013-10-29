@@ -1,0 +1,7 @@
+wmake libso
+set -x
+(
+    cd utilities
+    wmake all
+)
+set +x

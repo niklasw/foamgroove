@@ -1,0 +1,10 @@
+PIMPLE
+{
+    nOuterCorrectors 2;
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 1;
+    pRefCell        0;
+    pRefValue       0;
+}
+
+

@@ -1,0 +1,70 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      structuralModes_rod_wall;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+6
+(
+    a
+    {
+        frequency   24.5;
+        scalingFactor 1.54e-3;
+        modeDisplacement 
+#       include "interpolated_balk_total_displacement_1_wall_beam";        
+    }
+
+    a2
+    {
+        frequency   24.5;
+        scalingFactor 1.54e-3;
+        modeDisplacement 
+#       include "interpolated_balk_total_displacement_2_wall_beam";        
+    }
+
+    b
+    {
+        frequency   110.7;
+        scalingFactor 1.54e-3; 
+        modeDisplacement 
+#       include "interpolated_balk_total_displacement_3_wall_beam";        
+    }
+
+    c
+    {
+        frequency   132;
+        scalingFactor 1.54e-3; 
+        modeDisplacement 
+#       include "interpolated_balk_total_displacement_4_wall_beam";        
+    }
+
+    d
+    {
+        frequency   132;
+        scalingFactor 1.54e-3; 
+        modeDisplacement 
+#       include "interpolated_balk_total_displacement_5_wall_beam";        
+    }
+
+    e
+    {
+        frequency   194;
+        scalingFactor 1.54e-3; 
+        modeDisplacement 
+#       include "interpolated_balk_total_displacement_6_wall_beam";        
+    }
+
+);
+
+// ************************************************************************* //

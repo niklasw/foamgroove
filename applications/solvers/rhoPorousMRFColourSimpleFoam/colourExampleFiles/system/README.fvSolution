@@ -1,0 +1,26 @@
+
+// Changes to be able to run with colour source
+// are adding solver selection for the colour field.
+// Multigrid does not seem to work well.
+// If using the "macros" (Niklas Wikstroms cases) e.g:
+
+
+    colour
+    {
+        $smoothSolver;
+    }
+
+// One could also try adding relaxation to the colour field:
+
+relaxationFactors
+{
+
+    ...
+
+    equations
+    {
+        colour      0.5;
+    }
+}
+
+

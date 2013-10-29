@@ -1,0 +1,11 @@
+thermalPorousZone/thermalPorousZone.C
+thermalPorousZone/thermalPorousZones.C
+
+thermalModel/thermalModel/thermalModel.C
+thermalModel/thermalModel/thermalModelNew.C
+thermalModel/fixedTemperature/fixedTemperature.C
+thermalModel/heatSource/heatSource.C
+thermalModel/simpleHeatExchanger/simpleHeatExchanger.C
+thermalModel/noThermalModel/noThermalModel.C
+
+LIB = $(FOAM_USER_LIBBIN)/libthermalPorousZone

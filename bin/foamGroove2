@@ -1,0 +1,277 @@
+#!/usr/bin/env python
+# Author konwkn (Niklas Wikstrom, niklas.wikstrom@fsdynamics.se)
+
+import os,sys,re
+from os.path import join as pjoin
+from subprocess import Popen, PIPE
+import applyTemplate as Apply
+from entryTest import *
+
+def error(s,sig=1):
+    print '\nError %s!\n' % s
+    sys.exit(sig)
+
+def warn(s):
+    output = 'Warning %s!' % s
+    print '\n'+'='*len(output)
+    print output
+    print '='*len(output)
+
+def info(s):
+    print '\t%s' % s
+
+def submitLsfJob(jobFile,waitFor=''):
+    # Create bsub command and options
+    # job file applied through stdin
+    # Return lsf pid if found or
+    # system exit if failure to get lsf pid
+    waitOpts = []
+    if waitFor:
+        waitOpts = ['-w','done(%s)' % waitFor]
+
+    cmd = ['bsub']+waitOpts
+
+    jf = open(jobFile,'r')
+
+    process = Popen(cmd,stdin=jf,stdout=PIPE,stderr=PIPE)
+    process.wait()
+    out,err = process.communicate()
+    match = re.search('.*<([0-9]+)>.*',out)
+    if match:
+        return match.group(1)
+    else:
+        error('Job submission failed with output\n%s\n%s\n' % (out,err))
+
+
+class List(list):
+    def __init__(self, s='(0 0 0)', typ=float):
+        self.string = s
+        self.type = typ
+        l = [self.type(a) for a in self.string.strip('() ').split()]
+        list.__init__(self,l)
+
+    def __str__(self):
+        return '(%s)' % (' '.join(map(str,self)))
+
+class Configuration:
+    firstRunFile = '.firstRun'
+    # Resource management system template file name
+    # this file must reside together with this script
+    RMSTemplate = 'RMSTemplate.in'
+
+    queues = ['local','long','short']
+    def __init__(self, outFileName):
+        self.progPath = os.path.dirname(os.path.realpath(sys.argv[0]))
+        self.entries = entryDict()
+        self.fname = outFileName
+        descString = "%prog modifies an indata file simpleSetup.in and optionaly runs solver."
+        descString+= "The indata file must exist and its content defines the behaviour of %prog, "
+        descString+= "hence, its content must contain all variables needed for the case."
+        self.options = None
+        self.arguments = None
+        self.fileLines = []
+        self.RMSTemplate = pjoin(self.progPath,Configuration.RMSTemplate)
+        try:
+            with open(self.fname,'r') as f:
+                self.fileLines = [ line.strip() for line in f.readlines() ]
+        except IOError:
+            warn('Could not read input file %s' % self.fname)
+
+    def getArgs2(self):
+        from interactor3 import Interactors
+        from interactor3 import BooleanSelector, ValueSelector
+
+        I=Interactors('Help info here')
+        I.add( BooleanSelector(prompt='Run simulation?',default=False), 'runsimulation','R' )
+        I.add( BooleanSelector(prompt='Run decomposePar?',default=False), 'decompose', 'D' )
+        I.add( BooleanSelector(prompt='Fix boundaries?',default=False), 'fixboundaries','B' )
+        I.add( BooleanSelector(prompt='Apply template?',default='N'), 'applytemplate','A' )
+        I.add( ValueSelector(prompt='Run in queue', default='local', test=str, allowed=Configuration.queues),'queue','Q' )
+
+        for item in self.entries.values():
+            shortFlag = item.letter
+            longFlag  = item.name
+            I.add( ValueSelector(prompt=item.name, default=item.value, test=item.valueClass), longFlag, shortFlag )
+
+        I.getAll()
+
+        for name,ent in self.entries.iteritems():
+            o = getattr(I.options,name)
+            ent.setValue(o)
+
+        self.options = I.options
+
+    def isFirstRun(self):
+        # Must be called after getArgs
+        if os.path.isfile(self.firstRunFile) and not self.options.fixboundaries:
+            return False
+        else:
+            with open(self.firstRunFile,'w') as ff:
+                ff.close()
+            return True
+
+    def write(self):
+        try:
+            with open(self.fname,'w') as fh:
+                for item in self.entries.sortedList():
+                    fh.write(item.__str__())
+        except IOError:
+            error('Failed to write file %s' % self.fname)
+
+
+    def info(self):
+        info('\t\t/*******************************************\\')
+        info('\t\t*            Settings summary               *')
+        info('\t\t\*******************************************/\n')
+        for entry in self.entries.sortedList():
+            print entry.__str__().rstrip()
+
+class turbulence:
+    Cmu = 0.09
+    vsmall = 1e-10
+    def __init__(self,Uchar=1.0,ti=0.1,lt=0.01):
+        self.U = Uchar
+        self.ti = ti
+        self.lt = lt
+        self.check()
+
+    def check(self):
+        if self.lt < self.vsmall:
+            error('Turbulence length scale must be reasonable, got %e' % self.lt)
+        if self.ti < self.vsmall or self.ti > 1.0:
+            error('Turbulence intensity must be (0 < i < 1), got %e' % self.ti)
+        if self.U < self.vsmall:
+            error('Characteristic velocity must be > 0, got %e' % self.U )
+
+    def parseEntries(self,entries):
+        self.U = entries.get('characteristicVelocity').value
+        self.ti = entries.get('turbulenceIntensity').value
+        self.lt = entries.get('turbulentLengthScale').value
+        self.check()
+
+    def setEntries(self,entries):
+        entries.set('initialK',self.k())
+        entries.set('initialEps',self.eps())
+        entries.set('initialOmega',self.omega())
+
+    def __str__(self):
+        s = '%30s%40f;\n' % ('initialK',self.k())
+        s+= '%30s%40f;\n' % ('initialEps',self.eps())
+        s+= '%30s%40f;\n' % ('initialOmega',self.omega())
+        return s
+
+    def k(self):
+        return 1.5 * (self.ti*self.U)**2
+
+    def eps(self):
+        return self.Cmu**0.75*self.k()**1.5/self.lt
+
+    def omega(self):
+        return self.eps()/(self.Cmu*self.k())
+
+    def nut(self):
+        return self.Cmu*self.k()**2/self.eps()
+
+    def magVector(self,V):
+        from math import sqrt
+        return sqrt(sum([a**2 for a in V]))
+
+class foamRunner:
+    def __init__(self, config):
+        self.config = config
+        self.foamExe = 'foamBoundingBox'
+        self.log = self.foamExe+'.log'
+        self.options = []
+        self.np = self.config.entries.get('np').value
+        self.wait = True
+        self.pid = -1
+        self.qsub = None
+        self.qfile = 'foamQueue.job'
+
+    def submitRMS(self,cmd):
+        self.mkRMSFile(cmd)
+        info(submitLsfJob(self.qfile))
+
+    def execute(self,cmd):
+        cmdStr = ' '.join(cmd)
+        info('Attempt %s' % (cmdStr))
+        self.log = self.foamExe+'.log'
+        try:
+           with open(self.log,'w') as fh:
+               p = Popen(cmd,stdout=fh,stderr=fh,shell=False)
+               info('Running %s with PID %i' % (cmdStr,p.pid))
+               if self.wait:
+                   if not p.wait() == 0:
+                       error('Executable returned an error code. See log in %s' % (self.log))
+               self.pid = p.pid
+        except:
+           error('Could not run %s' % self.foamExe)
+
+    def runSerial(self):
+        cmd = [self.foamExe]+self.options
+        if self.qsub=='local':
+            self.execute(cmd)
+        else:
+            self.submitRMS(cmd)
+
+    def runPar(self):
+        cmd = ['mpirun','-np',str(self.np),self.foamExe,'-parallel']+self.options
+        if self.qsub=='local':
+            self.execute(cmd)
+        else:
+            self.submitRMS(cmd)
+
+    def run(self,foamExe,options=[],wait=True,serial=False,qsub='local'):
+        self.foamExe = foamExe
+        self.options = options
+        self.wait = wait
+        self.qsub = qsub
+        (self.runPar() if self.np > 1 and not serial else self.runSerial())
+
+    def mkRMSFile(self,cmd):
+        from string import Template
+        cmdStr = ' '.join(cmd)
+        s = ''
+        try:
+            with open(self.config.RMSTemplate) as tpl:
+                s = Template(tpl.read()).substitute(cwd=os.getcwd(), ncores=self.np, command=cmdStr, queue=self.qsub)
+        except IOError:
+            error('Could not read resource management system file template')
+
+        try:
+            with open(self.qfile,'w') as fh:
+                fh.write(s)
+                info('\n\tWrote lsf submit file %s' % self.qfile)
+        except IOError:
+            error('Could not write file %s' % self.qfile)
+
+if __name__=='__main__':
+
+    outFile = 'simpleSetup.in'
+
+    conf = Configuration(outFile)
+
+    conf.entries.read(conf.fileLines)
+
+    conf.getArgs2()
+
+    if not conf.fileLines or conf.options.applytemplate:
+        info('Apply template sequence. Then re-run to setup case.')
+        Apply.apply()
+        sys.exit(0)
+
+    turb = turbulence()
+    turb.parseEntries(conf.entries)
+    turb.setEntries(conf.entries)
+
+    conf.write()
+    conf.info()
+
+    r = foamRunner(conf)
+    if conf.isFirstRun():
+        r.run('changeDictionary',serial=True)
+    if conf.options.decompose:
+        r.run('decomposePar',options=['-force'],serial=True)
+    if conf.options.runsimulation:
+        r.run('porousMRFSimpleFoam', wait=False, qsub=conf.options.queue)
+

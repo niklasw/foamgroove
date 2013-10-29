@@ -1,0 +1,167 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1;
+
+deltaT          1e-4;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      3;
+
+writeFormat     ascii;
+
+writePrecision  8;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+functions
+(
+/*
+    forces
+    {
+        type forces;
+        functionObjectLibs ("libforces.so");
+        patches (WALL_BLADE);
+        pName p;
+        Uname U;
+        rhoName rhoInf;
+        rhoInf 1025;
+        CofR (0 0 0);
+        outputControl timeStep;
+        outputInterval 1;
+    }
+
+    probes
+    {
+        type            probes;
+        functionObjectLibs ("libsampling.so");
+        enabled         true;
+        outputControl   timeStep;
+        outputInterval  1;
+        probeLocations
+        (
+        );
+
+        fields
+        (
+            p
+        );
+    }
+
+    wall_surface
+    {
+        type patch;
+        functionObjectLibs ("libsampling.so");
+        patches (".*[Ww]all.*");
+        enabled true;
+        outputControl   timeStep;
+        outputInterval 100;
+        fields (p U ptot);
+    }
+    plane1
+    {
+        type plane;
+        functionObjectLibs ("libsampling.so");
+        basePoint (0 0 0);
+        normalVector (0 1 0);
+        enabled true;
+        outputControl   timeStep;
+        outputInterval 100;
+        fields (p U ptot);
+    }
+    pressureDrop
+    {
+        functionObjectLibs ("libutilityFunctionObjects.so");
+        type coded;
+        redirectType pressureLoss;
+        outputControl timeStep;
+        outputInterval  10;
+        code
+        #{
+            label inletID = -1;
+            label outletID = -1;
+            forAll ( mesh().boundaryMesh().names(), nameI )
+            {
+                word patchName = mesh().boundaryMesh().names()[nameI];
+                if ( regExp("inlet",true).search(patchName) )
+                {
+                    inletID = mesh().boundaryMesh().findPatchID(patchName);
+                }
+                if ( regExp("outlet",true).search(patchName) )
+                {
+                    outletID = mesh().boundaryMesh().findPatchID(patchName);
+                }
+            }
+
+            if ( (inletID >= 0) && (outletID >= 0) )
+            {
+                const scalar rho = 1.25;
+
+                const fvsPatchVectorField& inletSf = mesh().Sf().boundaryField()[inletID];
+                const fvsPatchVectorField& outletSf = mesh().Sf().boundaryField()[outletID];
+                const fvsPatchScalarField& inletMagSf = mesh().magSf().boundaryField()[inletID];
+                const fvsPatchScalarField& outletMagSf = mesh().magSf().boundaryField()[outletID];
+
+                double inletArea = gSum(inletMagSf);
+                double outletArea= gSum(outletMagSf);
+
+                const volScalarField& p = mesh().lookupObject<volScalarField>("p");
+                const volVectorField& U = mesh().lookupObject<volVectorField>("U");
+                const surfaceScalarField& phi = mesh().lookupObject<surfaceScalarField>("phi");
+
+                const fvPatchScalarField& pIn = p.boundaryField()[inletID];
+                const fvsPatchScalarField& phiIn = phi.boundaryField()[inletID];
+                const fvPatchVectorField& UIn = U.boundaryField()[inletID];
+
+                const fvPatchScalarField& pOut = p.boundaryField()[outletID];
+                const fvsPatchScalarField& phiOut = phi.boundaryField()[outletID];
+                const fvPatchVectorField& UOut = U.boundaryField()[outletID];
+
+                scalarField pTotIn = 0.5*rho*magSqr(UIn) + pIn;
+                scalar pTotMfaIn = gSum(phiIn*pTotIn)/gSum(SMALL+phiIn);
+
+                scalarField pTotOut = 0.5*rho*magSqr(UOut) + pOut;
+                scalar pTotMfaOut = gSum(phiOut*pTotOut)/gSum(SMALL+phiOut);
+
+                Info << "Surface average static pressure Inlet / Outlet = "
+                     << gSum(inletMagSf*pIn)/inletArea << " / "
+                     << gSum(outletMagSf*pOut)/outletArea << endl;
+
+                Info << "Total pressure loss  = " << pTotMfaIn - pTotMfaOut << nl << endl;
+            }
+        #};
+    }
+*/
+
+);
+
+// ************************************************************************* //

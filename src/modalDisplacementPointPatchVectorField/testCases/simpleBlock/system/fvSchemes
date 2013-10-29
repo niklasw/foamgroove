@@ -1,0 +1,85 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * Scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+/* Laplacian */
+Limited                     Gauss linear limited 0.33;
+Corrected                   Gauss linear corrected;
+LaplacianScheme             $Limited;
+
+/* Div */
+SecondOrder_CellLimited_V   Gauss linearUpwindV cellLimited Gauss linear 1;
+SecondOrder_CellLimited     Gauss linearUpwind cellLimited Gauss linear 1;
+
+// * * * End scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         backward;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+    gradLimiter     cellLimited Gauss linear 1;
+    grad(p)         Gauss linear;
+    grad(U)         cellLimited Gauss linear 1;
+}
+
+divSchemes
+{
+    default             Gauss linear;
+    div(phi,U)          Gauss linearUpwindV grad(U);
+    div(phi,k)          Gauss linearUpwind gradLimiter;
+    div(phi,epsilon)    Gauss linearUpwind gradLimiter;
+    div(phi,omega)      Gauss linearUpwind gradLimiter;
+    div(phi,nuTilda)    Gauss linearUpwind gradLimiter;
+    div(phi,R)          Gauss limitedLinear 1;
+    div(B)              Gauss linear;
+    div((nuEff*dev(T(grad(U))))) Gauss linear;
+}
+
+laplacianSchemes
+{
+    default                 $LaplacianScheme;
+    laplacian(nuEff,U)      $LaplacianScheme;
+    laplacian((1|A(U)),p)   $LaplacianScheme;
+    laplacian(DkEff,k)      $LaplacianScheme;
+    laplacian(DkEff,B)      $LaplacianScheme;
+    laplacian(DnuTildaEff,nuTilda)  $LaplacianScheme;
+}
+
+interpolationSchemes
+{
+    default         linear;
+    interpolate(U)  linear;
+}
+
+snGradSchemes
+{
+    default         limited 0.33;
+}
+
+fluxRequired
+{
+    default         no;
+    p               ;
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#BSUB -app openfoam
+#BSUB -cwd "$cwd"
+#BSUB -J "foamGroove"
+#BSUB -n $ncores
+#BSUB -q $queue
+#BSUB -N -o lsf.%J.log
+#BSUB -x
+
+module add openfoam/2.1.x
+
+$command > openFoam.$${LSB_JOBID}.log 2>&1
+
+

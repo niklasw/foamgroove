@@ -1,0 +1,37 @@
+gamg
+{
+    solver          GAMG;
+    tolerance       1e-08;
+    relTol          0.1;
+    smoother        GaussSeidel;
+    cacheAgglomeration true;
+    nCellsInCoarsestLevel 20;
+    agglomerator    faceAreaPair;
+    mergeLevels     1;
+}
+
+pcg
+{
+    solver          PCG;
+    preconditioner  DIC;
+    tolerance       1e-06;
+    relTol          0.1;
+}
+
+smoothSolver
+{
+    solver          smoothSolver;
+    smoother        GaussSeidel;
+    nSweeps         2;
+    tolerance       1e-07;
+    relTol          0.1;
+}
+
+pbicg
+{
+    solver          PBiCG;
+    preconditioner  DILU;
+    tolerance       1e-08;
+    relTol          0.1;
+}
+

@@ -1,0 +1,32 @@
+This is the source code for a modified version of the thermalPorousZone
+library. The original library source code is
+
+$FOAM_SRC/thermophysicalModels/thermalPorousZone
+
+This modified library adds classes for simplified heat exchanger modeling.
+The added classes (or models) are "heatSource" and "simpleHeatExchanger", both
+are based on the "fixedTemperature" thermalModel.
+
+INSTALLATION
+============
+
+Put this folder in e.g. $HOME/OpenFOAM/$USER-2.1.x/src/, so that the path
+to this README becomes $HOME/OpenFOAM/$USER-2.1.x/src/thermalPorousZone/README
+
+The location of the source is not important. It can be placed anywhere, as
+long as the content is unchanged.
+
+To have the compiled library in its default path, just run
+
+    wmake libso
+
+A successful compile will result in the shared library
+$FOAM_USER_LIBBIN/libthermalPorousZone.so
+
+In this way, two verisons of libthermalPorousZone.so will exist; the original
+OpenFOAM variant, and this modified variant. The suggested install path will
+make this modified variant to take precedence over the original.
+
+To change the installation location, edit the last line of Make/files found
+in this folder.
+

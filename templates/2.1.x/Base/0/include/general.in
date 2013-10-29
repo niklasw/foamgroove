@@ -1,0 +1,22 @@
+    "procBoundary.*"
+    {
+        type            processor;
+        value           $internalField;
+    }
+    "(.*[Ii]nterface.*|.*AMI.*)"
+    {
+        type            cyclicAMI;
+        value           $internalField;
+    }
+    ".*[Ss]lip.*"
+    {
+        type            slip;
+    }
+    ".*[Ss]ymmetry.*"
+    {
+        type            symmetryPlane;
+    }
+    frontAndBack
+    {
+        type            empty;
+    }

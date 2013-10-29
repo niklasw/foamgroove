@@ -1,0 +1,140 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * Solver macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+gamg
+{
+    solver          GAMG;
+    tolerance       1e-08;
+    relTol          0.1;
+    smoother        GaussSeidel;
+    cacheAgglomeration true;
+    nCellsInCoarsestLevel 20;
+    agglomerator    faceAreaPair;
+    mergeLevels     1;
+    preSweeps       0;
+    postSweeps      1;
+}
+
+pcg
+{
+    solver          PCG;
+    preconditioner  DIC;
+    tolerance       1e-08;
+    relTol          0.1;
+}
+
+smoothSolver
+{
+    solver          smoothSolver;
+    smoother        GaussSeidel;
+    nSweeps         2;
+    tolerance       1e-07;
+    relTol          0.1;
+}
+
+pbicg
+{
+    solver          PBiCG;
+    preconditioner  DILU;
+    tolerance       1e-08;
+    relTol          0.1;
+}
+// * * * End solver macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    p
+    {
+        $gamg;
+        tolerance   1e-8;
+        relTol      0.01;
+    }
+
+    pFinal
+    {
+        $gamg;
+        tolerance   1e-8;
+        relTol      0;
+    }
+
+    U
+    {
+        $pbicg;
+        tolerance   1e-8;
+        relTol      0.01;
+    }
+
+    UFinal
+    {
+        $U;
+        relTol      0;
+    }
+
+    "(k|nuTilda|B)"
+    {
+        $pbicg;
+        relTol      0;
+    }
+
+    cellDisplacement
+    {
+        $p;
+        tolerance   1e-6;
+        relTol      0;
+    }
+}
+
+PISO
+{
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 2;
+}
+
+PIMPLE
+{
+    nOuterCorrectors 1;
+    nCorrectors     2;
+    nNonOrthogonalCorrectors 1;
+
+    pRefCell    0;
+    pRefValue   1;
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 10;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p               1;
+    }
+    equations
+    {
+        "U.*"           1;
+        "kl.*"          1;
+        "kt.*"          1;
+        "omega.*"       1;
+    }
+}
+
+
+
+// ************************************************************************* //

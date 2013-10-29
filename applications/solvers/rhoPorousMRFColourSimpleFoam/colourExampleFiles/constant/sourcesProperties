@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      sourcesProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+colour0
+{
+    type            scalarExplicitSetValue;
+    active          on;            //on/off switch
+    timeStart       0.0;           //start time
+    duration        10000.0;        //duration
+    selectionMode   cellSet;       //cellSet // points //cellZone
+    cellSet         colour0;
+
+    scalarExplicitSetValueCoeffs
+    {
+        injectionRate
+        {
+            colour 1;
+        }
+    }
+}
+
+colour1
+{
+    type            scalarExplicitSetValue;
+    active          on;            //on/off switch
+    timeStart       0.0;           //start time
+    duration        10000.0;        //duration
+    selectionMode   cellSet;       //cellSet // points //cellZone
+    cellSet         colour1;
+
+    scalarExplicitSetValueCoeffs
+    {
+        injectionRate
+        {
+            colour -1;
+        }
+    }
+}
+
+
+// ************************************************************************* //

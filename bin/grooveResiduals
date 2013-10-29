@@ -1,0 +1,10 @@
+#!/bin/bash
+
+prog=$(basename $0)
+progDir=$(dirname $0)
+
+if [ -f "$1" ]; then
+    foamLog "$1" && gnuplot $progDir/foamLog.plot
+else
+    echo "No log file found in argument"
+fi

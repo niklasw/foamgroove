@@ -1,0 +1,435 @@
+#!/usr/bin/env python
+# Author konwkn (Niklas Wikstrom, niklas.wikstrom@fsdynamics.se)
+
+import os,sys,re
+from os.path import join as pjoin
+import applyTemplate as Apply
+
+def error(s,sig=1):
+    print '\nError %s!\n' % s
+    sys.exit(sig)
+
+def warn(s):
+    output = 'Warning %s!' % s
+    print '\n'+'='*len(output)
+    print output
+    print '='*len(output)
+
+def info(s):
+    print '\t%s' % s
+
+def submitLsfJob(jobFile,waitFor=''):
+    # Create bsub command and options
+    # job file applied through stdin
+    # Return lsf pid if found or
+    # system exit if failure to get lsf pid
+    from subprocess import Popen,PIPE
+    waitOpts = []
+    if waitFor:
+        waitOpts = ['-w','done(%s)' % waitFor]
+
+    cmd = ['bsub']+waitOpts
+
+    jf = open(jobFile,'r')
+
+    process = Popen(cmd,stdin=jf,stdout=PIPE,stderr=PIPE)
+    process.wait()
+    out,err = process.communicate()
+    match = re.search('.*<([0-9]+)>.*',out)
+    if match:
+        return match.group(1)
+    else:
+        error('Job submission failed with output\n%s\n%s\n' % (out,err))
+
+
+class List(list):
+    def __init__(self, s='(0 0 0)', typ=float):
+        self.string = s
+        self.type = typ
+        self.l = [self.type(a) for a in self.string.strip('() ').split()]
+        list.__init__(self,self.l)
+
+    def __str__(self):
+        return '(%s)' % (' '.join(map(str,self)))
+
+class Table(list):
+    def __init__(self, s='( (0 0) (0 0) )', typ=List):
+        self.string = re.sub('([\)\(])\s*([\)\(])','\g<1> \g<2>',s.strip())
+        self.type = typ
+        self.l = [self.type(a).__str__() for a in re.split('\)\s*\(',self.string)]
+        list.__init__(self,self.l)
+
+    def __str__(self):
+        return '(%s)' % (' '.join(map(str,self)))
+
+
+class Configuration:
+    # If an entry is of a special type (constant, table etc)
+    valueTypes = { 'flowrate':'constant'}
+    # A dictionary of all allowed properties that are not mandatory
+    # The entries are created if they appear in the template input file
+    entryFlags = {  'flowrate':('f','Inlet flowrate',float),
+                    'kinematicViscosity':('v','',float),
+                    'density':('d','In incompressible flow for post process only',float),
+                    'turbulentLengthScale':('l','',float),
+                    'turbulenceIntensity':('i','',float),
+                    'wallRoughnessHeight':('r','',float),
+                    'characteristicVelocity':('u','For turbulent properties calculation',float),
+                    'initialVelocity':('U','Velocity field initialisation',List),
+                    'inletTemperature':('t','',float),
+                    'initialTemperature':('T','',float),
+                    'ambientPressure':('p','',float),
+                    'np':('n','Number of cores for parallel run',int),
+                    'nSteps':('N','Number of iterations or time steps',int),
+                    'initialK':('K','Do not set. Calculated!',float),
+                    'initialEps':('E','Do not set. Calculated!',float),
+                    'initialOmega':('O','Do not set. Calculated!',float),
+                    'initialnuTilda':('z','Do not set. Calculated!',float),
+                    'solver':('S','Should not be changed',str)
+                    }
+    firstRunFile = '.firstRun'
+    # Resource management system template file name
+    # this file must reside together with this script
+    RMSTemplate = 'RMSTemplate.in'
+
+    def __init__(self, outFileName):
+        from optparse import OptionParser
+        self.progPath = os.path.dirname(os.path.realpath(sys.argv[0]))
+        self.entries = entryDict()
+        self.fname = outFileName
+        descString = "%prog modifies an indata file simpleSetup.in and optionaly runs solver."
+        descString+= "The indata file must exist and its content defines the behaviour of %prog, "
+        descString+= "hence, its content must contain all variables needed for the case."
+        self.parser = OptionParser(description=descString)
+        self.options = None
+        self.arguments = None
+        self.fileLines = []
+        self.RMSTemplate = pjoin(self.progPath,Configuration.RMSTemplate)
+        try:
+            with open(self.fname,'r') as f:
+                self.fileLines = [ line.strip() for line in f.readlines() ]
+        except IOError:
+            warn('Could not read input file %s' % self.fname)
+
+    def getArgs(self):
+        # Collect arguments from command line.
+        # Available options are defined by the contents of the simpleSetup.in file
+        # and by this Configuration class
+
+        self.parser.usage = "%prog <options>"
+
+        for item in self.entries.values():
+            shortFlag = '-'+item.letter
+            longFlag  = '--'+item.name
+            self.parser.add_option(shortFlag,longFlag,dest=item.name,default=item.value,help=item.help)
+
+        self.parser.add_option('-R','--runSimulation',dest='runSimulation',default=False,action='store_true', help='Launch solver')
+        self.parser.add_option('-D','--decompose',dest='decompose',default=False,action='store_true', help='Launch parallel decomposer')
+        self.parser.add_option('-B','--fixboundaries',dest='fixboundaries',default=False,action='store_true', help='Force reset boundary types (changeDictionary)')
+        self.parser.add_option('-A','--applytemplate',dest='applytemplate',default=False,action='store_true', help='Install a groove template')
+        self.parser.add_option('-Q','--queue',dest='queue',default='local', help='Submit to  this cluster queue. Default local')
+        self.parser.add_option('-P','--potential',dest='potential',default=False,action='store_true', help='Run potentialFoam first')
+
+        (opt,arg)= self.parser.parse_args()
+
+        for name,ent in self.entries.iteritems():
+            o = getattr(opt,name)
+            ent.setValue(o)
+
+        self.options = opt
+        self.arguments = arg
+
+    def isFirstRun(self):
+        # Must be called after getArgs
+        if os.path.isfile(self.firstRunFile) and not self.options.fixboundaries:
+            return False
+        else:
+            with open(self.firstRunFile,'w') as ff:
+                ff.close()
+            return True
+
+    def write(self):
+        try:
+            with open(self.fname,'w') as fh:
+                for item in self.entries.sortedList():
+                    fh.write(item.__str__())
+        except IOError:
+            error('Failed to write file %s' % self.fname)
+
+
+    def info(self):
+        info('\t\t/*******************************************\\')
+        info('\t\t*            Settings summary               *')
+        info('\t\t\*******************************************/\n')
+        for entry in self.entries.sortedList():
+            print entry.__str__().rstrip()
+
+class entry:
+    import re,string
+    rexFloat = '([+-]?\d*[.]?\d+(e[-+]\d+)?)'
+    rexWord = '(\w+)'
+    rexVector ='(\(\s*'+ string.join([rexFloat]*3,' +')+'\s*\))'
+    scalarPat = re.compile(string.join([rexWord,rexFloat],' +'),re.I)
+    specialScalarPat = re.compile(string.join([rexWord,rexWord,rexFloat],' +'),re.I)
+    vectorPat = re.compile(string.join([rexWord,rexVector],' +'),re.I)
+    specialVectorPat = re.compile(string.join([rexWord,rexWord,rexVector],' +'),re.I)
+    wordPat = re.compile(string.join([rexWord,rexWord],' +'),re.I)
+
+    def __init__(self,name = 'characteristicVelocity',letter='u',valueType = '', value=1.0, valueClass=float, help=''):
+        self.name = name
+        self.valueType = valueType
+        self.setAttributes()
+
+    def fromLine(self, line):
+        # Tedious function to identify an entry from a string
+        value = None
+        s = self.wordPat.match(line)
+        if s:
+            self.valueClass = str
+            self.name, value  = ( s.group(i) for i in (1,2) )
+        s = self.scalarPat.match(line)
+        if s:
+            self.valueClass = float
+            self.name, value  = ( s.group(i) for i in (1,2) )
+        s = self.vectorPat.match(line)
+        if s:
+            self.valueClass = list
+            self.name, value  = ( s.group(i) for i in (1,2) )
+        s = self.specialScalarPat.match(line)
+        if s:
+            self.valueClass = float
+            self.name, self.valueType, value  = ( s.group(i) for i in (1,2,3) )
+        s = self.specialVectorPat.match(line)
+        if s:
+            self.valueClass = list
+            self.name, self.valueType, value  = ( s.group(i) for i in (1,2,3) )
+        if value:
+            self.setAttributes()
+            self.setValue(value)
+            return True
+        else:
+            info('Unidentifiable entry in line "%s"' % line)
+            return False
+
+    def setAttributes(self):
+        if self.name in Configuration.valueTypes.keys():
+            self.valueType = Configuration.valueTypes[self.name]
+        else:
+            self.valueType = ''
+        if self.name in Configuration.entryFlags.keys():
+            self.letter =  Configuration.entryFlags[self.name][0]
+            self.help = Configuration.entryFlags[self.name][1]
+            self.valueClass = Configuration.entryFlags[self.name][2]
+        else:
+            error('Entry not implemented for %s in Configuration' % self.name)
+
+    def setValue(self, value):
+        if self.valueClass == type(str()):
+            self.value = str(value)
+            return
+        if not self.valueClass == type(List()):
+            try: self.value = self.valueClass(float(value))
+            except: error('Non list value type error for %s. Got %s'%(self.name, value))
+        else:
+            try:
+                if type(value) == type(List()):
+                    self.value = value
+                else:
+                    self.value = List(s=value)
+            except:
+                error('List value type error for %s. Got %s'%(self.name, value))
+
+
+    def __str__(self):
+        return '%30s%20s%20s;\n' % (self.name, self.valueType, self.value.__str__())
+
+class entryDict(dict):
+    def __init__(self, d={}):
+        dict.__init__(self,d)
+
+    def assertKey(self,name):
+        if not self.has_key(name):
+            warn('Could not find entry %s' % name)
+            return False
+        else:
+            return True
+
+    def set(self,name,value):
+        if self.assertKey(name):
+            self[name].setValue(value)
+
+    def get(self,name):
+        self.assertKey(name)
+        return self[name]
+
+    def read(self,lines):
+        for line in lines:
+            ent = entry()
+            if ent.fromLine(line):
+                self[ent.name] = ent
+
+    def sortedList(self,reverse=False):
+        from operator import attrgetter
+        return sorted(self.values(),key = attrgetter('name'))
+
+class turbulence:
+    Cmu = 0.09
+    vsmall = 1e-10
+    def __init__(self,Uchar=1.0,ti=0.1,lt=0.01):
+        self.U = Uchar
+        self.ti = ti
+        self.lt = lt
+        self.check()
+
+    def check(self):
+        if self.lt < self.vsmall:
+            error('Turbulence length scale must be reasonable, got %e' % self.lt)
+        if self.ti < self.vsmall or self.ti > 1.0:
+            error('Turbulence intensity must be (0 < i < 1), got %e' % self.ti)
+        if self.U < self.vsmall:
+            error('Characteristic velocity must be > 0, got %e' % self.U )
+
+    def parseEntries(self,entries):
+        self.U = entries.get('characteristicVelocity').value
+        self.ti = entries.get('turbulenceIntensity').value
+        self.lt = entries.get('turbulentLengthScale').value
+        self.check()
+
+    def setEntries(self,entries):
+        entries.set('initialK',self.k())
+        entries.set('initialEps',self.eps())
+        entries.set('initialOmega',self.omega())
+        entries.set('initialnuTilda',self.nuTilda())
+
+    def __str__(self):
+        s = '%30s%40f;\n' % ('initialK',self.k())
+        s+= '%30s%40f;\n' % ('initialEps',self.eps())
+        s+= '%30s%40f;\n' % ('initialOmega',self.omega())
+        s+= '%30s%40f;\n' % ('initialnuTilda',self.nuTilda())
+        return s
+
+    def k(self):
+        return 1.5 * (self.ti*self.U)**2
+
+    def eps(self):
+        return self.Cmu**0.75*self.k()**1.5/self.lt
+
+    def omega(self):
+        return self.eps()/(self.Cmu*self.k())
+
+    def nut(self):
+        return self.Cmu*self.k()**2/self.eps()
+
+    def nuTilda(self):
+        return self.nut()*3.0;
+
+    def magVector(self,V):
+        from math import sqrt
+        return sqrt(sum([a**2 for a in V]))
+
+class foamRunner:
+    def __init__(self, config):
+        self.config = config
+        self.foamExe = 'foamBoundingBox'
+        self.log = self.foamExe+'.log'
+        self.options = []
+        self.np = self.config.entries.get('np').value
+        self.wait = True
+        self.pid = -1
+        self.qsub = None
+        self.qfile = 'foamQueue.job'
+        self.solver = self.config.entries.get('solver').value
+
+    def submitRMS(self,cmd):
+        self.mkRMSFile(cmd)
+        info(submitLsfJob(self.qfile))
+
+    def execute(self,cmd):
+        from subprocess import Popen
+        cmdStr = ' '.join(cmd)
+        info('Attempt %s' % (cmdStr))
+        self.log = self.foamExe+'.log'
+        try:
+           with open(self.log,'w') as fh:
+               p = Popen(cmd,stdout=fh,stderr=fh,shell=False)
+               info('Running %s with PID %i' % (cmdStr,p.pid))
+               if self.wait:
+                   if not p.wait() == 0:
+                       error('Executable returned an error code. See log in %s' % (self.log))
+               self.pid = p.pid
+        except:
+           error('Could not run %s' % self.foamExe)
+
+    def runSerial(self):
+        cmd = [self.foamExe]+self.options
+        if self.qsub=='local':
+            self.execute(cmd)
+        else:
+            self.submitRMS(cmd)
+
+    def runPar(self):
+        cmd = ['mpirun','-np',str(self.np),self.foamExe,'-parallel']+self.options
+        if self.qsub=='local':
+            self.execute(cmd)
+        else:
+            self.submitRMS(cmd)
+
+    def run(self,foamExe,options=[],wait=True,serial=False,qsub='local'):
+        self.foamExe = foamExe
+        self.options = options
+        self.wait = wait
+        self.qsub = qsub
+        (self.runPar() if self.np > 1 and not serial else self.runSerial())
+
+    def mkRMSFile(self,cmd):
+        from string import Template
+        cmdStr = ' '.join(cmd)
+        s = ''
+        try:
+            with open(self.config.RMSTemplate) as tpl:
+                s = Template(tpl.read()).substitute(cwd=os.getcwd(), ncores=self.np, command=cmdStr, queue=self.qsub)
+        except IOError:
+            error('Could not read resource management system file template')
+
+        try:
+            with open(self.qfile,'w') as fh:
+                fh.write(s)
+                info('\n\tWrote lsf submit file %s' % self.qfile)
+        except IOError:
+            error('Could not write file %s' % self.qfile)
+
+if __name__=='__main__':
+
+    outFile = 'simpleSetup.in'
+
+    conf = Configuration(outFile)
+
+    conf.entries.read(conf.fileLines)
+
+    conf.getArgs()
+
+    if not conf.fileLines or conf.options.applytemplate:
+        info('Apply template sequence. Then re-run to setup case.')
+        Apply.apply()
+        sys.exit(0)
+
+    turb = turbulence()
+    turb.parseEntries(conf.entries)
+    turb.setEntries(conf.entries)
+
+    conf.write()
+    conf.info()
+
+    r = foamRunner(conf)
+    if conf.options.fixboundaries:
+        r.run('changeDictionary',serial=True)
+    if conf.options.decompose:
+        r.run('decomposePar',options=['-force'],serial=True)
+    if conf.options.runSimulation:
+        if conf.options.potential:
+            r.run('potentialFoam',wait=False,qsub=conf.options.queue)
+            r.mkRMSFile(r.solver)
+            info('Wrote RMS job file for actual run. Submit yourself.')
+            sys.exit(0)
+        r.run(r.solver, wait=False, qsub=conf.options.queue)
+

@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/constant/boundaryConditions/basic";
+
+dimensions      [ 0 1 -1 0 0 0 0 ];
+
+internalField   $velocity.initial;
+
+boundaryField
+{
+#   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+
+    defaultGroup { $:bc.default.U; }
+
+    inletGroup { $:bc.fixedInlet.U; }
+
+    wallGroup { $:bc.walls.U; }
+
+    slipGroup { $:bc.slipWalls.U; }
+
+    movingWallGroup { $:bc.movingWalls.U; }
+
+    ambienceGroup { $:bc.totalPressure.U; }
+
+    outflowGroup { $:bc.pressureOutlet.U; }
+
+    farfieldGroup { $:bc.freestream.U; }
+
+#   include "include/general.in";
+}
+
+// ************************************************************************* //

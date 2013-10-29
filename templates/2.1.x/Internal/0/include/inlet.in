@@ -1,0 +1,6 @@
+    ".*[Ii]nlet.*"
+    {
+        type            flowRateInletVelocity;
+        flowRate        $flowrate;
+        value           $internalField;
+    }

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+function rmthese()
+{
+ls -d $@ 2>/dev/null
+[[ $? == "0" ]] || return 0 ;
+read -p "Remove these? [Y/n] " ans
+[[ $ans != "n" ]] && rm -rf $@
+}
+
+tp='[1-9]*'
+rmthese $tp
+tp='[0-9].[0-9]*'
+rmthese $tp
+tp='*[Ee]-[0-9]*'
+rmthese $tp

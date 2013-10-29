@@ -1,0 +1,30 @@
+% Template for new reports written with the default style
+% of LaTeX.
+% 
+% It relies on the existence of the files 'commands.tex'
+% and 'bibl.bib' which are my constantly growing files
+\documentclass{article}
+
+\usepackage{amsfonts,amsmath}
+\usepackage{graphicx,epsfig,psfrag}
+%\usepackage{draftcopy}
+
+% My usual user defined commands
+\include{commands}
+
+\author{Carl Tro\"{e}ng \and Niklas Wikstr\"{o}m \and Mattias Liefvendahl}
+\title{Mode-based fluid-structure interaction simulation}
+
+\begin{document}
+
+\maketitle
+
+\input{texFiles/intro}
+\input{texFiles/theory}
+\input{texFiles/impl}
+\input{texFiles/tests}
+
+\bibliography{bibl/ml,bibl/nw,bibl/ct}
+\bibliographystyle{plain}
+
+\end{document}

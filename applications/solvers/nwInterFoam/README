@@ -1,0 +1,9 @@
+This is an interFoam collection, straight from stock OF 2.2.x, with
+added fvOption capability to LTSInterFoam and interFoam.
+
+I do not, presently, know why there is a porousInterFoam still in stock,
+since fvOptions should take care of it. Something I missed probably.
+
+Use with care!
+
+/nikwik
