@@ -93,6 +93,8 @@ class structuralMode
          */
 
         const Switch generateMode_;
+
+        const Switch uniformMode_;
         //- Origin of the axis
         vector origin_;
 
@@ -188,6 +190,8 @@ public:
 
     // Member Functions
     void trigonometricMode();
+
+    void uniformMode();
 
     void scale(const scalar reScale);
 

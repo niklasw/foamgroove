@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "/home/nikwik/tmp/FSD1020500/OpenFOAM/run/mesh/piston1";
+    object      setup.OpenFOAM;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+transport
+{
+    kinematicViscosity 1e-06;
+}
+
+velocity
+{
+    flowrate        0.01;
+    inlet           uniform ( 10 0 0 );
+    ambient         uniform ( 0 0 0 );
+    initial         uniform ( 0 0 0 );
+    reference       1;
+}
+
+turbulence
+{
+    intensity       0.05;
+    mixingLength    0.05;
+    initialnuSgs    uniform 4e-06;
+    initialK        uniform 0.00375;
+    initialOmega    uniform 2.236068;
+    initialnuTilda  uniform 0.0030618622;
+    initialEpsilon  uniform 0.00075467294;
+}
+
+pressure
+{
+    ambient         uniform 100000;
+    outlet          uniform 100000;
+}
+
+energy
+{
+    inletTemperature uniform 300;
+    ambientTemperature uniform 300;
+    initialTemperature uniform 300;
+}
+
+relaxation
+{
+    pressure        1;
+    velocity        1;
+    turbulence      1;
+    rho             1;
+    energy          1;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

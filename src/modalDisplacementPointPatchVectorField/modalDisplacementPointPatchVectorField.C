@@ -206,10 +206,12 @@ List<Tuple2<label,label> > modalDisplacementPointPatchField::findMonitorPoints()
         {
             searchResult[i] = primitiveNearestPointSearch(mPoints[i]);
         }
+        Info << "Found " << mPoints.size() << " monitor points." << endl;
         return searchResult;
     }
     else
     {
+        Info << "Found no monitor points." << endl;
         return List<Tuple2<label,label> >();
     }
 }

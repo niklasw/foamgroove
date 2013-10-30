@@ -1,0 +1,61 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dictionaryReplacement
+{
+
+    boundary
+    {
+        periodic0
+        {
+            type            cyclicAMI;
+            neighbourPatch  periodic1;
+            matchTolerance  0.00001;
+            transform       rotational;
+            rotationAxis    (0 0 1);
+            rotationCentre  (0 0 0);
+        }
+        pistonWall
+        {
+            type            wall;
+            inGroups        2(movingWallGroup wallGroup);
+        }
+        extrusionBase
+        {
+            type            wall;
+            inGroups        1(wallGroup);
+        }
+        periodic1
+        {
+            type            cyclicAMI;
+            neighbourPatch  periodic0;
+            matchTolerance  0.00001;
+            transform       rotational;
+            rotationAxis    (0 0 1);
+            rotationCentre  (0 0 0);
+        }
+        extrusionBase
+        {
+            type            wall;
+        }
+
+    }
+}
+
+
+// ************************************************************************* //

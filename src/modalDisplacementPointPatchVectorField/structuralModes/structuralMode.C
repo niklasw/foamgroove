@@ -142,6 +142,7 @@ Foam::structuralMode::structuralMode
     odeSubSteps_(50),
 
     generateMode_(dict_.lookupOrDefault("generateMode",false)),
+    uniformMode_(dict_.lookupOrDefault("uniformMode",false)),
     origin_(vector::zero),
     axis_(vector(1,0,0)),
     waveLength_(1.0),
@@ -181,7 +182,14 @@ Foam::structuralMode::structuralMode
         modeDisplacement_.resize(patch_.size(),vector::zero);
         trigonometricMode();
     }
-
+    else if (uniformMode_)
+    {
+        Info << "Generating uniform mode " << this->name()
+             << " for patch " << patch_.name() << nl << endl;
+        const dictionary& genDict = dict_.subDict("generatedMode");
+        amplitude_ = genDict.lookup("amplitude");
+        uniformMode();
+    }
     else
     {
         if (parallel)
@@ -213,6 +221,11 @@ void Foam::structuralMode::trigonometricMode()
     scalarField modeCoordinate = axis_ & (patch_.localPoints() - origin_);
     modeDisplacement_ = amplitude_
               * (1-cos((2*pi/waveLength_)*modeCoordinate));
+}
+
+void Foam::structuralMode::uniformMode()
+{
+    modeDisplacement_ = vectorField(patch_.localPoints().size(),amplitude_);
 }
 
 void Foam::structuralMode::scale(const scalar reScale)

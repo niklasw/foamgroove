@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * Scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+Correction                 limited 0.33; // corrected;
+
+ConvectionModel            Gauss;
+
+// * * * End scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         Euler;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+    grad(p)         cellLimited leastSquares 1;
+    grad(U)         cellLimited leastSquares 1;
+    gradLimited     cellLimited leastSquares 1;
+}
+
+divSchemes
+{
+    default             none; //$ConvectionModel upwind;
+    div(phi,U)          $ConvectionModel linearUpwindV grad(U);
+    div(phi,k)          $ConvectionModel linearUpwind grad(U);
+    div(phi,epsilon)    $ConvectionModel linearUpwind grad(U);
+    div(phi,omega)      $ConvectionModel linearUpwind grad(U);
+    div(phi,nuTilda)    $ConvectionModel linearUpwind grad(U);
+    div(meshPhi,p)      $ConvectionModel linearUpwind grad(p);
+
+    div((muEff*dev2(T(grad(U))))) $ConvectionModel linear;
+    div(phi,e)          $ConvectionModel upwind;
+    div(phi,h)          $ConvectionModel upwind;
+    div(phi,K)          $ConvectionModel upwind;
+    div(phid,p)         $ConvectionModel upwind;
+    div(phiv,p)         $ConvectionModel upwind;
+    div((phi|interpolate(rho)),p) $ConvectionModel upwind;
+}
+
+laplacianSchemes
+{
+    default                 Gauss linear $Correction;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         $Correction;
+}
+
+fluxRequired
+{
+    default         no;
+    p               ;
+    pcorr           ;
+}
+#includeIfPresent "include/freeSurfaceFvSchemesI";
+
+// ************************************************************************* //
