@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
 
-    fileName setupFile = "setup.OpenFOAM";
+    fileName setupFile = "setup.foam";
 
     IOobject dictHdr
     (

@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "${FOAM_CASE}/setup.OpenFOAM";
+#include "${FOAM_CASE}/setup.foam";
 #include "${FOAM_CASE}/system/include/solverDefinitions";
 
 solvers

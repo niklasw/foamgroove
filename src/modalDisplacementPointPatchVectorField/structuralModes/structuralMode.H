@@ -89,10 +89,10 @@ class structuralMode
         /*
          * Origin, axis and waveLength is only used to generate
          * trigonometric fake modes for testing. I.e. when
-         * generateMode is yes.
+         * trigonometricMode is yes.
          */
 
-        const Switch generateMode_;
+        const Switch trigonometricMode_;
 
         const Switch uniformMode_;
         //- Origin of the axis
@@ -254,7 +254,7 @@ public:
         }
         else
         {
-            return (generateMode_ == true);
+            return (trigonometricMode_ == true);
         }
     };
 

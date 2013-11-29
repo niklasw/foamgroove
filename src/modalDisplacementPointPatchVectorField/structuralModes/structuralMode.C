@@ -141,7 +141,7 @@ Foam::structuralMode::structuralMode
     odeData_(2, 0.0),
     odeSubSteps_(50),
 
-    generateMode_(dict_.lookupOrDefault("generateMode",false)),
+    trigonometricMode_(dict_.lookupOrDefault("trigonometricMode",false)),
     uniformMode_(dict_.lookupOrDefault("uniformMode",false)),
     origin_(vector::zero),
     axis_(vector(1,0,0)),
@@ -167,7 +167,7 @@ Foam::structuralMode::structuralMode
         modeDisplacement_.resize(patch_.size(),vector::zero);
     }
 
-    if (generateMode_)
+    if (trigonometricMode_)
     {
         Info << "Generating tronometric mode " << this->name()
              <<" for patch " << patch_.name() << nl << endl;
@@ -255,7 +255,7 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const structuralMode& mode)
 
     os  << token::BEGIN_BLOCK << incrIndent << nl;
 
-    os.writeKeyword("generateMode") << "no" << token::END_STATEMENT << nl;
+    os.writeKeyword("trigonometricMode") << "no" << token::END_STATEMENT << nl;
 
     os.writeKeyword("generatedMode") << nl;
 

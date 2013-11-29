@@ -54,6 +54,7 @@ Description
 #include "volFields.H"
 #include "fvc.H"
 #include "fvMotionSolverCore.H"
+#include "modalDisplacementPointPatchVectorField.H"
 
 using namespace Foam;
 
@@ -106,8 +107,9 @@ int main(int argc, char *argv[])
 
     if (args.optionFound("writeDisplacements"))
     {
-       const pointVectorField& pointDisplacement
-           = mesh.lookupObject<pointVectorField>("pointDisplacement");
+
+        const pointVectorField& pointDisplacement
+            = mesh.lookupObject<pointVectorField>("pointDisplacement");
 
         pointDisplacement.write();
         cellDisplacement.write();

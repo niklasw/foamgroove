@@ -14,7 +14,7 @@ FoamFile
     object      transportProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-#include "$FOAM_CASE/setup.OpenFOAM"
+#include "$FOAM_CASE/setup.foam"
 
 transportModel  Newtonian;
 

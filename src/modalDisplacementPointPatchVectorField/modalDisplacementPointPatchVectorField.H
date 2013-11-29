@@ -310,6 +310,12 @@ public:
             return globalMeshToGlobalPatchIndex(globalMeshIndex(i));
         }
 
+        //- Enable switching to debug from utilities
+        bool& debugMode()
+        {
+            return writeDebugField_;
+        }
+
         // Evaluation functions
 
             //- Update the coefficients associated with the patch field
