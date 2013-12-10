@@ -24,7 +24,7 @@ target=${target:=system}
 
 echo "...trying $dictName";
 dictPath=$( find  $FOAM_UTILITIES -name $dictName )
-if [ ! -z $dictPath ]; then
+if [ ! -z "$dictPath" ]; then
     echo Found $dictPath
 else
     echo "Found no dict named $dictName";
