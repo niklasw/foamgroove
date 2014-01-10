@@ -68,7 +68,7 @@ namespace Foam
         scalar k      = 1.5*pow(intensity*referenceU,2);
         scalar eps    = pow(Cmu,0.75)*pow(k,1.5)/mixingLength;
         scalar omega  = eps/(Cmu*k);
-        scalar nut    = Cmu*pow(k,2)/eps;
+        //scalar nut    = Cmu*pow(k,2)/eps;
         scalar nuTilda= k/(omega*pow(Cmu,0.25));
 
         setUniformValue(turbulence, "initialK", k);

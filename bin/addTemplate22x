@@ -4,6 +4,8 @@ echo "Select template to add by entering it's number."
 echo "The order is significant and Ctrl C aborts.\n"
 echo "Base case is Incompressible Steady Internal"
 
+FG_TEMPLATES_DIR_V=${FG_TEMPLATES_DIR}/$WM_PROJECT_VERSION
+
 function cleanList()
 {
     echo $@|tr " " "\n"|sort -u|tr "\n" " "
@@ -11,10 +13,11 @@ function cleanList()
 
 function checkEnv()
 {
-    if [ ! -d "$FG_TEMPLATES_DIR" ]; then
-        echo -e "\nCannot find templates. Exit"
+    if [ ! -d "$FG_TEMPLATES_DIR_V" ]; then
+        echo -e "\nCannot find templates in $FG_TEMPLATES_DIR_V. Exit"
         exit 1
     fi
+    echo -e "Fetching templates from $FG_TEMPLATES_DIR_V\n"
 }
 
 checkEnv
@@ -54,6 +57,6 @@ echo ""
 for T in $AVAILABLE_TEMPLATES; do
     if [[ "$SELECTED_TEMPLATES" == *"$T"* ]]; then
         echo "adding $T"
-        rsync --exclude="template" -r $FG_TEMPLATES_DIR/$T/ .
+        rsync --exclude="template" -r $FG_TEMPLATES_DIR_V/$T/ .
     fi
 done
