@@ -84,6 +84,7 @@ dictionaryReplacement
         "(.*procBoundary.*)"
         {
             type  processor;
+            inGroups    1(processor);
         }
     }
 }
