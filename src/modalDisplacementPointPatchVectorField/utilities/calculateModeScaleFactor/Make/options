@@ -10,4 +10,4 @@ EXE_LIBS = \
     -lmeshTools \
     -ldynamicMesh \
     -lfvMotionSolvers \
-    -lmodalDisplacementPointPatchField
+    -L$(FOAM_USER_LIBBIN) -lmodalDisplacementPointPatchField
