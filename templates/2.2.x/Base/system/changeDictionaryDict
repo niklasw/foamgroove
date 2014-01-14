@@ -39,6 +39,12 @@ dictionaryReplacement
             inGroups     1(slipGroup);
         }
 
+        ".*2[Dd].*"
+        {
+            type            empty;
+            inGroups        1(empty);
+        }
+
         ".*[Ff]ront.*[Bb]ack.*"
         {
             type            empty;

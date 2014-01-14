@@ -37,7 +37,7 @@ gradSchemes
 
 divSchemes
 {
-    default             $ConvectionModel upwind;
+    default             $ConvectionModel limitedLinear 1 phi;
     div(phi,U)          $ConvectionModel linearUpwind grad(U);
   //div(phi,U)          $ConvectionModel LUST unlimitedGrad(U);
     div(phi,k)          $ConvectionModel limitedLinear 1;
