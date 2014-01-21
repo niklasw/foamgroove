@@ -98,7 +98,7 @@ class snappyHexMesh22(Template):
 
 castellatedMesh true;
 snap            true;
-addLayers       false;
+addLayers       true;
 
 
 geometry
@@ -254,8 +254,8 @@ addLayersControls
     // - overall thickness and firstLayerThickness
     // - overall thickness and finalLayerThickness
 
-        // //expansionRatio 1.2;
-        // //finalLayerThickness 0.3;
+    expansionRatio 1.2;
+    finalLayerThickness 0.6;
         //firstLayerThickness 0.1;
         //thickness 0.5;
 
@@ -265,9 +265,7 @@ addLayersControls
     {
         wallGroup
         {
-            nSurfaceLayers 3;
-            firstLayerThickness 0.1;
-            thickness 0.5;
+            nSurfaceLayers 4;
         }
     }
 
