@@ -84,7 +84,7 @@ class config:
 
     def __init__(self,name=''):
         self.template = None
-        self.templatesDir = os.getenv('OpenFOAM_TEMPLATES_DIR')
+        self.templatesDir = os.getenv('FG_TEMPLATES_DIR')
         self.checkEnv()
         self.templates = self.listTemplates()
 
