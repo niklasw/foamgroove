@@ -2,8 +2,7 @@
 
 rm -rf processor*/0
 for p in processor*; do
-    echo -e "$p"
-    cp -r 0 $p/0
+    cp -rv 0 $p/0
 done
 
 

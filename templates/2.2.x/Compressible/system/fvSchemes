@@ -52,7 +52,7 @@ divSchemes
     div(phi,K)          $ConvectionModel linear;
     div(phid,p)         $ConvectionModel upwind;
     div(phiv,p)         $ConvectionModel upwind;
-    //div(phi,Ekp)      $ConvectionModel upwind;
+    div(phi,Ekp)      $ConvectionModel upwind;
     div((phi|interpolate(rho)),p) $ConvectionModel upwind;
 }
 

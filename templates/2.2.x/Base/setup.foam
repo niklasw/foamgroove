@@ -42,8 +42,9 @@ turbulence
 
 pressure
 {
-    ambient         uniform 0;
-    outlet          uniform 0;
+    reference       0;
+    ambient         uniform $reference ;
+    outlet          uniform $reference;
 };
 
 energy
