@@ -1,0 +1,41 @@
+#!/bin/bash
+
+function error()
+{
+    echo -e "\nError:\t$1\n"
+    exit 1
+}
+
+function getExec()
+{
+    exe=$(which $1 2> /dev/null)
+    if [ -z "$exe" ]; then
+        error "Could not find executable $1"
+    else
+        echo "$exe"
+        return 0
+    fi
+}
+
+function checks()
+{
+    EXEC=$( getExec "$1" )
+    NP=$(ls -X1 -d processor[0-9]* 2>/dev/null|wc -l)
+    [[ "$NP" -gt "0" ]] || error "Case does not seem to be decomposed"
+
+    for mf in machinefile hostfile machines hosts; do
+        [ -f "$mf"  ] && MACHINESDEF='-machinefile $mf'
+    done
+
+    echo -e "\nWill launch $(basename $EXEC) on $NP processors"
+}
+
+EXEC="$1"
+shift 1
+OPTS=$@
+
+MACHINESDEF=""
+
+checks $EXEC
+
+echo "mpirun -np $NP $MACHINESDEF $EXEC $OPTS -parallel >& $EXEC.log &"
