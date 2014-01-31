@@ -4,6 +4,8 @@ echo "Select template to add by entering it's number."
 echo "The order is significant and Ctrl C aborts.\n"
 echo "Base case is Incompressible Steady Internal"
 
+[[ "$1" == "-v" ]] && verbose="yes" || verbose="no"
+
 FG_TEMPLATES_DIR_V=${FG_TEMPLATES_DIR}/$WM_PROJECT_VERSION
 
 function cleanList()
@@ -41,6 +43,9 @@ do
         *)
             SELECTED_TEMPLATES="$SELECTED_TEMPLATES $T"
             SELECTED_TEMPLATES=$(cleanList "$SELECTED_TEMPLATES")
+            if [[ "$verbose" == "yes" ]]; then
+                tree $FG_TEMPLATES_DIR_V/$T
+            fi
             echo -e "Now active:\n\t$SELECTED_TEMPLATES"
             ;;
   esac
