@@ -31,6 +31,7 @@ function checks()
 }
 
 EXEC="$1"
+EXECNAME=$EXEC
 shift 1
 OPTS=$@
 
@@ -38,4 +39,4 @@ MACHINESDEF=""
 
 checks $EXEC
 
-echo "mpirun -np $NP $MACHINESDEF $EXEC $OPTS -parallel >& $EXEC.log &"
+echo "mpirun -np $NP $MACHINESDEF $EXEC $OPTS -parallel >& $EXECNAME.log &"
