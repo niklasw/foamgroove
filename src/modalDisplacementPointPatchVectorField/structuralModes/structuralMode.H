@@ -53,7 +53,9 @@ SourceFiles
 #include "mapPolyMesh.H"
 #include "DataEntry.H"
 #include "autoPtr.H"
+
 #include "modalDisplacementPointPatchVectorField.H"
+#include "modeShape.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,7 +65,6 @@ namespace Foam
 // Forward declaration of classes
 class polyMesh;
 class modalDisplacementPointPatchField;
-class structuralMode;
 
 /*---------------------------------------------------------------------------*\
                            Class structuralMode Declaration
@@ -92,29 +93,15 @@ class structuralMode
          * trigonometricMode is yes.
          */
 
-        const Switch trigonometricMode_;
+        modeShape modeShape_;
 
-        const Switch uniformMode_;
-        //- Origin of the axis
-        vector origin_;
-
-        //- Axis vector
-        vector axis_;
-
-        //- Wave length (geometrical) of generated mode.
-        scalar waveLength_;
-
-        //- Amplitude of generated mode.
-        vector amplitude_;
+        dictionary modeShapeDict_;
 
         //- Mode frequency
         const scalar frequency_;
 
         //- Renormalisation factor
         scalar scalingFactor_;
-
-        //- List of modal displacement vector lists
-        vectorField modeDisplacement_;
 
         //- scalarField of volumes swept by faces when
         //  displaced by the eigen mode.
@@ -124,13 +111,6 @@ class structuralMode
 
         //- Disallow default bitwise copy construct
         structuralMode(const structuralMode&);
-
-        void scale();
-
-        //- Re-make the modeDisplacement vectorField to match each
-        //  processors patch points. Must be called inside a
-        //  "if(Pstream::parRun())" statement.
-        void distributeParModeDisplacement();
 
         void calculateSweptVols();
 
@@ -187,14 +167,6 @@ public:
     virtual ~structuralMode()
     {}
 
-
-    // Member Functions
-    void trigonometricMode();
-
-    void uniformMode();
-
-    void scale(const scalar reScale);
-
     //- Work issued by pressure when displacing
     //  patch by mode.
     scalar Q(const volScalarField& p) const;
@@ -208,12 +180,12 @@ public:
 
     const vectorField& modeDisplacement() const
     {
-        return modeDisplacement_;
+        return modeShape_.displacement();
     };
 
     vectorField modeDisplacement(const scalar& scale) const
     {
-        return scale*modeDisplacement_;
+        return scale*modeShape_.displacement();
     };
 
     const scalarField& sweptVols() const
@@ -254,7 +226,10 @@ public:
         }
         else
         {
-            return (trigonometricMode_ == true);
+            //return (trigonometricMode_ == true);
+            Info << "MUST BE IMPLEMENTED: Foam::structuralMode::needsWrite"
+                 << endl;
+            return false;
         }
     };
 

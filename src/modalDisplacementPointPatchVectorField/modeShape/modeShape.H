@@ -2,7 +2,7 @@
   =========                 |
   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
    \\    /   O peration     |
-    \\  /    A nd           | Copyright (C) 2011-2012 OpenFOAM Foundation
+    \\  /    A nd           | Copyright (C) 2013 OpenFOAM Foundation
      \\/     M anipulation  |
 -------------------------------------------------------------------------------
 License
@@ -22,23 +22,21 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::structuralModes
+    Foam::modeShape
 
 Description
-    Container class for a set of structuralModes with the structuralMode member functions
-    implemented to loop over the functions for each structuralMode.
 
 SourceFiles
-    structuralModes.C
+    modeShapeI.H
+    modeShape.C
+    modeShapeIO.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef structuralModes_H
-#define structuralModes_H
-
-#include "structuralMode.H"
-#include "IOPtrList.H"
-#include "volFieldsFwd.H"
+#ifndef modeShape_H
+#define modeShape_H
+#include "primitiveFields.H"
+#include "pointFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,65 +45,93 @@ namespace Foam
 
 // Forward declaration of classes
 class modalDisplacementPointPatchField;
-class structuralMode;
+class Istream;
+class Ostream;
+
+// Forward declaration of friend functions and operators
+//class modeShape;
+//Istream& operator>>(Istream&, modeShape&);
+//Ostream& operator<<(Ostream&, const modeShape&);
+
 
 /*---------------------------------------------------------------------------*\
-                           Class structuralModes Declaration
+                         Class modeShape Declaration
 \*---------------------------------------------------------------------------*/
 
-class structuralModes
-:
-    public IOPtrList<structuralMode>
+class modeShape
 {
     // Private data
 
-        //- Reference to mesh
-        const modalDisplacementPointPatchField& BC_;
-
-        const vectorField& patchPoints_;
-
-        dimensionedScalar fluidDensity_;
+    const dictionary& dict_;
+    word modeTypeName_;
+    const modalDisplacementPointPatchField& BC_;
+    const pointField& points_;
+    vectorField displacement_;
 
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        structuralModes(const structuralModes&);
+        modeShape(const modeShape&);
 
         //- Disallow default bitwise assignment
-        void operator=(const structuralModes&);
+        void operator=(const modeShape&);
+
+        //- Mode generation functions
+        const scalarField coordinateAxis();
+
+        void genRigidMode();
+
+        void genTrigonometricMode();
+
+        void genPolynomialMode();
+
+        void genInterpolatedMode();
+
+        void distributeParModeDisplacement();
 
 public:
 
+    // Static data members
+
+
     // Constructors
 
-        //- Construct from polyMesh
-        structuralModes(const modalDisplacementPointPatchField& BC);
+        //- Construct null
+        modeShape
+        (
+            const dictionary& dict,
+            const modalDisplacementPointPatchField& BC
+        );
+
+
+    //- Destructor
+    ~modeShape();
+
 
     // Member Functions
 
-        vectorField modeDisplacement() const;
-        vectorField calculatedModeDisplacement(const volScalarField& p) const;
+        // Access
+        const vectorField& displacement() const;
 
-        const dimensionedScalar& fluidDensity() const
-        {
-            return fluidDensity_;
-        };
+        // Check
 
-    // I-O
+        // Edit
+        vectorField generateMode();
 
-        //- Read from Istream
-        virtual bool readData(Istream&);
-
-        void writeODEData() const;
-
-        //- IF ODEData-file for the associated patch is found
-        //  in the instant directory, read and distribute odeData
-        //  to all modes. If no file present; Do nothing.
-        void readODEData();
-
-        bool writeIfNeeded() const;
+        // Write
 
 
+    // Member Operators
+
+
+    // Friend Functions
+
+    // Friend Operators
+
+    // IOstream Operators
+
+        friend Istream& operator>>(Istream&, modeShape&);
+        friend Ostream& operator<<(Ostream&, const modeShape&);
 };
 
 

@@ -60,18 +60,20 @@ Description
         (
             first
             {
-                generateMode yes;
-                generatedMode
+                modeShape
                 {
+                    modeType    trigonometric; // interpolated, polynomial,
+                                                  rigid
                     origin  (0 0 0);
                     axis    (0 0 1);
                     waveLength   1;
                     amplitude (0.1 0 0);
+
+                    modeDisplacement 0();
                 }
 
                 frequency   2.5;
                 scalingFactor 1;
-                modeDisplacement 0();
             }
 
             second

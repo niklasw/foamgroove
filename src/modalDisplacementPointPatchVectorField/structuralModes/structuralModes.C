@@ -81,22 +81,6 @@ Foam::structuralModes::structuralModes(const modalDisplacementPointPatchField& B
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 
-void Foam::structuralModes::trigonometricMode()
-{
-    forAll(*this, i)
-    {
-        operator[](i).trigonometricMode();
-    }
-}
-
-void Foam::structuralModes::scale(const scalar& reScale)
-{
-    forAll(*this, i)
-    {
-        operator[](i).scale(reScale);
-    }
-}
-
 Foam::vectorField Foam::structuralModes::modeDisplacement() const
 {
     vectorField sumDisplacements(BC_.size(),vector::zero);

@@ -49,29 +49,6 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::structuralMode::scale()
-{
-    Info << "Scaling mode "<<name_ << " with factor "
-         << scalingFactor_ << endl; 
-    modeDisplacement_ *= scalingFactor_;
-}
-
-void Foam::structuralMode::distributeParModeDisplacement()
-{
-    Info << "Distributing mode \"" <<name()<<"\" to processors" << nl << endl;
-
-    vectorField localModeDisplacement(patch_.size(), vector::zero);
-
-    forAll (patch_.meshPoints(), i)
-    {
-        label globalPatchIndex = BC_.localToGlobalPatchIndex(i);
-        localModeDisplacement[i] = modeDisplacement_[globalPatchIndex];
-    }
-
-    modeDisplacement_.resize(patch_.size());
-    modeDisplacement_ = localModeDisplacement;
-}
-
 void structuralMode::calculateSweptVols()
 {
     Info << "Calculating volumes swept by mode \""<< name() << "\"\n" << endl;
@@ -141,98 +118,17 @@ Foam::structuralMode::structuralMode
     odeData_(2, 0.0),
     odeSubSteps_(50),
 
-    trigonometricMode_(dict_.lookupOrDefault("trigonometricMode",false)),
-    uniformMode_(dict_.lookupOrDefault("uniformMode",false)),
-    origin_(vector::zero),
-    axis_(vector(1,0,0)),
-    waveLength_(1.0),
-    amplitude_(vector::zero),
+    modeShape_(dict_.subDict("modeShape"), BC),
 
     frequency_(readScalar(dict_.lookup("frequency"))),
     scalingFactor_(readScalar(dict_.lookup("scalingFactor"))),
-    modeDisplacement_(dict_.lookup("modeDisplacement")),
     sweptVols_(mesh_.boundaryMesh()[patch_.index()].size())
-
 {
-    bool parallel = Pstream::parRun();
-
-    axis_ = axis_/mag(axis_);
-
-    if (modeDisplacement_.size()==0)
-    {
-        WarningIn("Foam::structuralMode::structuralMode")
-            << "modeDisplacement list with zero elements!" << nl
-            << "Resizing with vector::zero elements.\n" << endl;
-
-        modeDisplacement_.resize(patch_.size(),vector::zero);
-    }
-
-    if (trigonometricMode_)
-    {
-        Info << "Generating tronometric mode " << this->name()
-             <<" for patch " << patch_.name() << nl << endl;
-
-        const dictionary& genDict = dict_.subDict("generatedMode");
-
-        origin_ = genDict.lookup("origin");
-        axis_ = genDict.lookup("axis");
-        waveLength_ = readScalar(genDict.lookup("waveLength"));
-        amplitude_ = genDict.lookup("amplitude");
-
-        modeDisplacement_.resize(patch_.size(),vector::zero);
-        trigonometricMode();
-    }
-    else if (uniformMode_)
-    {
-        Info << "Generating uniform mode " << this->name()
-             << " for patch " << patch_.name() << nl << endl;
-        const dictionary& genDict = dict_.subDict("generatedMode");
-        amplitude_ = genDict.lookup("amplitude");
-        uniformMode();
-    }
-    else
-    {
-        if (parallel)
-        {
-            distributeParModeDisplacement();
-        }
-        else
-        {
-            if (modeDisplacement_.size() != patch_.size())
-            {
-                WarningIn("Foam::structuralMode::structuralMode")
-                    << "modeDisplacement list size (" << modeDisplacement_.size()
-                    << ") does not match size of patch (" << patch_.size() << nl
-                    << ") This is normal during decomposePar/reconstructPar!"
-                    << nl << endl;
-            }
-        }
-    }
-    scale();
     calculateSweptVols();
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
-
-void Foam::structuralMode::trigonometricMode()
-{
-    scalar pi = constant::mathematical::pi;
-    scalarField modeCoordinate = axis_ & (patch_.localPoints() - origin_);
-    modeDisplacement_ = amplitude_
-              * (1-cos((2*pi/waveLength_)*modeCoordinate));
-}
-
-void Foam::structuralMode::uniformMode()
-{
-    modeDisplacement_ = vectorField(patch_.localPoints().size(),amplitude_);
-}
-
-void Foam::structuralMode::scale(const scalar reScale)
-{
-    scalingFactor_ = reScale;
-    scale();
-}
 
 scalar Foam::structuralMode::Q(const volScalarField& p) const
 {
@@ -263,6 +159,7 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const structuralMode& mode)
 
     os << token::BEGIN_BLOCK << incrIndent << nl;
 
+    /*
     os.writeKeyword("origin") << mode.origin_
                               << token::END_STATEMENT << nl;
 
@@ -270,6 +167,7 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const structuralMode& mode)
 
     os.writeKeyword("waveLength") << mode.waveLength_
                                   << token::END_STATEMENT << nl;
+                                  */
 
     os  << token::END_BLOCK << decrIndent << nl;
 
@@ -279,7 +177,7 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const structuralMode& mode)
     os.writeKeyword("scalingFactor") << mode.scalingFactor_
                                      << token::END_STATEMENT << nl;
 
-    os.writeKeyword("modeDisplacement") << mode.modeDisplacement_
+    os.writeKeyword("modeDisplacement") << mode.modeShape_.displacement()
                                         << token::END_STATEMENT << nl;
 
     os  << decrIndent << token::END_BLOCK << nl;
