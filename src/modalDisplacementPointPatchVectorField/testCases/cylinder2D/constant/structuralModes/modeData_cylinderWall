@@ -19,26 +19,27 @@ FoamFile
 (
     a
     {
-        uniformMode true;
-        generatedMode
+        modeShape
         {
+            modeType rigid;
             amplitude (1 0 0);
+            scalingFactor 1;
+            modeDisplacement 0();
         }
         frequency   24.5;
-        scalingFactor 1;
-        modeDisplacement 0();
     }
 
     b
     {
-        uniformMode true;
-        generatedMode
+        modeShape
         {
-            amplitude (0 0 1);
+            modeType rigid;
+            amplitude (0 1 0);
+            scalingFactor 1;
+            modeDisplacement 0();
         }
         frequency   24.5;
-        scalingFactor 1;
-        modeDisplacement 0();
+        
     }
 
 
