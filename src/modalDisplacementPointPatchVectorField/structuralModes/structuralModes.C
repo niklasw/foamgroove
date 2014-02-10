@@ -149,18 +149,20 @@ void Foam::structuralModes::readODEData()
     {
         scalarListIOList OdeData(ODEDataHdr);
 
-        if (OdeData.size() != this->size())
+        if (OdeData.size() == this->size())
+        {
+            forAll(*this, i)
+            {
+                Info << "ODEData found for mode "<< operator[](i).name()
+                     << ": " << OdeData[i] << nl << endl;
+                operator[](i).odeData() = OdeData[i];
+            }
+        }
+        else
         {
             FatalErrorIn("Foam::structuralModes::readODEData()")
                 << "List size in \n" << ODEDataHdr.path() << nl
                 << "does not match number of modes." << abort(FatalError);
-        }
-
-        forAll(*this, i)
-        {
-            Info << "ODEData found for mode "<< operator[](i).name()
-                 << ": " << OdeData[i] << nl << endl;
-            operator[](i).odeData() = OdeData[i];
         }
     }
 }

@@ -187,7 +187,8 @@ Tuple2<label,label> modalDisplacementPointPatchField::primitiveNearestPointSearc
     return Tuple2<label,label>(procId, pointId);
 }
 
-List<Tuple2<label,label> > modalDisplacementPointPatchField::findMonitorPoints()
+List<Tuple2<label,label> >
+modalDisplacementPointPatchField::findMonitorPoints()
 {
     IOobject monitorsHdr
     (
@@ -225,13 +226,13 @@ void modalDisplacementPointPatchField::findMyMonitors()
         if ( Pstream::myProcNo() == proc)
         {
             myMonitorMeshLabels_.append
-                                 (
-                                     Tuple2<label,label>
-                                     (
-                                         i,
-                                         allMonitors[i].second()
-                                     )
-                                 );
+            (
+                Tuple2<label,label>
+                (
+                    i,
+                    allMonitors[i].second()
+                )
+            );
         }
 
     }

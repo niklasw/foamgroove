@@ -77,21 +77,28 @@ scalar structuralMode::calculateCoeff
     const volScalarField& p
 )
 {
+    // Solve the ODE using simple forward euler RK:
+    // ddt2(a)+w^2 a = Q
+    // Should include damping D so:
+    // ddt2(a)+D*w*ddt(a)+w^2 a = Q
+    //
     scalar dT = (mesh_.time().deltaT().value())/odeSubSteps_;
 
     scalar& aStar_ = odeData_[0];
     scalar& bStar_ = odeData_[1];
 
     scalar a = 0;
+    scalar b = 0;
 
+    // Calculate forcing (ODE RHS), as function of pressure
     const scalar q = Q(p);
 
     scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
 
     for (int i=0; i<odeSubSteps_; i++)
     {
-        scalar b = dT*(q-pow(omega,2)*aStar_)+bStar_;
-               a = dT*b+aStar_;
+        b = dT*(q-pow(omega,2)*aStar_)+bStar_;
+        a = dT*b+aStar_;
 
         aStar_ = a;
         bStar_ = b;
@@ -121,9 +128,9 @@ Foam::structuralMode::structuralMode
     modeShape_(dict_.subDict("modeShape"), BC),
 
     frequency_(readScalar(dict_.lookup("frequency"))),
-    scalingFactor_(readScalar(dict_.lookup("scalingFactor"))),
     sweptVols_(mesh_.boundaryMesh()[patch_.index()].size())
 {
+    modeShape_.generate();
     calculateSweptVols();
 }
 
@@ -151,34 +158,10 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const structuralMode& mode)
 
     os  << token::BEGIN_BLOCK << incrIndent << nl;
 
-    os.writeKeyword("trigonometricMode") << "no" << token::END_STATEMENT << nl;
-
-    os.writeKeyword("generatedMode") << nl;
-
-    os.indent();
-
-    os << token::BEGIN_BLOCK << incrIndent << nl;
-
-    /*
-    os.writeKeyword("origin") << mode.origin_
-                              << token::END_STATEMENT << nl;
-
-    os.writeKeyword("axis") << mode.axis_ << token::END_STATEMENT << nl;
-
-    os.writeKeyword("waveLength") << mode.waveLength_
-                                  << token::END_STATEMENT << nl;
-                                  */
-
-    os  << token::END_BLOCK << decrIndent << nl;
+    os << mode.modeShape_ << endl;
 
     os.writeKeyword("frequency") << mode.frequency_
                                  << token::END_STATEMENT << nl;
-
-    os.writeKeyword("scalingFactor") << mode.scalingFactor_
-                                     << token::END_STATEMENT << nl;
-
-    os.writeKeyword("modeDisplacement") << mode.modeShape_.displacement()
-                                        << token::END_STATEMENT << nl;
 
     os  << decrIndent << token::END_BLOCK << nl;
 

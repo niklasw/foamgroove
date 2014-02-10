@@ -25,7 +25,7 @@ License
 
 #include "modalDisplacementPointPatchVectorField.H"
 #include "modeShape.H"
-#include "fvCFD.H"
+//#include "fvCFD.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -37,8 +37,8 @@ License
 
 const scalarField Foam::modeShape::coordinateAxis()
 {
-    Foam::vector origin_ = dict_.lookup("origin");
-    Foam::vector axis_ = dict_.lookup("axis");
+    origin_ = dict_.lookup("origin");
+    axis_ = dict_.lookup("axis");
     axis_ /= mag(axis_);
     scalarField modeCoordinate = axis_ & (points_ - origin_);
     return modeCoordinate;
@@ -46,19 +46,19 @@ const scalarField Foam::modeShape::coordinateAxis()
 
 void Foam::modeShape::genRigidMode()
 {
-    vector amplitude_ = dict_.lookup("amplitude");
-    scalar scale = readScalar(dict_.lookup("scalingFactor"));
-    displacement_ = vectorField(points_.size(), scale*amplitude_);
+    amplitude_ = dict_.lookup("amplitude");
+    scalar scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
+    displacement_ = vectorField(points_.size(), scalingFactor_*amplitude_);
 }
 
 void Foam::modeShape::genTrigonometricMode()
 {
-    scalar waveLength_ = readScalar(dict_.lookup("waveLength"));
-    vector amplitude_ = dict_.lookup("amplitude");
-    scalar scale = readScalar(dict_.lookup("scalingFactor"));
+    waveLength_ = readScalar(dict_.lookup("waveLength"));
+    amplitude_ = dict_.lookup("amplitude");
+    scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
 
     scalar pi = constant::mathematical::pi;
-    displacement_ = scale*amplitude_
+    displacement_ = scalingFactor_*amplitude_
               * (1-cos((2*pi/waveLength_)*coordinateAxis()));
 }
 
@@ -66,15 +66,15 @@ void Foam::modeShape::genPolynomialMode()
 {
     //vector amplitude_ = dict_.lookup("amplitude");
     //vector coeffs = dict_.lookup("polyCoeffs");
-    //scalar scale = dict_.lookup("scalingFactor");
+    //scalar scalingFactor_ = dict_.lookup("scalingFactor");
     //displacement_ = ...
 }
 
 void Foam::modeShape::genInterpolatedMode()
 {
     tmp<vectorField> tmpDisplacement(dict_.lookup("modeDisplacement"));
-    scalar scale = readScalar(dict_.lookup("scalingFactor"));
-    displacement_ = scale*tmpDisplacement();
+    scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
+    displacement_ = scalingFactor_*tmpDisplacement();
 }
 
 void Foam::modeShape::distributeParModeDisplacement()
@@ -110,28 +110,17 @@ Foam::modeShape::modeShape
 :
     dict_(dict),
     modeTypeName_(dict_.lookup("modeType")),
+
+    scalingFactor_(1.0),
+    origin_(Foam::vector::zero),
+    axis_(Foam::vector(0,0,1)),
+    amplitude_(Foam::vector::zero),
+    waveLength_(1.0),
+
     BC_(BC),
     points_(BC.patch().localPoints()),
     displacement_(points_.size(), vector::zero)
-{
-    if ( modeTypeName_ == "trigonometric" )
-    {
-        genTrigonometricMode();
-    }
-    else if ( modeTypeName_ == "polynomial" )
-    {
-        genPolynomialMode();
-    }
-    else if ( modeTypeName_ == "rigid" )
-    {
-        genRigidMode();
-    }
-    else if ( modeTypeName_ == "interpolated" )
-    {
-        genInterpolatedMode();
-        distributeParModeDisplacement();
-    }
-}
+{}
 
 // * * * * * * * * * * * * * * * * Selectors * * * * * * * * * * * * * * * * //
 
@@ -152,12 +141,64 @@ Foam::modeShape::~modeShape()
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
+void Foam::modeShape::generate()
+{
+    if ( modeTypeName_ == "trigonometric" )
+    {
+        genTrigonometricMode();
+    }
+    else if ( modeTypeName_ == "polynomial" )
+    {
+        genPolynomialMode();
+    }
+    else if ( modeTypeName_ == "rigid" )
+    {
+        genRigidMode();
+    }
+    else if ( modeTypeName_ == "interpolated" )
+    {
+        genInterpolatedMode();
+        distributeParModeDisplacement();
+    }
+}
+
 const Foam::vectorField& Foam::modeShape::displacement() const
 {
     return displacement_;
 }
 
+const scalar& Foam::modeShape::scalingFactor() const
+{
+    return scalingFactor_;
+}
+
+scalar& Foam::modeShape::scalingFactor()
+{
+    return scalingFactor_;
+}
+
+
 // * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * * //
+
+Foam::Ostream& Foam::operator<<(Ostream& os, const modeShape& shape)
+{
+    os.write("modeShape") << nl;
+    os << token::BEGIN_BLOCK << incrIndent << nl;
+    os.writeKeyword("modeType") << shape.modeTypeName_
+                                << token::END_STATEMENT << nl;
+    os.writeKeyword("ampliptude") << shape.amplitude_
+                                  << token::END_STATEMENT << nl;
+    os.writeKeyword("scalingFactor") << shape.scalingFactor()
+                                     << token::END_STATEMENT << nl;
+    os.writeKeyword("waveLength") << shape.waveLength_
+                                  << token::END_STATEMENT << nl;
+    os.writeKeyword("modeDisplacement") << shape.displacement()
+                                        << token::END_STATEMENT << nl;
+    os  << decrIndent << token::END_BLOCK << nl;
+
+    return os;
+}
+
 
 void Foam::modeShape::operator=(const modeShape& rhs)
 {

@@ -177,6 +177,11 @@ public:
     scalar calculateCoeff(const volScalarField& p);
 
     // Access
+    
+    const modeShape& shape() const
+    {
+        return modeShape_;
+    };
 
     const vectorField& modeDisplacement() const
     {

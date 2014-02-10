@@ -26,7 +26,7 @@ FoamFile
             scalingFactor 1;
             modeDisplacement 0();
         }
-        frequency   24.5;
+        frequency   35;
     }
 
     b
@@ -34,11 +34,11 @@ FoamFile
         modeShape
         {
             modeType rigid;
-            amplitude (0 1 0);
+            amplitude (0 0 1);
             scalingFactor 1;
             modeDisplacement 0();
         }
-        frequency   24.5;
+        frequency  35;
         
     }
 

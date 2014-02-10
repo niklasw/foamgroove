@@ -48,12 +48,6 @@ class modalDisplacementPointPatchField;
 class Istream;
 class Ostream;
 
-// Forward declaration of friend functions and operators
-//class modeShape;
-//Istream& operator>>(Istream&, modeShape&);
-//Ostream& operator<<(Ostream&, const modeShape&);
-
-
 /*---------------------------------------------------------------------------*\
                          Class modeShape Declaration
 \*---------------------------------------------------------------------------*/
@@ -64,6 +58,13 @@ class modeShape
 
     const dictionary& dict_;
     word modeTypeName_;
+
+    scalar scalingFactor_;
+    vector origin_;
+    vector axis_;
+    vector amplitude_;
+    scalar waveLength_;
+
     const modalDisplacementPointPatchField& BC_;
     const pointField& points_;
     vectorField displacement_;
@@ -112,11 +113,13 @@ public:
 
         // Access
         const vectorField& displacement() const;
+        const scalar& scalingFactor() const;
+        scalar& scalingFactor();
 
         // Check
 
         // Edit
-        vectorField generateMode();
+        void generate();
 
         // Write
 

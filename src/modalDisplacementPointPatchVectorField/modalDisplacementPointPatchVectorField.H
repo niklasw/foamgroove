@@ -78,6 +78,9 @@ Description
 
             second
             { ... }
+
+            third
+            { ... }
        );
 
     ---------------------------------------------------------------------
@@ -192,6 +195,8 @@ class modalDisplacementPointPatchField
         //  and mesh label of closes point (local to processor).
         List<Tuple2<label,label> > findMonitorPoints();
 
+        //- Filter out the monitor points relevant to this process;
+        //  for parallel runs.
         void findMyMonitors();
 public:
 
