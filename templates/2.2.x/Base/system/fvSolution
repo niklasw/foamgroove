@@ -48,6 +48,11 @@ solvers
         $p;
         relTol 0;
     }
+
+    "(k|epsilon|omega|nuTilda)Final"
+    {
+        $pbicg;
+    }
 }
 
 SIMPLE
