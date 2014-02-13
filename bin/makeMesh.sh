@@ -26,6 +26,18 @@ runmePar()
     fi
 }
 
+setDecomposition()
+{
+    dict="system/decomposeParDict"
+    if [ "$1" == "1" ]; then
+        return 0
+    elif [ ! -f $dict ]; then
+        echo "Error: Missing decomposeParDict"
+        exit 1
+    fi
+    sed -i -e "s%^\s*\(numberOfSubdomains\) .*;%\1 $1;%g" $dict
+}
+
 #- Replaces processor*/0 with serial 0, to keep templates
 distributeZero()
 {
@@ -35,22 +47,25 @@ distributeZero()
     done
 }
 
-NP=1
+NP=${1:-1}
+echo $NP
 if [ -z $1 ]; then
     read -p "How many processes? " NP
 fi
 
 foamClearPolyMesh
 
-runmePar 1 blockMesh -dict system/blockMeshDict
+runme blockMesh -dict system/blockMeshDict
 
-runmePar 1 changeDictionary
+runme changeDictionary
 
-runmePar 1 decomposePar -force
+runme setDecomposition $NP
+
+runme decomposePar -force
 
 runmePar $NP snappyHexMesh -overwrite
 
 runmePar $NP changeDictionaryLight
 
-runmePar 1 distributeZero
+runme distributeZero
 
