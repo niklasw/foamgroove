@@ -331,6 +331,13 @@ public:
 
         //- Write
         virtual void write(Ostream&) const;
+
+        //- Access
+        const structuralModes& modeList() const
+        {
+            return *modesPtr_;
+        };
+
 };
 
 

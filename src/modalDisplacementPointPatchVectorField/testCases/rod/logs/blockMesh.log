@@ -1,0 +1,69 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : 2.2.x-8a983dba63b2
+Exec   : blockMesh -dict system/blockMeshDict
+Date   : Feb 17 2014
+Time   : 13:51:36
+Host   : "nami.win.foi.se"
+PID    : 24809
+Case   : /home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod
+nProcs : 1
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster
+allowSystemOperations : Disallowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+sigWriteNow : Enabling writing upon signal 10
+sigStopAtWriteNow : Enabling writing and stopping upon signal 11
+Creating block mesh from
+    "/home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod/system/blockMeshDict"
+Creating curved edges
+Creating topology blocks
+Creating topology patches
+
+Creating block mesh topology
+
+Check topology
+
+	Basic statistics
+		Number of internal faces : 0
+		Number of boundary faces : 6
+		Number of defined boundary faces : 6
+		Number of undefined boundary faces : 0
+	Checking patch -> block consistency
+
+Creating block offsets
+Creating merge list .
+
+Creating polyMesh from blockMesh
+Creating patches
+Creating cells
+Creating points with scale 1
+
+Writing polyMesh
+----------------
+Mesh Information
+----------------
+  boundingBox: (-2 -2 0) (4 2 2)
+  nPoints: 7161
+  nCells: 6000
+  nFaces: 19100
+  nInternalFaces: 16900
+----------------
+Patches
+----------------
+  patch 0 (start: 16900 size: 600) name: slipSides
+  patch 1 (start: 17500 size: 200) name: inlet
+  patch 2 (start: 17700 size: 200) name: outlet
+  patch 3 (start: 17900 size: 600) name: lowerWall
+  patch 4 (start: 18500 size: 600) name: slipRoof
+
+End
+

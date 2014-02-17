@@ -35,7 +35,7 @@ License
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-const scalarField Foam::modeShape::coordinateAxis()
+const scalarField Foam::modeShape::X()
 {
     origin_ = dict_.lookup("origin");
     axis_ = dict_.lookup("axis");
@@ -59,15 +59,25 @@ void Foam::modeShape::genTrigonometricMode()
 
     scalar pi = constant::mathematical::pi;
     displacement_ = scalingFactor_*amplitude_
-              * (1-cos((2*pi/waveLength_)*coordinateAxis()));
+              * (1-cos((2*pi/waveLength_)*X()));
 }
 
 void Foam::modeShape::genPolynomialMode()
 {
-    //vector amplitude_ = dict_.lookup("amplitude");
-    //vector coeffs = dict_.lookup("polyCoeffs");
-    //scalar scalingFactor_ = dict_.lookup("scalingFactor");
-    //displacement_ = ...
+    vector amplitude_ = dict_.lookup("amplitude");
+    List<scalar> coeffs;
+    dict_.lookup("coeffs") >> coeffs;
+
+    scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
+    tmp<scalarField> dPtr(new scalarField(points_.size()));
+    scalarField& D = dPtr();
+
+    forAll(coeffs, i)
+    {
+        scalar C = coeffs[i];
+        D += C*pow(X(),i);
+    }
+    displacement_ = amplitude_*D;
 }
 
 void Foam::modeShape::genInterpolatedMode()
@@ -160,6 +170,8 @@ void Foam::modeShape::generate()
         genInterpolatedMode();
         distributeParModeDisplacement();
     }
+
+    Info << "Mode max displacement = " << gMax(displacement_) << endl;
 }
 
 const Foam::vectorField& Foam::modeShape::displacement() const

@@ -1,0 +1,182 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : 2.2.x-8a983dba63b2
+Exec   : changeDictionaryLight -parallel
+Date   : Feb 17 2014
+Time   : 13:51:47
+Host   : "nami.win.foi.se"
+PID    : 24819
+Case   : /home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod
+nProcs : 4
+Slaves : 
+3
+(
+"nami.win.foi.se.24820"
+"nami.win.foi.se.24821"
+"nami.win.foi.se.24822"
+)
+
+Pstream initialized with:
+    floatTransfer      : 0
+    nProcsSimpleSum    : 0
+    commsType          : nonBlocking
+    polling iterations : 0
+sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster
+allowSystemOperations : Disallowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+sigWriteNow : Enabling writing upon signal 10
+sigStopAtWriteNow : Enabling writing and stopping upon signal 11
+Create mesh for time = 0
+
+Read dictionary changeDictionaryDict with replacements for dictionaries 1(boundary)
+Reading polyMesh/boundary file to extract patch names
+Loaded dictionary boundary with entries 
+9
+(
+slipSides
+inlet
+outlet
+lowerWall
+slipRoof
+rod_wall
+procBoundary0to1
+procBoundary0to3
+procBoundary0to2
+)
+
+Extracted patch groups:
+    group inletGroup with patches 1(inlet)
+    group outflowGroup with patches 1(outlet)
+    group processor with patches 
+3
+(
+procBoundary0to1
+procBoundary0to3
+procBoundary0to2
+)
+
+    group slipGroup with patches 
+2
+(
+slipSides
+slipRoof
+)
+
+    group wallGroup with patches 
+2
+(
+lowerWall
+rod_wall
+)
+
+Replacing entries in dictionary boundary
+Special handling of boundary as polyMesh/boundary file.
+Merging entries from 
+11
+(
+.*
+(.*[Ww]all.*|.*[Hh]ull.*)
+(.*[Ss]lip.*)
+.*2[Dd].*
+.*[Ff]ront.*[Bb]ack.*
+(.*[Ii]nlet.*|.*[Ii]nflow.*)
+(.*[Oo]utlet.*|.*[Oo]utflow.*)
+(.*[Oo]pening.*|.*[Aa]mbien.*|.*[Aa]tmos.*)
+(.*[Ff]ree[Ss]tream.*|.*[Ff]ar[Ff]ield.*)
+(.*[Ss]ymmetr.*)
+(.*procBoundary.*)
+)
+
+fieldDict:
+{
+    slipSides
+    {
+        type            wall;
+        inGroups        1 ( slipGroup );
+        nFaces          600;
+        startFace       80900;
+    }
+    inlet
+    {
+        type            patch;
+        inGroups        1 ( inletGroup );
+        nFaces          200;
+        startFace       81500;
+    }
+    outlet
+    {
+        type            patch;
+        inGroups        1 ( outflowGroup );
+        nFaces          200;
+        startFace       81700;
+    }
+    lowerWall
+    {
+        type            wall;
+        inGroups        1 ( wallGroup );
+        nFaces          548;
+        startFace       81900;
+    }
+    slipRoof
+    {
+        type            wall;
+        inGroups        1 ( slipGroup );
+        nFaces          600;
+        startFace       82448;
+    }
+    rod_wall
+    {
+        type            wall;
+        inGroups        1 ( wallGroup );
+        nFaces          1216;
+        startFace       83048;
+    }
+    procBoundary0to1
+    {
+        type            processor;
+        inGroups        1 ( processor );
+        nFaces          1329;
+        startFace       84264;
+        matchTolerance  0.0001;
+        transform       unknown;
+        myProcNo        0;
+        neighbProcNo    1;
+    }
+    procBoundary0to3
+    {
+        type            processor;
+        inGroups        1 ( processor );
+        nFaces          16;
+        startFace       85593;
+        matchTolerance  0.0001;
+        transform       unknown;
+        myProcNo        0;
+        neighbProcNo    3;
+    }
+    procBoundary0to2
+    {
+        type            processor;
+        inGroups        1 ( processor );
+        nFaces          286;
+        startFace       85609;
+        matchTolerance  0.0001;
+        transform       unknown;
+        myProcNo        0;
+        neighbProcNo    2;
+    }
+}
+
+Writing modified fieldDict boundary
+
+End
+
+Finalising parallel run

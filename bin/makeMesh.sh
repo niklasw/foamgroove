@@ -61,7 +61,7 @@ runme changeDictionary
 
 runme setDecomposition $NP
 
-runme decomposePar -force
+[[ "$NP" == "1" ]] ||  runme decomposePar -force
 
 runmePar $NP snappyHexMesh -overwrite
 

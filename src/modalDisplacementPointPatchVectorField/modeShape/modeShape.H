@@ -78,7 +78,9 @@ class modeShape
         void operator=(const modeShape&);
 
         //- Mode generation functions
-        const scalarField coordinateAxis();
+
+        // - Coordinate for analytical mode generation.
+        const scalarField X();
 
         void genRigidMode();
 
