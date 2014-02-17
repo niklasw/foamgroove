@@ -73,17 +73,28 @@ int main(int argc, char *argv[])
 
     forAll (pointDisplacement.boundaryField(), patchI)
     {
-        if ( isA<modalDisplacementPointPatchField>( pointDisplacement.boundaryField()[patchI] ) )
+        const pointPatchField<vector>& curPatch =
+            pointDisplacement.boundaryField()[patchI];
+
+        if ( isA<modalDisplacementPointPatchField>(curPatch) )
         {
-            Info << "Modal displacement patch: " << mesh.boundary()[patchI].name() << endl;
-            //modalDisplacementPointPatchField& BC = static_cast<modalDisplacementPointPatchField>(pointDisplacement.boundaryField()[patchI]);
-            //pointDisplacement.boundaryField()[patchI].debugMode() = true;
+            Info << "Modal displacement patch: " <<mesh.boundary()[patchI].name()<< endl;
+
+            //- Here a not very nice operations of casting (in the words of Prabaker, Shantaram)
+            //  seems necessary to reach down through layers of patchFields in order to
+            //  access the debugMode() member.
+
+            const pointPatchField<vector>* Pptr = &curPatch;
+            
+            modalDisplacementPointPatchField* BC =
+            dynamic_cast<modalDisplacementPointPatchField* >
+            (
+                const_cast<pointPatchField<vector>* >(Pptr)
+            );
+
+            BC->debugMode() = true;
         }
     }
-
-
-    //- Store original mesh points
-    pointField oldPoints = mesh.points();
 
     //- Perform the mesh motion, in order to distribute the
     //  patch mode displacement in the solid.
@@ -92,6 +103,7 @@ int main(int argc, char *argv[])
     runTime++;
 
     pointDisplacement.write();
+
     mesh.write();
 
     Info<< "End\n" << endl;

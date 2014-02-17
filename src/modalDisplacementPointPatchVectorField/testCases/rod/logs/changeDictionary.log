@@ -5,12 +5,12 @@
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
-Build  : 2.2.x-8a983dba63b2
+Build  : 2.2.x-d803bdc608f0
 Exec   : changeDictionary
 Date   : Feb 17 2014
-Time   : 13:51:36
-Host   : "nami.win.foi.se"
-PID    : 24810
+Time   : 20:53:27
+Host   : "rail.localdomain"
+PID    : 29426
 Case   : /home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod
 nProcs : 1
 sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
@@ -20,8 +20,6 @@ allowSystemOperations : Disallowing user-supplied system call operations
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 Create time
 
-sigWriteNow : Enabling writing upon signal 10
-sigStopAtWriteNow : Enabling writing and stopping upon signal 11
 Create mesh for time = 0
 
 Read dictionary changeDictionaryDict with replacements for dictionaries 1(boundary)

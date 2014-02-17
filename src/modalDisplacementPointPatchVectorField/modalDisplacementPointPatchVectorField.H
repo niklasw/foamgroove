@@ -25,6 +25,7 @@ Class
     Foam::modalDisplacementPointPatchField
 
 Description
+    OUTDATED
     Foam::modalDisplacementPointPatchField
 
     boundary condition example for the pointDisplacement field:
@@ -337,7 +338,6 @@ public:
         {
             return *modesPtr_;
         };
-
 };
 
 

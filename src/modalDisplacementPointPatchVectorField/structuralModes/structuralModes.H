@@ -102,10 +102,6 @@ public:
         //  in the instant directory, read and distribute odeData
         //  to all modes. If no file present; Do nothing.
         void readODEData();
-
-        bool writeIfNeeded() const;
-
-
 };
 
 

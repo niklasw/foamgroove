@@ -21,12 +21,12 @@ FoamFile
     {
         modeShape
         {
+            modeType polynomial;
             origin  (0 0 0);
             axis    (0 0 1);
-            modeType polynomial;
-            coeffs  3(0 0 2);
-            amplitude (0.01 0 0);
-            scalingFactor 1;
+            coeffs  3(0 0 1);
+            amplitude (1 0 0);
+            scalingFactor 0.1;
         }
         frequency   40;
     }
@@ -35,17 +35,15 @@ FoamFile
     {
         modeShape
         {
+            modeType polynomial;
             origin  (0 0 0);
             axis    (0 0 1);
-            modeType polynomial;
-            coeffs  3(0 0 2);
-            amplitude (0 0.01 0);
-            scalingFactor 1;
+            coeffs  3(0 0 1);
+            amplitude (0 1 0);
+            scalingFactor 0.1;
         }
         frequency  40;
     }
-
-
 );
 
 // ************************************************************************* //

@@ -35,13 +35,12 @@ License
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-const scalarField Foam::modeShape::X()
+const tmp<scalarField> Foam::modeShape::X()
 {
     origin_ = dict_.lookup("origin");
     axis_ = dict_.lookup("axis");
     axis_ /= mag(axis_);
-    scalarField modeCoordinate = axis_ & (points_ - origin_);
-    return modeCoordinate;
+    return axis_ & (points_ - origin_);
 }
 
 void Foam::modeShape::genRigidMode()
@@ -67,9 +66,9 @@ void Foam::modeShape::genPolynomialMode()
     vector amplitude_ = dict_.lookup("amplitude");
     List<scalar> coeffs;
     dict_.lookup("coeffs") >> coeffs;
-
     scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
-    tmp<scalarField> dPtr(new scalarField(points_.size()));
+
+    tmp<scalarField> dPtr(new scalarField(points_.size(),0.0));
     scalarField& D = dPtr();
 
     forAll(coeffs, i)
@@ -77,7 +76,8 @@ void Foam::modeShape::genPolynomialMode()
         scalar C = coeffs[i];
         D += C*pow(X(),i);
     }
-    displacement_ = amplitude_*D;
+    displacement_ = scalingFactor_*amplitude_*D;
+    dPtr.clear();
 }
 
 void Foam::modeShape::genInterpolatedMode()

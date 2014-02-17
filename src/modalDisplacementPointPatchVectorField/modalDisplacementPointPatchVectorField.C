@@ -265,8 +265,6 @@ modalDisplacementPointPatchField
     findMyMonitors();
 
     modesPtr_=new structuralModes(*this);
-
-    modesPtr_->writeIfNeeded();
     */
 }
 
@@ -301,8 +299,6 @@ modalDisplacementPointPatchField
     findMyMonitors();
 
     modesPtr_ = new structuralModes(*this);
-
-    modesPtr_->writeIfNeeded();
 
     if (!dict.found("value"))
     {
@@ -356,8 +352,6 @@ modalDisplacementPointPatchField
     findMyMonitors();
 
     modesPtr_=new structuralModes(*this);
-
-    modesPtr_->writeIfNeeded();
 }
 
 
@@ -391,6 +385,7 @@ void modalDisplacementPointPatchField::updateCoeffs()
             )
         );
     }
+
     fixedValuePointPatchField<vector>::updateCoeffs();
 
     forAll (myMonitorMeshLabels_,i)

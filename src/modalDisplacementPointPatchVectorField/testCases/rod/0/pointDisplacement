@@ -31,7 +31,6 @@ boundaryField
         type            modalDisplacement;
         rampBegin       0;
         rampEnd         0;
-        writeDebugField yes;
         value           uniform (0 0 0);
     }
 }

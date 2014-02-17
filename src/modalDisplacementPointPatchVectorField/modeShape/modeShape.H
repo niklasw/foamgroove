@@ -80,7 +80,7 @@ class modeShape
         //- Mode generation functions
 
         // - Coordinate for analytical mode generation.
-        const scalarField X();
+        const tmp<scalarField> X();
 
         void genRigidMode();
 

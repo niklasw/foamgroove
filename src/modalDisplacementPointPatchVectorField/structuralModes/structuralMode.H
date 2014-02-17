@@ -220,24 +220,6 @@ public:
         return odeData_;
     }
 
-    // For now, allways claim write needed if mode generated
-    // propagates to all modes in the list.
-    // Not implemented for parallel run
-    bool needsWrite() const
-    {
-        if (Pstream::parRun())
-        {
-            return false;
-        }
-        else
-        {
-            //return (trigonometricMode_ == true);
-            Info << "MUST BE IMPLEMENTED: Foam::structuralMode::needsWrite"
-                 << endl;
-            return false;
-        }
-    };
-
     void write() const;
 
     // IOstream operator

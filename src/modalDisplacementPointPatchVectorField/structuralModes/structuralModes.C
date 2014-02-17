@@ -173,18 +173,4 @@ bool Foam::structuralModes::readData(Istream& is)
     return is.good();
 }
 
-bool Foam::structuralModes::writeIfNeeded() const
-{
-    forAll(*this, i)
-    {
-        const structuralMode& mode = operator[](i);
-        if (mode.needsWrite())
-        {
-            mode.write();
-        }
-    }
-    return false;
-}
-
-
 // ************************************************************************* //
