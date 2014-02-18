@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.1.x                                 |
+|  \\    /   O peration     | Version:  1.6                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,40 +10,12 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      structuralModes_rod_wall;
+    location    "constant/structuralModes";
+    object      fluidProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-2
-(
-    a
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (1 0 0);
-            scalingFactor 0.79817141;
-        }
-        frequency   40;
-    }
-
-    b
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (0 1 0);
-            scalingFactor 0.79817141;
-        }
-        frequency  40;
-    }
-);
+fluidDensity              fluidDensity [ 1 -3 0 0 0 0 0 ] 1000;
 
 // ************************************************************************* //
+

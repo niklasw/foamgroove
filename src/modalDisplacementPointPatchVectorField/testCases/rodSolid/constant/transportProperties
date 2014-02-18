@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.1.x                                 |
+|  \\    /   O peration     | Version:  1.6                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -11,39 +11,31 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "constant";
-    object      structuralModes_rod_wall;
+    object      transportProperties;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-2
-(
-    a
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (1 0 0);
-            scalingFactor 0.79817141;
-        }
-        frequency   40;
-    }
+#include "$FOAM_CASE/setup.foam"
 
-    b
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (0 1 0);
-            scalingFactor 0.79817141;
-        }
-        frequency  40;
-    }
-);
+transportModel  Newtonian;
+
+nu              nu [ 0 2 -1 0 0 0 0 ] $:transport.kinematicViscosity;
+
+CrossPowerLawCoeffs
+{
+    nu0             nu0 [ 0 2 -1 0 0 0 0 ] 1e-06;
+    nuInf           nuInf [ 0 2 -1 0 0 0 0 ] 1e-06;
+    m               m [ 0 0 1 0 0 0 0 ] 1;
+    n               n [ 0 0 0 0 0 0 0 ] 1;
+}
+
+BirdCarreauCoeffs
+{
+    nu0             nu0 [ 0 2 -1 0 0 0 0 ] 1e-06;
+    nuInf           nuInf [ 0 2 -1 0 0 0 0 ] 1e-06;
+    k               k [ 0 0 1 0 0 0 0 ] 0;
+    n               n [ 0 0 0 0 0 0 0 ] 1;
+}
+
 
 // ************************************************************************* //

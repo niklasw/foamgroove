@@ -9,41 +9,31 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       dictionary;
-    location    "constant";
-    object      structuralModes_rod_wall;
+    class       pointVectorField;
+    location    "0";
+    object      pointDisplacement;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-2
-(
-    a
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (1 0 0);
-            scalingFactor 0.79817141;
-        }
-        frequency   40;
-    }
+dimensions      [0 1 0 0 0 0 0];
 
-    b
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    ".*"
     {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (0 1 0);
-            scalingFactor 0.79817141;
-        }
-        frequency  40;
+        type            fixedValue;
+        value           uniform (0 0 0);
     }
-);
+    rod_wall
+    {
+        type            modalDisplacement;
+        rampBegin       400;
+        rampEnd         1000;
+        value           uniform (0 0 0);
+    }
+}
+
 
 // ************************************************************************* //

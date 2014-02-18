@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.1.x                                 |
+|  \\    /   O peration     | Version:  2.2.0                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,40 +10,28 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      structuralModes_rod_wall;
+    object      surfaceFeatureExtractDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-2
-(
-    a
+rod.stl
+{
+    // How to obtain raw features (extractFromFile || extractFromSurface)
+    extractionMethod    extractFromSurface;
+
+    extractFromSurfaceCoeffs
     {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (1 0 0);
-            scalingFactor 0.79817141;
-        }
-        frequency   40;
+        // - 0  : selects no edges
+        // - 180: selects all edges
+        includedAngle   120;
     }
 
-    b
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (0 1 0);
-            scalingFactor 0.79817141;
-        }
-        frequency  40;
-    }
-);
+    // Write options
+
+        // Write features to obj format for postprocessing
+        writeObj                no;
+        writeVTK                yes;
+}
+
 
 // ************************************************************************* //

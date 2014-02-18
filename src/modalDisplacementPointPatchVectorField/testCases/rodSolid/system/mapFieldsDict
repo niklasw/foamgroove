@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.1.x                                 |
+|  \\    /   O peration     | Version:  2.2.0                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,40 +10,19 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "constant";
-    object      structuralModes_rod_wall;
+    object      mapFieldsDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-2
+// List of pairs of source/target patches for mapping
+patchMap
 (
-    a
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (1 0 0);
-            scalingFactor 0.79817141;
-        }
-        frequency   40;
-    }
+);
 
-    b
-    {
-        modeShape
-        {
-            modeType polynomial;
-            origin  (0 0 0);
-            axis    (0 0 1);
-            coeffs  3(0 0 1);
-            amplitude (0 1 0);
-            scalingFactor 0.79817141;
-        }
-        frequency  40;
-    }
+// List of target patches cutting the source domain (these need to be
+// handled specially e.g. interpolated from internal values)
+cuttingPatches
+(
 );
 
 // ************************************************************************* //
