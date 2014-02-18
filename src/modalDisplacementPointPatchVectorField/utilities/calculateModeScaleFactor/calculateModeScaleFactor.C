@@ -36,10 +36,7 @@ Description
     (1) Activate one (1) mode in constant/structuralModes/modeData_{patchName}
         Make sure the scale is set to 1.0 for the mode.
 
-    (2) In the 0/pointDisplacement field, set "writeDebugField yes;" to disable
-        the FSI functions and dependence on flow fields.
-
-    (3) Run the application, and define the solid density with argument -rho
+    (2) Run the application, and define the solid density with argument -rho
 
     The resulting Scale factor is written to stdout, and has to manually be
     inserted for the mode.
@@ -84,6 +81,40 @@ int main(int argc, char *argv[])
 
     Info<< "Time = " << runTime.timeName() << endl;
 
+    const pointVectorField& pointDisplacement
+        = mesh.lookupObject<pointVectorField>("pointDisplacement");
+
+    forAll (pointDisplacement.boundaryField(), patchI)
+    {
+        const pointPatchField<vector>& curPatch =
+            pointDisplacement.boundaryField()[patchI];
+
+        if ( isA<modalDisplacementPointPatchField>(curPatch) )
+        {
+            Info << "Modal displacement patch: "
+                  << mesh.boundary()[patchI].name() << endl;
+
+            //- Here is a not very nice operations of casting (in the
+            //  words of Prabaker, Shantaram) seems necessary to reach
+            //  down through layers of patchFields in order to access
+            //  the debugMode() member.
+
+            const pointPatchField<vector>* Pptr = &curPatch;
+            
+            modalDisplacementPointPatchField* BC =
+            dynamic_cast<modalDisplacementPointPatchField* >
+            (
+                const_cast<pointPatchField<vector>* >(Pptr)
+            );
+
+            // Set debugMode for the modalDisplacementPointPatchField,
+            // since debugMode prevents normal fluid interaction but sets
+            // the explicit displacements directly to the patch
+
+            BC->debugMode() = true;
+        }
+    }
+
     //- Store original mesh points
     pointField oldPoints = mesh.points();
 
@@ -99,18 +130,15 @@ int main(int argc, char *argv[])
 
     runTime++;
 
+    dimensionedScalar V = gSum(mesh.V());
     dimensionedScalar I = fvc::domainIntegrate(magSqr(cellDisplacement));
 
-    Info << "Integral = " << I.value() << endl;
-
-    Info << "Scale factor (based on constant density) = " << Foam::sqrt( 1.0/(I.value()*rho) ) << endl;
+    Info << "Solid volume = " << V.value() << endl;
+    Info << "Integral     = " << I.value() << endl;
+    Info << "Scale factor = " << Foam::sqrt( 1.0/(I.value()*rho) ) << endl;
 
     if (args.optionFound("writeDisplacements"))
     {
-
-        const pointVectorField& pointDisplacement
-            = mesh.lookupObject<pointVectorField>("pointDisplacement");
-
         pointDisplacement.write();
         cellDisplacement.write();
     }

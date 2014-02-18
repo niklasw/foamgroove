@@ -26,7 +26,7 @@ FoamFile
             axis    (0 0 1);
             coeffs  3(0 0 1);
             amplitude (1 0 0);
-            scalingFactor 0.1;
+            scalingFactor 5.6439241;
         }
         frequency   40;
     }
@@ -40,7 +40,7 @@ FoamFile
             axis    (0 0 1);
             coeffs  3(0 0 1);
             amplitude (0 1 0);
-            scalingFactor 0.1;
+            scalingFactor 5.6439241;
         }
         frequency  40;
     }

@@ -324,7 +324,7 @@ modalDisplacementPointPatchField
     patchPointProcAddressing_(this->size()),
     myMonitorMeshLabels_(0)
 {
-    Info << "modalDisplacementPointPatchField:: In constructor 2\n" << endl;
+    Info << "modalDisplacementPointPatchField:: In constructor 2" << endl;
 }
 
 
@@ -343,7 +343,7 @@ modalDisplacementPointPatchField
     patchPointProcAddressing_(this->size()),
     myMonitorMeshLabels_(0)
 {
-    Info << "modalDisplacementPointPatchField:: In constructor 3\n" << endl;
+    Info << "modalDisplacementPointPatchField:: In constructor 3," << endl;
 
     meshPtr_ = & this->dimensionedInternalField().mesh()();
 

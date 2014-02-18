@@ -48,7 +48,7 @@ using namespace Foam;
 int main(int argc, char *argv[])
 {
     timeSelector::addOptions();
-    argList::noParallel();
+    //argList::noParallel();
     argList::validOptions.insert("region","region");
     argList::validOptions.insert("patch", "patchName");
     argList::validOptions.insert("cellSet", "cellSet");

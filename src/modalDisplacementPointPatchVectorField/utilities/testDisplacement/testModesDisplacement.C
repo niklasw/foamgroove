@@ -78,11 +78,13 @@ int main(int argc, char *argv[])
 
         if ( isA<modalDisplacementPointPatchField>(curPatch) )
         {
-            Info << "Modal displacement patch: " <<mesh.boundary()[patchI].name()<< endl;
+            Info << "Modal displacement patch: "
+                 << mesh.boundary()[patchI].name() << endl;
 
-            //- Here a not very nice operations of casting (in the words of Prabaker, Shantaram)
-            //  seems necessary to reach down through layers of patchFields in order to
-            //  access the debugMode() member.
+            //- Here is a not very nice operations of casting (in the
+            //  words of Prabaker, Shantaram) seems necessary to reach
+            //  down through layers of patchFields in order to access
+            //  the debugMode() member.
 
             const pointPatchField<vector>* Pptr = &curPatch;
             
@@ -91,6 +93,10 @@ int main(int argc, char *argv[])
             (
                 const_cast<pointPatchField<vector>* >(Pptr)
             );
+
+            // Set debugMode for the modalDisplacementPointPatchField,
+            // since debugMode prevents normal fluid interaction but sets
+            // the explicit displacements directly to the patch
 
             BC->debugMode() = true;
         }
@@ -110,6 +116,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
 
 // ************************************************************************* //

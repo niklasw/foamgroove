@@ -58,6 +58,7 @@ functions
 //    #include "include/functionObjectProbesI";
 //    #include "include/functionObjectForceCoeffsI";
     #include "include/functionObjectForcesI";
+    #include "include/functionObjectFieldMinMaxI";
 //    #include "include/functionObjectSlicePlaneI";
 //    #include "include/functionObjectIsoSurfaceI";
 };
