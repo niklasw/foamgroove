@@ -8,9 +8,9 @@
 Build  : 2.2.x-8a983dba63b2
 Exec   : blockMesh -dict system/blockMeshDict
 Date   : Feb 18 2014
-Time   : 09:10:23
+Time   : 18:13:11
 Host   : "nami.win.foi.se"
-PID    : 28230
+PID    : 29741
 Case   : /home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod
 nProcs : 1
 sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).

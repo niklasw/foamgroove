@@ -24,9 +24,9 @@ FoamFile
             modeType rigid;
             amplitude (1 0 0);
             scalingFactor 1;
-            modeDisplacement 0();
         }
         frequency   35;
+        damping 1e-3;
     }
 
     b
@@ -36,10 +36,9 @@ FoamFile
             modeType rigid;
             amplitude (0 0 1);
             scalingFactor 1;
-            modeDisplacement 0();
         }
         frequency  35;
-        
+        damping 1e-3;
     }
 
 

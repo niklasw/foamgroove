@@ -16,14 +16,12 @@ public ODE
     scalar omega_;
     scalar damping_;
     scalar Q_;
-    const List<scalar>& X_;
 
 public:
     myODE
     (
         const scalar frequency,
-        const scalar damping,
-        const List<scalar>& X
+        const scalar damping
     );
 
     label nEqns() const;

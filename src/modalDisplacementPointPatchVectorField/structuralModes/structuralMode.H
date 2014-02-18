@@ -183,9 +183,9 @@ public:
     //- Calculate this modes coefficient by solving
     //  the modal analysis ODE with pressure as driving
     //  force.
-    scalar structuralMode::solveMotionEquation(const volScalarField& p);
+    scalar solveMotionEquation(const volScalarField& p);
 
-    scalar calculateCoeff(const volScalarField& p);
+    scalar solveMotionEquation2(const volScalarField& p);
 
     // Access
     

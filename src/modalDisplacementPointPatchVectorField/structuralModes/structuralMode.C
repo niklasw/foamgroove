@@ -71,66 +71,6 @@ void structuralMode::calculateSweptVols()
     }
 }
 
-scalar structuralMode::solveMotionEquation
-(
-    const volScalarField& p
-)
-{
-    scalarField yStart(odeData_);
-    scalarField dyStart(motionEquation_.nEqns());
-    motionEquation_.derivatives(0.0, yStart, dyStart);
-
-    scalar  t0 = mesh_.time().timeOutputValue();
-    scalar  t1 = t0+mesh_.time().deltaT();
-
-    scalarField y(odeData_);
-
-    odeSolver_->solve(motionEquation_, t0, t1, y, 1e-5, 0.1);
-
-
-
-}
-
-scalar structuralMode::calculateCoeff
-(
-    const volScalarField& p
-)
-{
-    // Solve the ODE using simple forward euler RK:
-    // ddt2(a)+w^2 a = Q
-    // Should include damping D so:
-    // ddt2(a)+D*w*ddt(a)+w^2 a = Q
-    //
-
-    scalar relaxation = 0.25;
-
-    scalar dT = (mesh_.time().deltaTValue())/odeSubSteps_;
-
-    scalar& aStar_ = odeData_[0];
-    scalar& bStar_ = odeData_[1];
-
-    scalar a = 0;
-    scalar b = 0;
-
-    // Calculate forcing (ODE RHS), as function of pressure
-    const scalar q = Q(p);
-
-    scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
-
-    for (int i=0; i<odeSubSteps_; i++)
-    {
-        b = dT*(q-pow(omega,2)*aStar_-2*damping_*omega*bStar_);
-        a = dT*b+aStar_;
-
-        aStar_ = (1-relaxation)*a+relaxation*aStar_;
-        bStar_ = (1-relaxation)*b+relaxation*bStar_;
-    }
-    Info << "Unit work by mode    \""<< name_ <<"\" = " << q << endl;
-    Info << "Coefficient for mode \""<< name_ <<"\" = " << a << endl;
-
-    return a;
-}
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::structuralMode::structuralMode
@@ -154,13 +94,12 @@ Foam::structuralMode::structuralMode
 
     sweptVols_(mesh_.boundaryMesh()[patch_.index()].size()),
 
-    motionEquation_(frequency_, damping_ , odeData_),
+    motionEquation_(frequency_, damping_),
 
     odeSolver_(ODESolver::New("RK",motionEquation_))
 {
     modeShape_.generate();
     calculateSweptVols();
-
 }
 
 
@@ -170,6 +109,79 @@ scalar Foam::structuralMode::Q(const volScalarField& p) const
 {
     return gSum(p.boundaryField()[patch_.index()]*sweptVols_);
 }
+
+scalar structuralMode::solveMotionEquation2
+(
+    const volScalarField& p
+)
+{
+    const scalar q = Q(p);
+
+    motionEquation_.RHS(q);
+
+    scalarField dyStart(motionEquation_.nEqns());
+    scalar notUsed = 0.0;
+
+    motionEquation_.derivatives(notUsed, scalarField(odeData_), dyStart);
+
+    scalar  t0 = mesh_.time().timeOutputValue();
+    scalar  dT = mesh_.time().deltaTValue();
+    scalar  t1 = t0+dT;
+
+    scalar dtEst = (t1-t0)/10;
+
+    scalarField y(odeData_);
+
+    odeSolver_->solve(motionEquation_, t0, t1, y, 1e-5, dtEst);
+
+    Info << "ODE solved with forcing Q ="
+         << q << ". Coeffs = ("
+         << odeData_[0] << " "
+         << odeData_[1]
+         << ") ODE dT = " << dtEst << endl;
+
+    return y[0];
+}
+
+scalar structuralMode::solveMotionEquation
+(
+    const volScalarField& p
+)
+{
+    // Solve the ODE using simple forward euler RK:
+    // ddt2(a)+w^2 a = Q
+    // Should include damping D so:
+    // ddt2(a)+D*w*ddt(a)+w^2 a = Q
+
+    scalar relaxation = 0.25;
+
+    scalar dT = (mesh_.time().deltaTValue())/odeSubSteps_;
+
+    scalar& aStar_ = odeData_[0];
+    scalar& bStar_ = odeData_[1];
+
+    scalar a = 0;
+    scalar b = 0;
+
+    // Calculate forcing (ODE RHS), as function of pressure
+    const scalar q = Q(p);
+
+    scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
+
+    for (int i=0; i<odeSubSteps_; i++)
+    {
+        b = dT*(q-pow(omega,2)*aStar_-2*damping_*omega*bStar_)+bStar_;
+        a = dT*b+aStar_;
+
+        aStar_ = a; // (1-relaxation)*a+relaxation*aStar_;
+        bStar_ = b; //(1-relaxation)*b+relaxation*bStar_;
+    }
+    Info << "Unit work by mode    \""<< name_ <<"\" = " << q << endl;
+    Info << "Coefficient for mode \""<< name_ <<"\" = " << a << endl;
+
+    return a;
+}
+
 
 void Foam::structuralMode::write() const
 {

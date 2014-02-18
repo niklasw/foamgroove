@@ -1,18 +1,17 @@
 #include "myODE.H"
+#include "mathematicalConstants.H"
 
 namespace Foam
 {
     myODE::myODE
     (
         const scalar frequency,
-        const scalar damping,
-        const List<scalar>& X
+        const scalar damping
     )
     :
         omega_(2*constant::mathematical::pi*frequency),
         damping_(damping),
-        Q_(0.0),
-        X_(X)
+        Q_(0.0)
     {}
 
     label myODE::nEqns() const

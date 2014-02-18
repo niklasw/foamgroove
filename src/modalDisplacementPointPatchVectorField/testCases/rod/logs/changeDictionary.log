@@ -8,9 +8,9 @@
 Build  : 2.2.x-8a983dba63b2
 Exec   : changeDictionary
 Date   : Feb 18 2014
-Time   : 09:10:23
+Time   : 18:13:11
 Host   : "nami.win.foi.se"
-PID    : 28231
+PID    : 29742
 Case   : /home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod
 nProcs : 1
 sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
@@ -39,10 +39,11 @@ slipRoof
 Replacing entries in dictionary boundary
 Special handling of boundary as polyMesh/boundary file.
 Merging entries from 
-11
+12
 (
 .*
 (.*[Ww]all.*|.*[Hh]ull.*)
+(.*rod.*)
 (.*[Ss]lip.*)
 .*2[Dd].*
 .*[Ff]ront.*[Bb]ack.*

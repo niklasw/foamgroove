@@ -107,9 +107,9 @@ Foam::vectorField Foam::structuralModes::calculatedModeDisplacement
     {
         //- Because operator[](i) returns a const reference,
         //  we need to cast off the const to be able to use
-        //  the non-const calculateCoeffs
+        //  the non-const motionSolver
         structuralMode& mode = const_cast<structuralMode&>(operator[](i));
-        scalar coeff = mode.calculateCoeff(rho*p);
+        scalar coeff = mode.solveMotionEquation(rho*p);
         sumDisplacements += mode.modeDisplacement()*coeff;
     }
     return sumDisplacements;

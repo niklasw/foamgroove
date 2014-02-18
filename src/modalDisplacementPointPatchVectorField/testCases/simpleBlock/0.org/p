@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.1.x                                 |
+|  \\    /   O peration     | Version:  2.1.0                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -9,30 +9,21 @@ FoamFile
 {
     version     2.0;
     format      ascii;
-    class       pointVectorField;
+    class       volScalarField;
     location    "0";
-    object      pointDisplacement;
+    object      p;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 1 0 0 0 0 0];
+dimensions      [ 0 2 -2 0 0 0 0 ];
 
-internalField   uniform (0 0 0);
+internalField   uniform 0;
 
 boundaryField
 {
     ".*"
     {
-        type            fixedValue;
-        value           uniform (0 0 0);
-    }
-    cylinderWall
-    {
-        type            modalDisplacement;
-        rampBegin       0;
-        rampEnd         100;
-        writeDebugField no;
-        value           uniform (0 0 0);
+        type zeroGradient;
     }
 }
 

@@ -26,11 +26,11 @@ boundaryField
         type            fixedValue;
         value           uniform (0 0 0);
     }
-    cylinderWall
+    movingBlock
     {
         type            modalDisplacement;
         rampBegin       0;
-        rampEnd         100;
+        rampEnd         0;
         writeDebugField no;
         value           uniform (0 0 0);
     }
