@@ -56,11 +56,11 @@ energy
 
 relaxation
 {
-    pressure        0.3;
-    velocity        0.7;
-    turbulence      0.3;
-    rho             0.01;
-    energy          0.5;
+    pressure        1;
+    velocity        1;
+    turbulence      1;
+    rho             1;
+    energy          1;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

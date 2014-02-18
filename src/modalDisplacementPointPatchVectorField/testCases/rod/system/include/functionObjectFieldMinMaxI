@@ -4,7 +4,7 @@
         functionObjectLibs ("libfieldFunctionObjects.so");
         enabled         true;
         outputControl   timeStep;
-        outputInterval  2;
+        outputInterval  1;
         log             true;
         write           false;
         fields

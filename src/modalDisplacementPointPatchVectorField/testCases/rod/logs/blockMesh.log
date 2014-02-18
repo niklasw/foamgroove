@@ -5,12 +5,12 @@
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
-Build  : 2.2.x-d803bdc608f0
+Build  : 2.2.x-8a983dba63b2
 Exec   : blockMesh -dict system/blockMeshDict
-Date   : Feb 17 2014
-Time   : 20:53:27
-Host   : "rail.localdomain"
-PID    : 29425
+Date   : Feb 18 2014
+Time   : 09:10:23
+Host   : "nami.win.foi.se"
+PID    : 28230
 Case   : /home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod
 nProcs : 1
 sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
@@ -20,6 +20,8 @@ allowSystemOperations : Disallowing user-supplied system call operations
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 Create time
 
+sigWriteNow : Enabling writing upon signal 10
+sigStopAtWriteNow : Enabling writing and stopping upon signal 11
 Creating block mesh from
     "/home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod/system/blockMeshDict"
 Creating curved edges

@@ -632,6 +632,10 @@ modeShape/modeShape.dep: modeShape/modeShape.H
 modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/pointFields.H
 modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/pointPatchFields.H
 modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/pointPatchFieldsFwd.H
+modeShape/modeShape.dep: lnInclude/myODE.H
+modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/ODE/lnInclude/ODE.H
+modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/ODE/lnInclude/ODESolver.H
+modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/ODE/lnInclude/RK.H
 modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/IOPtrList.H
 modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/IOPtrList.C
 modeShape/modeShape.dep: $(WM_PROJECT_DIR)/src/OpenFOAM/lnInclude/Tuple2.H

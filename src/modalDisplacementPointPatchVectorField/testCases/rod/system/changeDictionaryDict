@@ -33,6 +33,13 @@ dictionaryReplacement
             inGroups         1(wallGroup);
         }
 
+        "(.*rod.*)"
+        {
+            type            wall;
+            inGroups         1(movingWallGroup);
+        }
+
+
         "(.*[Ss]lip.*)"
         {
             type        wall;

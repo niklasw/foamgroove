@@ -41,6 +41,7 @@ setDecomposition()
 #- Replaces processor*/0 with serial 0, to keep templates
 distributeZero()
 {
+    [[ -d processor0 ]] || return 0
     for p in processor*; do
         rm -rf $p/0
         cp -rv 0 $p/0

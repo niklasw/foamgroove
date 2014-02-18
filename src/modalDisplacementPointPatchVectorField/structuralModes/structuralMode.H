@@ -56,6 +56,7 @@ SourceFiles
 
 #include "modalDisplacementPointPatchVectorField.H"
 #include "modeShape.H"
+#include "myODE.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -100,12 +101,20 @@ class structuralMode
         //- Mode frequency
         const scalar frequency_;
 
+        //- Modes structural damping coefficient
+        const scalar damping_;
+
         //- Renormalisation factor
         scalar scalingFactor_;
 
         //- scalarField of volumes swept by faces when
         //  displaced by the eigen mode.
         scalarField sweptVols_;
+
+        //- Ode solver
+        myODE motionEquation_;
+
+        autoPtr<ODESolver> odeSolver_;// = ODESolver::New(args[1], ode);
 
     // Private Member Functions
 
@@ -174,6 +183,8 @@ public:
     //- Calculate this modes coefficient by solving
     //  the modal analysis ODE with pressure as driving
     //  force.
+    scalar structuralMode::solveMotionEquation(const volScalarField& p);
+
     scalar calculateCoeff(const volScalarField& p);
 
     // Access

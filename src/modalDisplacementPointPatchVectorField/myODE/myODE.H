@@ -14,17 +14,21 @@ public ODE
 {
 
     scalar omega_;
+    scalar damping_;
     scalar Q_;
-    const scalarField& X_;
+    const List<scalar>& X_;
 
+public:
     myODE
     (
-        const scalar omega,
-        const scalar Q,
-        const scalarField& X
+        const scalar frequency,
+        const scalar damping,
+        const List<scalar>& X
     );
 
     label nEqns() const;
+
+    void RHS(scalar Q);
 
     void derivatives
     (
@@ -39,7 +43,7 @@ public ODE
         const scalarField& y,
         scalarField& dfdx,
         scalarSquareMatrix& dfdy
-     ) const;
+    ) const;
 };
 
 } // END namespace Foam

@@ -7,10 +7,10 @@
 \*---------------------------------------------------------------------------*/
 Build  : 2.2.x-8a983dba63b2
 Exec   : decomposePar -force
-Date   : Feb 17 2014
-Time   : 13:51:36
+Date   : Feb 18 2014
+Time   : 09:10:23
 Host   : "nami.win.foi.se"
-PID    : 24812
+PID    : 28233
 Case   : /home/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/rod
 nProcs : 1
 sigFpe : Enabling floating point exception trapping (FOAM_SIGFPE).
