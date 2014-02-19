@@ -85,17 +85,17 @@ Foam::structuralMode::structuralMode
     name_(is),
     dict_(is),
     odeData_(2, 0.0),
-    odeSubSteps_(1),
+    odeSubSteps_(10),
 
     modeShape_(dict_.subDict("modeShape"), BC),
 
     frequency_(readScalar(dict_.lookup("frequency"))),
     damping_(readScalar(dict_.lookup("damping"))),
 
-    sweptVols_(mesh_.boundaryMesh()[patch_.index()].size()),
+    sweptVols_(mesh_.boundaryMesh()[patch_.index()].size())
 
-    motionEquation_(frequency_, damping_),
-    odeSolver_(ODESolver::New("RK",motionEquation_))
+    //motionEquation_(frequency_, damping_),
+    //odeSolver_(ODESolver::New("RK",motionEquation_))
 {
     modeShape_.generate();
     calculateSweptVols();
@@ -109,6 +109,7 @@ scalar Foam::structuralMode::Q(const volScalarField& p) const
     return gSum(p.boundaryField()[patch_.index()]*sweptVols_);
 }
 
+/*
 scalar structuralMode::solveMotionEquation2
 (
     const volScalarField& p
@@ -141,6 +142,7 @@ scalar structuralMode::solveMotionEquation2
 
     return y[0];
 }
+*/
 
 scalar structuralMode::solveMotionEquation
 (

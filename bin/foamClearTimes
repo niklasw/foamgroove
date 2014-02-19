@@ -4,8 +4,9 @@ function rmthese()
 {
 ls -d $@ 2>/dev/null
 [[ $? == "0" ]] || return 0 ;
-read -p "Remove these? [y/n] " ans
-[[ $ans == "y" ]] && rm -rf $@
+read -p "Remove these? [Y/n] " ans
+ans="${ans:=y}"
+[[ "$ans" == "y" || "$ans" == "Y" ]] && rm -rf $@
 }
 
 tp='[1-9]*'

@@ -56,7 +56,7 @@ SourceFiles
 
 #include "modalDisplacementPointPatchVectorField.H"
 #include "modeShape.H"
-#include "myODE.H"
+//#include "myODE.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -112,9 +112,9 @@ class structuralMode
         scalarField sweptVols_;
 
         //- Ode solver
-        myODE motionEquation_;
+        //myODE motionEquation_;
 
-        autoPtr<ODESolver> odeSolver_;// = ODESolver::New(args[1], ode);
+        //autoPtr<ODESolver> odeSolver_;// = ODESolver::New(args[1], ode);
 
     // Private Member Functions
 
@@ -185,7 +185,7 @@ public:
     //  force.
     scalar solveMotionEquation(const volScalarField& p);
 
-    scalar solveMotionEquation2(const volScalarField& p);
+    //scalar solveMotionEquation2(const volScalarField& p);
 
     // Access
     

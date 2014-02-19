@@ -50,6 +50,11 @@ int main(int argc, char *argv[])
     {
         IStringStream(args.options()["patches"])() >> patchNames;
     }
+    else
+    {
+        Info << "needs -patches '(patch list)' option" << nl << endl;
+        exit(1);
+    }
     List<label> patchLabels(patchNames.size(),-1);
 
     forAll(patchNames, i)

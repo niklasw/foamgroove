@@ -26,9 +26,10 @@ FoamFile
             axis    (0 0 1);
             coeffs  3(0 0 1);
             amplitude (1 0 0);
-            scalingFactor 0.79817141;
+            scalingFactor 0.3569494;
         }
         frequency   40;
+        damping     0.01;
     }
 
     b
@@ -40,9 +41,10 @@ FoamFile
             axis    (0 0 1);
             coeffs  3(0 0 1);
             amplitude (0 1 0);
-            scalingFactor 0.79817141;
+            scalingFactor 0.3569494;
         }
         frequency  40;
+        damping    0.01;
     }
 );
 

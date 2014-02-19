@@ -19,7 +19,7 @@ FoamFile
 
 #include "$FOAM_CASE/setup.foam"
 
-numberOfSubdomains 4;
+numberOfSubdomains 2;
 
 //- Keep owner and neighbour on same processor for faces in zones:
 // preserveFaceZones (heater solid1 solid3);

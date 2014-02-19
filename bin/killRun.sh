@@ -21,7 +21,7 @@ OPTIONS:
 EOF
 }
 
-KILL_SIG=''
+KILL_SIG='-1'
 LOG_FILE=''
 while getopts ":hwf:" opt; do
     case $opt in
@@ -30,10 +30,9 @@ while getopts ":hwf:" opt; do
             exit 0
         ;;
         f)
-            LOG_FILE=$OPTARG
+            KILL_SIG='-9'
         ;;
         w)
-            DO_WRITE='y'
             KILL_SIG='-10'
         ;;
         \?)
@@ -47,13 +46,18 @@ while getopts ":hwf:" opt; do
     esac
 done
 
+shift $((OPTIND-1))
+
+if [ -z "$LOG_FILE" ]; then
+    LOG_FILE=$1
+fi
+
 if [ -f "$LOG_FILE" ]; then
     PID=$(awk '$1~"PID" {print $3}' $LOG_FILE)
-    kill $KILL_SIG $PID
+    echo -e "Trying to kill process $PID"
+    exec kill $KILL_SIG $PID
 else
     echo -e "Log file $LOG_FILE not found"
     help
     exit 1
 fi
-
-
