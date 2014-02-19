@@ -147,17 +147,17 @@ scalar structuralMode::solveMotionEquation
     const volScalarField& p
 )
 {
-    // Solve the ODE using simple forward euler RK:
+    // Solve the ODE using simple forward euler:
     // ddt2(a)+w^2 a = Q
     // Should include damping D so:
     // ddt2(a)+D*w*ddt(a)+w^2 a = Q
 
-    scalar relaxation = 0.25;
+    scalar relax = 0.75;
 
     scalar dT = (mesh_.time().deltaTValue())/odeSubSteps_;
 
-    scalar& aStar_ = odeData_[0];
-    scalar& bStar_ = odeData_[1];
+    scalar& a_0 = odeData_[0];
+    scalar& b_0 = odeData_[1];
 
     scalar a = 0;
     scalar b = 0;
@@ -169,11 +169,11 @@ scalar structuralMode::solveMotionEquation
 
     for (int i=0; i<odeSubSteps_; i++)
     {
-        b = dT*(q-pow(omega,2)*aStar_-2*damping_*omega*bStar_)+bStar_;
-        a = dT*b+aStar_;
+        b = dT*( q-sqr(omega)*a_0-2*damping_*omega*b_0 )+b_0;
+        a = dT*b+a_0;
 
-        aStar_ = a; // (1-relaxation)*a+relaxation*aStar_;
-        bStar_ = b; //(1-relaxation)*b+relaxation*bStar_;
+        a_0 = a; // relax*a+(1-relax)*a_0;
+        b_0 = b; // relax*b+(1-relax)*b_0;
     }
     Info << "Unit work by mode    \""<< name_ <<"\" = " << q << endl;
     Info << "Coefficient for mode \""<< name_ <<"\" = " << a << endl;

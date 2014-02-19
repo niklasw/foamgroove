@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
         ode.RHS(q);
         scalarField y(yStart);
         scalar hEst = dt;
-        odeSolver->solve(ode, x, xEnd, y, 1e-4, hEst);
+        odeSolver->solve(ode, x, x+dt, y, 1e-4, hEst);
         x += dt;
 
         Info <<  x <<" " << q <<" "<< y[0] << " " << y[1] << " " <<  hEst << endl;
