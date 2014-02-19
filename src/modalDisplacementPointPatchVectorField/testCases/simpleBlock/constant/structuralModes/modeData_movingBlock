@@ -26,8 +26,7 @@ FoamFile
             scalingFactor 0.1;
         }
         frequency   1;
-        damping 1e-8;
-
+        damping 1;
     }
 )
 
