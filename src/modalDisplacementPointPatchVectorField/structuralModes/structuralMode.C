@@ -85,7 +85,7 @@ Foam::structuralMode::structuralMode
     name_(is),
     dict_(is),
     odeData_(2, 0.0),
-    odeSubSteps_(50),
+    odeSubSteps_(1),
 
     modeShape_(dict_.subDict("modeShape"), BC),
 
