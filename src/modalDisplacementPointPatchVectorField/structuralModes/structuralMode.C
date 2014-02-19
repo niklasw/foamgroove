@@ -95,7 +95,6 @@ Foam::structuralMode::structuralMode
     sweptVols_(mesh_.boundaryMesh()[patch_.index()].size()),
 
     motionEquation_(frequency_, damping_),
-
     odeSolver_(ODESolver::New("RK",motionEquation_))
 {
     modeShape_.generate();

@@ -1,0 +1,4 @@
+    slipGroup
+    {
+        type        slip;
+    }
