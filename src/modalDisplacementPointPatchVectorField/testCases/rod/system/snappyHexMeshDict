@@ -15,14 +15,14 @@ addLayers       true;
 
 geometry
 {
-    /*
     box
     {
         type searchableBox;
-        min (1 1 1);
-        max (2 2 2);
+        min (-0.2 -0.3 0);
+        max (   2  0.3 1.2);
     }
 
+    /*
     example.stl
     {
         type triSurfaceMesh;
@@ -111,7 +111,12 @@ castellatedMeshControls
         rod.stl
         {
             mode distance;
-            levels ((0.1 4) (0.2 3) (0.4 2));
+            levels ((0.1 5) (0.2 4) (0.3 3) (0.4 2));
+        }
+        box
+        {
+            mode inside;
+            levels ((0 3));
         }
     }
 
