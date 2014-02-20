@@ -29,8 +29,9 @@ boundaryField
     rod_wall
     {
         type            modalDisplacement;
-        rampBegin       10000;
-        rampEnd         10200;
+        rampBegin       5000;
+        rampEnd         5200;
+        writeDebugField no;
         value           uniform (0 0 0);
     }
 }
