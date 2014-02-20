@@ -28,7 +28,7 @@ FoamFile
             amplitude (1 0 0);
             scalingFactor 0.3569494;
         }
-        frequency   40;
+        frequency   20;
         damping     0.01;
     }
 
@@ -43,7 +43,7 @@ FoamFile
             amplitude (0 1 0);
             scalingFactor 0.3569494;
         }
-        frequency  40;
+        frequency  20;
         damping    0.01;
     }
 );
