@@ -1,0 +1,17 @@
+
+
+wallFunction
+{
+    epsilon         epsilonWallFunction;
+    k               kqRWallFunction;
+    omega           omegaWallFunction;
+    nut             nutkWallFunction;
+    nuSgs           nutUSpaldingWallFunction;
+};
+
+inletType
+{
+    epsilon         turbulentMixingLengthDissipationRateInlet;
+    k               turbulentIntensityKineticEnergyInlet;
+    omega           turbulentMixingLengthFrequencyInlet;
+}

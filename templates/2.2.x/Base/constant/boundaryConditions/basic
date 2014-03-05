@@ -114,7 +114,7 @@ bc
 
         nuSgs
         {
-            type            fixedValue;
+            type            zeroGradient;
             value           $:turbulence.initialnuSgs;
         };
 

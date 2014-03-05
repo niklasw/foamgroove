@@ -290,6 +290,8 @@ addLayersControls
 
     maxThicknessToMedialRatio 0.3;
 
+    nMedialAxisIter 10;
+
     minMedianAxisAngle 150; //90;
 
     nBufferCellsNoExtrude 0;

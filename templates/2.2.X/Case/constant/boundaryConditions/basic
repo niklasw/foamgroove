@@ -1,0 +1,326 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      boundaryConditions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/setup.foam"
+
+#include "$FOAM_CASE/constant/boundaryConditions/${flowType}BoundaryTypesI";
+
+bc
+{
+    walls
+    {
+        U
+        {
+            type            fixedValue;
+            value           uniform (0 0 0);
+        };
+
+        p
+        {
+            type            zeroGradient;
+        };
+
+        k
+        {
+            type            $:wallFunction.k;
+            value           $:turbulence.initialK;
+        };
+
+        epsilon
+        {
+            type            $:wallFunction.epsilon;
+            value           $:turbulence.initialEpsilon;
+        };
+
+        omega
+        {
+            type            $:wallFunction.omega;
+            value           $:turbulence.initialOmega;
+        };
+
+        nut
+        {
+            type            $:wallFunction.nut;
+            Cmu             0.09;
+            kappa           0.41;
+            E               9.8;
+            value           uniform 0;
+        };
+
+        nuSgs
+        {
+            type            $:wallFunction.nuSgs;
+            value           $:turbulence.initialnuSgs;
+        };
+
+        // Compressible
+        T
+        {
+            type            zeroGradient;
+        };
+
+        alphat
+        {
+            type            compressible::alphatWallFunction;
+            value           uniform 0;
+        };
+
+
+    };
+
+    default
+    {
+        $..walls;
+    };
+
+    fixedInlet
+    {
+        U
+        {
+            type                $:velocitySpecification;
+            volumetricFlowRate  $:velocity.flowrate;
+            massFlowRate        $:velocity.flowrate;
+            value               $:velocity.inlet;
+        };
+
+        p
+        {
+            type            zeroGradient;
+        };
+
+        k
+        {
+            type            $:inletType.k;
+            intensity       $:turbulence.intensity;
+            value           uniform 0;
+        };
+
+        epsilon
+        {
+            type            $:inletType.epsilon;
+            mixingLength    $:turbulence.mixingLength;
+            value           uniform 0;
+        };
+
+        omega
+        {
+            type            $:inletType.omega;
+            mixingLength    $:turbulence.mixingLength;
+            value           uniform 0;
+        };
+
+        nut
+        {
+            type            calculated;
+            value           uniform 0;
+        };
+
+        nuSgs
+        {
+            type            zeroGradient;
+        };
+
+        T
+        {
+            type            fixedValue;
+            value           $:energy.inletTemperature;
+        };
+
+        alphat
+        {
+            type            calculated;
+            value           uniform 0;
+        };
+    };
+
+    pressureOutlet
+    {
+        U
+        {
+            type            inletOutlet;
+            phi             phi;
+            inletValue      uniform (0 0 0);
+            value           uniform (0 0 0);
+        };
+
+        p
+        {
+            type            fixedValue;
+            value           $:pressure.ambient;
+        };
+
+        k
+        {
+            type            inletOutlet;
+            value           uniform 0;
+            inletValue      $:turbulence.initialK;
+        };
+
+        epsilon
+        {
+            $k;
+            inletValue      $:turbulence.initialEpsilon;
+        };
+
+        omega
+        {
+            $k;
+            inletValue      $:turbulence.initialOmega;
+        };
+
+        nuTilda
+        {
+            $k;
+            inletValue      $:turbulence.initialnuTilda;
+        };
+
+        nut
+        {
+            type            calculated;
+            value           uniform 0;
+        };
+
+        nuSgs
+        {
+            $k;
+            inletValue      $:turbulence.initialnuSgs;
+        }
+
+        // Compressible
+        T
+        {
+            type            inletOutlet;
+            value           $:energy.ambientTemperature;
+            inletValue      $:energy.ambientTemperature;
+        };
+
+        alphat
+        {
+            type            calculated;
+            value           uniform 0;
+        };
+ 
+    };
+
+    totalPressure
+    {
+        $..pressureOutlet;
+
+        U
+        {
+            type            pressureInletOutletVelocity;
+            phi             phi;
+            //tangentialVelocity uniform (0 0 0);
+            value           uniform (0 0 0);
+        };
+
+        p
+        {
+            type            totalPressure;
+            gamma           1;
+            value           $:pressure.ambient;
+            p0              $:pressure.ambient;
+        };
+    };
+
+    slipWalls
+    {
+        ".*"
+        {
+            type            slip;
+        };
+    };
+
+    movingWalls
+    {
+        $..walls;
+
+        U
+        {
+            type            movingWallVelocity;
+            value           uniform (0 0 0);
+        };
+    };
+
+    freestream
+    {
+        U
+        {
+            type            freestream;
+            freestreamValue $:velocity.ambient;
+        };
+
+        p
+        {
+            type            freestreamPressure;
+        };
+
+        k
+        {
+            type            freestream;
+            freestreamValue $:turbulence.initialK;
+        };
+
+        epsilon
+        {
+            type            freestream;
+            freestreamValue $:turbulence.initialEpsilon;
+        };
+
+        omega
+        {
+            type            freestream;
+            freestreamValue $:turbulence.initialOmega;
+        };
+
+        nut
+        {
+            type            calculated;
+            value           uniform 0;
+        };
+
+        nuSgs
+        {
+            type            freestream;
+            freestreamValue $:turbulence.initialnuSgs;
+        };
+
+        nut
+        {
+            type            calculated;
+            value           uniform 0;
+        };
+
+        // Compressible
+        T
+        {
+            type                freestream;
+            freestreamValue     $:energy.ambientTemperature;
+        };
+
+        alphat
+        {
+            type            calculated;
+            value           uniform 0;
+        };
+ 
+    };
+
+#includeIfPresent   "$FOAM_CASE/constant/boundaryConditions/freeSurfaceI"
+
+};
+// ************************************************************************* //

@@ -46,8 +46,8 @@ divSchemes
     div(phi,omega)      $ConvectionModel limitedLinear 1;
     div(phi,nuTilda)    $ConvectionModel limitedLinear 1;
 
-    div((nuEff*dev(T(grad(U))))) $ConvectionModel linear;
-    div(R)              $ConvectionModel linear;
+    div((nuEff*dev(T(grad(U))))) Gauss linear;
+    div(R)              Gauss  linear;
 }
 
 laplacianSchemes
@@ -69,6 +69,8 @@ fluxRequired
 {
     default         no;
     p               ;
+    pcorr;
+    p_rgh;
 }
 #includeIfPresent "include/freeSurfaceFvSchemesI";
 

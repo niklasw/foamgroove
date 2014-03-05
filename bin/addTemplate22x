@@ -55,7 +55,14 @@ echo -e "Selected flow type is:\n\t$SELECTED_TEMPLATES"
 
 echo ""
 
-read -p "Enter to continue. "
+for T in $AVAILABLE_TEMPLATES; do
+    if [[ "$SELECTED_TEMPLATES" == *"$T"* ]]; then
+        echo "adding $T"
+        rsync -nv --exclude="template" -r $FG_TEMPLATES_DIR_V/$T/ .
+    fi
+done
+
+read -p "Enter to actually apply the above "
 
 echo ""
 
