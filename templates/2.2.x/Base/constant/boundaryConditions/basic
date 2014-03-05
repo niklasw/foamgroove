@@ -115,7 +115,6 @@ bc
         nuSgs
         {
             type            zeroGradient;
-            value           $:turbulence.initialnuSgs;
         };
 
     };
@@ -184,8 +183,7 @@ bc
 
         nuSgs
         {
-            $k;
-            inletValue      $:turbulence.initialnuSgs;
+            zeroGradient;
         }
 
     };

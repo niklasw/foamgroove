@@ -3,7 +3,7 @@
 # =========                 |
 # \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
 #  \\    /   O peration     |
-#   \\  /    A nd           | Copyright (C) 2011 OpenFOAM Foundation
+#   \\  /    A nd           | Copyright (C) 2011-2013 OpenFOAM Foundation
 #    \\/     M anipulation  |
 #-------------------------------------------------------------------------------
 # License
@@ -48,6 +48,28 @@ options:
 
 USAGE
     exit 1
+}
+
+#for being able to echo strings that have single quotes
+echoArgs() {
+    addSpace=""
+
+    for stringItem in "$@"; do
+
+        echo -n "${addSpace}"
+
+        if [ "${stringItem##* }" = "$stringItem" ]
+        then
+            echo -n "$stringItem"
+            addSpace=" "
+        else
+            echo -n "'$stringItem'"
+            addSpace=" "
+        fi
+
+    done
+
+    unset stringItem addSpace
 }
 
 unset version
@@ -129,6 +151,7 @@ done
 
 [ "$#" -ge 1 ] || usage "No application specified"
 
+REAL_APPLICATION=''
 
 # use foamExec for a specified version
 # also need foamExec for remote (parallel) runs
@@ -142,6 +165,7 @@ then
 
     # use foamExec for dispatching
     APPLICATION=`findExec foamExec` || usage "'foamExec' not found"
+    REAL_APPLICATION=$(basename `findExec $1`)
 
     [ -n "$version" ] && APPLICATION="$APPLICATION -version $version"
 
@@ -153,11 +177,11 @@ then
 
 else
     APPLICATION=`findExec $1` || usage "Application '$1' not found"
+    REAL_APPLICATION=$(basename $APPLICATION)
     echo "Application : $1"
     shift
 fi
 
-echo $APPLICATION
 
 if [ "$parallelOpt" = true ]
 then
@@ -218,11 +242,11 @@ then
     #
     if [ "$screenOpt" = true ]
     then
-        echo "Executing: $mpirun $mpiopts $APPLICATION $@ -parallel | tee log"
-        $mpirun $mpiopts $APPLICATION $@ -parallel | tee log
+        echo "Executing: $mpirun $mpiopts $APPLICATION $(echoArgs "$@") -parallel | tee $REAL_APPLICATION.log"
+        $mpirun $mpiopts $APPLICATION "$@" -parallel | tee $REAL_APPLICATION.log
     else
-        echo "Executing: $mpirun $mpiopts $APPLICATION $@ -parallel > log 2>&1"
-        $mpirun $mpiopts $APPLICATION $@ -parallel > log 2>&1 &
+        echo "Executing: $mpirun $mpiopts $APPLICATION $(echoArgs "$@") -parallel > $REAL_APPLICATION.log 2>&1"
+        $mpirun $mpiopts $APPLICATION "$@" -parallel > $REAL_APPLICATION.log 2>&1 &
     fi
 
 else
@@ -231,12 +255,12 @@ else
     #
     if [ "$screenOpt" = true ]
     then
-        echo "Executing: $APPLICATION $@ | tee log &"
-        $APPLICATION $@ | tee log &
+        echo "Executing: $APPLICATION $(echoArgs "$@") | tee $REAL_APPLICATION.log &"
+        $APPLICATION "$@" | tee $REAL_APPLICATION.log &
         wait $!
     else
-        echo "Executing: $APPLICATION $@ > log 2>&1 &"
-        $APPLICATION $@ > log 2>&1 &
+        echo "Executing: $APPLICATION $(echoArgs "$@") > $REAL_APPLICATION.log 2>&1 &"
+        $APPLICATION "$@" > $REAL_APPLICATION.log 2>&1 &
     fi
 fi
 
