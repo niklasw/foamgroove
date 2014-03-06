@@ -1,0 +1,72 @@
+
+solvers
+{
+    pcorr
+    {
+        solver          PCG;
+        preconditioner
+        {
+            preconditioner  GAMG;
+
+            smoother        DICGaussSeidel;
+            nPreSweeps      0;
+            nPostSweeps     2;
+            nFinestSweeps   2;
+            cacheAgglomeration false;
+            nCellsInCoarsestLevel 10;
+            agglomerator    faceAreaPair;
+            mergeLevels     1;
+
+            tolerance       1e-05;
+            relTol          0;
+        }
+        tolerance       1e-05;
+        relTol          0;
+        maxIter         100;
+    }
+
+    p_rgh
+    {
+        solver          GAMG;
+        smoother        GaussSeidel;
+        nPreSweeps      0;
+        nPostSweeps     2;
+        nFinestSweeps   2;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 10;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+
+        tolerance       1e-07;
+        relTol          0.01;
+    }
+
+    p_rghFinal
+    {
+        $p_rgh;
+
+        tolerance       1e-7;
+        relTol          0;
+    }
+}
+
+PIMPLE
+{
+    momentumPredictor           no;
+    nCorrectors                 2;
+    nNonOrthogonalCorrectors    1;
+    nAlphaCorr                  1;
+    nAlphaSubCycles             2;
+    cAlpha                    0.5;
+
+    maxCo           0.9;
+    maxAlphaCo      0.2;
+
+    rDeltaTSmoothingCoeff 0.05;
+    rDeltaTDampingCoeff 0.5;
+
+    nAlphaSweepIter  0;
+    nAlphaSpreadIter 0;
+
+    maxDeltaT       1;
+}
