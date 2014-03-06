@@ -16,6 +16,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 flowType compressible;        //compressible, incompressible
+flowTypeNs "compressible::";
 timeType unsteady;              //steady, unsteady
 velocitySpecification  flowRate;           //flowRate, fixedValue
 

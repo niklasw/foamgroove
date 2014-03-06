@@ -1,1 +1,0 @@
-/home/soft/OpenFOAM/foamGroove/templates/2.2.x
