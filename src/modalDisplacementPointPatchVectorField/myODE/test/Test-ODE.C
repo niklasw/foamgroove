@@ -27,9 +27,7 @@ Description
 
 #include "argList.H"
 #include "IOmanip.H"
-#include "ODE.H"
 #include "ODESolver.H"
-#include "RK.H"
 #include "mathematicalConstants.H"
 #include "myODE.H"
 
@@ -51,11 +49,16 @@ int main(int argc, char *argv[])
 
     scalar damping = 0.0;
 
+    dictionary dict;
+
+    dict.add("solver", args[1]);
+
     myODE ode(freq,damping);
-    autoPtr<ODESolver> odeSolver = ODESolver::New(args[1], ode);
+    autoPtr<ODESolver> odeSolver = ODESolver::New(ode, dict);
 
     scalar xStart = 0.0;
     scalarField yStart(ode.nEqns());
+
     yStart[0] = 0;
     yStart[1] = 0;
 
@@ -74,12 +77,12 @@ int main(int argc, char *argv[])
         ode.RHS(q);
         scalarField y(yStart);
         scalar hEst = dt;
-        odeSolver->solve(ode, x, x+dt, y, 1e-4, hEst);
+        odeSolver->relTol() = 1e-5;
+        odeSolver->solve(x, x+dt, y, hEst);
         x += dt;
 
         Info <<  x <<" " << q <<" "<< y[0] << " " << y[1] << " " <<  hEst << endl;
     }
-
 
 
     Info<< "\nEnd\n" << endl;
