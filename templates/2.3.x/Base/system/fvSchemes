@@ -17,7 +17,7 @@ FoamFile
 
 // * * * Scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
 
-Correction                  limited 0.33; // corrected;
+Correction          corrected; //limited 0.33;
 
 // * * * End scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
 

@@ -2,6 +2,21 @@
 
 import os,sys
 
+class ioList(list):
+
+    def __init__(self,var='(0 0 0)'):
+        if isinstance(var,list):
+            list.__init__(self,var)
+        elif isinstance(var,str):
+            s = strList.strip('() "')
+            try:
+                list.__init__(self,map(float, s.split()))
+            except TypeError:
+                print 'Error in ioList.__init__'
+                raise
+
+    def __str__(self):
+        return '('+' '.join((str(a) for a in self))+')'
 
 class interactor:
 
