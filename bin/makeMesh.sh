@@ -86,5 +86,7 @@ runmePar $NP snappyHexMesh -overwrite
 
 runmePar $NP changeDictionaryLight
 
+runmePar $NP checkMesh
+
 runme distributeZero
 
