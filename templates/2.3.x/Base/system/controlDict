@@ -53,6 +53,7 @@ maxAlphaCo      0.5;
 
 functions
 {
+    #include "include/functionObjectFieldMinMaxI";
 //    #include "include/functionObjectFieldAverageI";
 //    #include "include/functionObjectProbesI";
 //    #include "include/functionObjectForceCoeffsI";

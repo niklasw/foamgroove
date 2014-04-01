@@ -102,6 +102,9 @@ FoamFile
         {
             type            totalPressure;
             gamma           1;
+            phi             phi;
+            U               U;
+            rho             rho;
             value           $:pressure.ambient;
             p0              $:pressure.ambient;
         };
