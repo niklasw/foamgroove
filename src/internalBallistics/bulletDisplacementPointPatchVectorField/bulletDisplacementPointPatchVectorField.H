@@ -52,10 +52,13 @@ class bulletDisplacementPointPatchVectorField
 {
     // Private data
 
-        vector stroke_;
-        vector amplitude_;
-        scalar RPM_;
-        scalar omega_;
+        vector aimVector_;
+        vector boltPosition_;
+        scalar initialPosition_;
+        scalar currentPosition_;
+        scalar barrelLength_;
+        scalar v0_;
+        scalar v1_;
 
 
 public:

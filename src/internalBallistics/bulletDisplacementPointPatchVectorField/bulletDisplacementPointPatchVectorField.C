@@ -44,10 +44,13 @@ bulletDisplacementPointPatchVectorField
 )
 :
     fixedValuePointPatchField<vector>(p, iF),
-    stroke_(vector::zero),
-    amplitude_(vector::zero),
-    RPM_(0.0),
-    omega_(0.0)
+    aimVector_(vector(1,0,0)),
+    boltPosition_(vector::zero),
+    initialPosition_(0.0),
+    currentPosition_(initialPosition_),
+    barrelLength_(1.0),
+    v0_(0.0),
+    v1_(0.0)
 {}
 
 
@@ -60,10 +63,13 @@ bulletDisplacementPointPatchVectorField
 )
 :
     fixedValuePointPatchField<vector>(p, iF, dict),
-    stroke_(dict.lookup("stroke")),
-    amplitude_(stroke_/2.0),
-    RPM_(readScalar(dict.lookup("RPM"))),
-    omega_(RPM_/60*2*M_PI)
+
+    aimVector_(dict.lookup("aimVector")),
+    boltPosition_(dict.lookup("boltPosition")),
+    initialPosition_(readScalar(dict.lookup("initialPosition"))),
+    barrelLength_(readScalar(dict.lookup("barrelLength"))),
+    v0_(readScalar(dict.lookup("v0"))),
+    v1_(readScalar(dict.lookup("v1")))
 
 {
     if (!dict.found("value"))
@@ -83,10 +89,13 @@ bulletDisplacementPointPatchVectorField
 )
 :
     fixedValuePointPatchField<vector>(ptf, p, iF, mapper),
-    stroke_(ptf.stroke_),
-    amplitude_(ptf.amplitude_),
-    RPM_(ptf.RPM_),
-    omega_(ptf.omega_)
+    aimVector_(ptf.aimVector_),
+    boltPosition_(ptf.boltPosition_),
+    initialPosition_(ptf.initialPosition_),
+    currentPosition_(ptf.currentPosition_),
+    barrelLength_(ptf.barrelLength_),
+    v0_(ptf.v0_),
+    v1_(ptf.v1_)
 {}
 
 
@@ -98,10 +107,13 @@ bulletDisplacementPointPatchVectorField
 )
 :
     fixedValuePointPatchField<vector>(ptf, iF),
-    stroke_(ptf.stroke_),
-    amplitude_(ptf.amplitude_),
-    RPM_(ptf.RPM_),
-    omega_(ptf.omega_)
+    aimVector_(ptf.aimVector_),
+    boltPosition_(ptf.boltPosition_),
+    initialPosition_(ptf.initialPosition_),
+    currentPosition_(ptf.currentPosition_),
+    barrelLength_(ptf.barrelLength_),
+    v0_(ptf.v0_),
+    v1_(ptf.v1_)
 {}
 
 
@@ -114,10 +126,16 @@ void bulletDisplacementPointPatchVectorField::updateCoeffs()
         return;
     }
 
-    const polyMesh& mesh = this->dimensionedInternalField().mesh()();
-    const Time& t = mesh.time();
+    // Assume constant dv/dx between v0 and v1
 
-    Field<vector>::operator=(amplitude_ - amplitude_*cos(omega_*t.value()));
+    const polyMesh& mesh = this->dimensionedInternalField().mesh()();
+
+    scalar accelerationLength = barrelLength_-initialPosition_;
+    scalar dvdx = (v1_ - v0_)/accelerationLength;
+    scalar curVel = min((currentPosition_ - initialPosition_)*dvdx, v1_);
+    currentPosition_ += mesh.time().deltaTValue() * curVel;
+
+    Field<vector>::operator=(boltPosition_+aimVector_*currentPosition_);
 
     fixedValuePointPatchField<vector>::updateCoeffs();
 }
@@ -126,10 +144,18 @@ void bulletDisplacementPointPatchVectorField::updateCoeffs()
 void bulletDisplacementPointPatchVectorField::write(Ostream& os) const
 {
     pointPatchField<vector>::write(os);
-    os.writeKeyword("stroke")
-        << stroke_ << token::END_STATEMENT << nl;
-    os.writeKeyword("RPM")
-        << RPM_ << token::END_STATEMENT << nl;
+    os.writeKeyword("aimVector")
+        << aimVector_ << token::END_STATEMENT << nl;
+    os.writeKeyword("boltPosition")
+        << boltPosition_ << token::END_STATEMENT << nl;
+    os.writeKeyword("initialPosition")
+        << currentPosition_ << token::END_STATEMENT << nl;
+    os.writeKeyword("barrelLength")
+        << barrelLength_ << token::END_STATEMENT << nl;
+    os.writeKeyword("v0")
+        << v0_ << token::END_STATEMENT << nl;
+    os.writeKeyword("v1")
+        << v1_ << token::END_STATEMENT << nl;
     writeEntry("value", os);
 }
 
