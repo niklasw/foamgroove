@@ -52,13 +52,28 @@ void Foam::modeShape::genRigidMode()
 
 void Foam::modeShape::genTrigonometricMode()
 {
+    scalar pi = constant::mathematical::pi;
     waveLength_ = readScalar(dict_.lookup("waveLength"));
     amplitude_ = dict_.lookup("amplitude");
     scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
+    word function = dict_.lookupOrDefault<word>("function","invcos");
 
-    scalar pi = constant::mathematical::pi;
-    displacement_ = scalingFactor_*amplitude_
-              * (1-cos((2*pi/waveLength_)*X()));
+    if ( function == "invcos" )
+    {
+        displacement_ = scalingFactor_*amplitude_
+                      * (1-cos((2*pi/waveLength_)*X()));
+    }
+    else if ( function == "cos" )
+    {
+        displacement_ = scalingFactor_*amplitude_
+                      * cos((2*pi/waveLength_)*X());
+    }
+    else
+    {
+        FatalErrorIn("Foam::modeShape::genTrigonometricMode()")
+            << "Available function entries is cos and invcos"
+            << abort(FatalError);
+    }
 }
 
 void Foam::modeShape::genPolynomialMode()

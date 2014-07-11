@@ -50,7 +50,7 @@ adjustTimeStep  no;
 maxCo           0.25;
 maxAlphaCo      0.5;
 
-libs ("/remote/home/niklasw/OpenFOAM/niklasw-2.2.x/platforms/linux64GccDPOpt/lib/libinCylinder.so");
+libs ("libinCylinder.so");
 
 functions
 {

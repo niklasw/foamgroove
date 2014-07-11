@@ -183,7 +183,7 @@ bc
 
         nuSgs
         {
-            zeroGradient;
+            type            zeroGradient;
         }
 
     };
