@@ -59,6 +59,7 @@ class bulletDisplacementPointPatchVectorField
         scalar barrelLength_;
         scalar v0_;
         scalar v1_;
+        scalar currentVelocity_;
 
 
 public:
@@ -135,6 +136,13 @@ public:
 
             //- Update the coefficients associated with the patch field
             virtual void updateCoeffs();
+
+        //- Access
+
+        const scalar currentVelocity()
+        {
+            return currentVelocity_;
+        }
 
 
         //- Write

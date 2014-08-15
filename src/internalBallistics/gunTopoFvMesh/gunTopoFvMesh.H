@@ -60,21 +60,26 @@ class gunTopoFvMesh
         //- Motion dictionary
         dictionary motionDict_;
 
-        //- Stroke (vector)
-        const vector stroke_;
+        //- Barrel information
+        const vector aimVector_;
 
-        //- Crank shaft rpm
-        const scalar RPM_;
+        const vector boltPosition_;
 
-        const scalar frequency_;
+        const scalar barrelLength_;
 
-        vector upVector_;
+        //- Bullet information
+        const scalar initialPosition_;
 
-        //- Motion velocity period
+        const scalar initialVelocity_;
+
+        const scalar exitVelocity_;
+
+        //- Information bearers
         vector curMotionVel_;
 
-        //- Start bullet layer position
-        scalar curLower_;
+        scalar currentPosition_;
+
+        scalar growthLayerPosition_;
 
         //- Search tolerance, for finding motion points.
         scalar tolerance_;
@@ -138,7 +143,7 @@ public:
         virtual bool update();
 
         //- Current position rel to lower turn
-        vector curPosition() const;
+        // vector curPosition() const;
 
         //- Present bullet velocity, defined positive upwards
         vector curMotionVel() const;

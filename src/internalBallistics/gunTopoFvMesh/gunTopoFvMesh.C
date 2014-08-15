@@ -55,7 +55,7 @@ void Foam::gunTopoFvMesh::debugInfo()
     Info << "\tPiston info: "
          <<"time:" << time().value()
          << " curMotionVel_:" << curMotionVel_
-         << " curLower:" << curLower_ << endl;
+         << " growthLayerPosition:" << growthLayerPosition_ << endl;
     Info << "\tPiston info: "
          << "Current volume of domain = " << gSum(V()) << endl;
 
@@ -65,7 +65,7 @@ void Foam::gunTopoFvMesh::debugInfo()
 void Foam::gunTopoFvMesh::updateExtrudeLayerPosition()
 {
     label zoneI = faceZones().findZoneID("extrusionFaces");
-    curLower_ = average
+    growthLayerPosition_ = average
     (
         faceZones()[zoneI]().localPoints().component(vector::Z)
     );
@@ -81,7 +81,7 @@ Foam::tmp<Foam::scalarField> Foam::gunTopoFvMesh::vertexMarkup
 
     forAll(p, pI)
     {
-        if (p[pI].z() < curLower_+tolerance_)
+        if (p[pI].x() < growthLayerPosition_+tolerance_) // CHECK DIRECTION!
         {
             vertexMarkup[pI] = 1;
         }
@@ -130,9 +130,9 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
 
     forAll(fc, faceI)
     {
-        if (mag(curLower_ - fc[faceI].z()) < tolerance_)
+        if (mag(growthLayerPosition_ - fc[faceI].x()) < tolerance_)
         {
-            if ((fa[faceI] & upVector_) < 0)
+            if ((fa[faceI] & aimVector_) < 0)
             {
                 flipZone1[nZoneFaces1] = true;
             }
@@ -283,15 +283,17 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
             )
         ).subDict(typeName + "Coeffs")
     ),
-    stroke_(motionDict_.lookup("stroke")),
-    RPM_(readScalar(motionDict_.lookup("RPM"))),
-    frequency_(RPM_/60.0),
-    upVector_(stroke_/(mag(stroke_)+VSMALL)),
+    aimVector_(motionDict_.lookup("aimVector")),
+    boltPosition_(readScalar(motionDict_.lookup("boltPosition"))),
+    barrelLength_(readScalar(motionDict_.lookup("barrelLength"))),
+    initialPosition_(readScalar(motionDict_.lookup("initialPosition"))),
+    initialVelocity_(readScalar(motionDict_.lookup("initialVelocity"))),
+    exitVelocity_(readScalar(motionDict_.lookup("exitVelocity"))),
     curMotionVel_(curMotionVel()),
-    curLower_(readScalar(motionDict_.lookup("growthLayerPosition"))),
-    tolerance_(SMALL)
+    currentPosition_(initialPosition_),
+    growthLayerPosition_(readScalar(motionDict_.lookup("growthLayerPosition"))),
+    tolerance_(1e-8)
     //tolerance_(readScalar(motionDict_.subDict("extrusion").lookup("tolerance")))
-
 {
     if
     (
@@ -379,17 +381,20 @@ bool Foam::gunTopoFvMesh::update()
     return true;
 }
 
+/*
 Foam::vector Foam::gunTopoFvMesh::curPosition() const
 {
-    vector A = stroke_*0.5;
     return A - A*Foam::cos(time().value() * 2*M_PI * frequency_);
 }
+*/
 
 Foam::vector Foam::gunTopoFvMesh::curMotionVel() const
 {
-    vector A = stroke_*0.5;
-    return  A * 2*M_PI * frequency_
-          * Foam::sin(time().value() * 2*M_PI * frequency_);
+    scalar accelerationLength = barrelLength_-initialPosition_;
+    scalar dvdx = (initialVelocity_ - exitVelocity_)/accelerationLength;
+    curMotionVel_= min((currentPosition_ - initialPosition_)*dvdx, exitVelocity_);
+    currentPosition_ +=  this->time().deltaTValue() * curMotionVel_;
+    return  curMotionVel_;
 }
 
 // ************************************************************************* //

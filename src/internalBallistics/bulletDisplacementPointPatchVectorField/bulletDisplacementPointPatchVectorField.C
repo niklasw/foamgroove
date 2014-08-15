@@ -50,7 +50,8 @@ bulletDisplacementPointPatchVectorField
     currentPosition_(initialPosition_),
     barrelLength_(1.0),
     v0_(0.0),
-    v1_(0.0)
+    v1_(0.0),
+    currentVelocity_(0.0)
 {}
 
 
@@ -69,7 +70,8 @@ bulletDisplacementPointPatchVectorField
     initialPosition_(readScalar(dict.lookup("initialPosition"))),
     barrelLength_(readScalar(dict.lookup("barrelLength"))),
     v0_(readScalar(dict.lookup("v0"))),
-    v1_(readScalar(dict.lookup("v1")))
+    v1_(readScalar(dict.lookup("v1"))),
+    currentVelocity_(0.0)
 
 {
     if (!dict.found("value"))
@@ -95,7 +97,8 @@ bulletDisplacementPointPatchVectorField
     currentPosition_(ptf.currentPosition_),
     barrelLength_(ptf.barrelLength_),
     v0_(ptf.v0_),
-    v1_(ptf.v1_)
+    v1_(ptf.v1_),
+    currentVelocity_(ptf.currentVelocity_)
 {}
 
 
@@ -113,7 +116,8 @@ bulletDisplacementPointPatchVectorField
     currentPosition_(ptf.currentPosition_),
     barrelLength_(ptf.barrelLength_),
     v0_(ptf.v0_),
-    v1_(ptf.v1_)
+    v1_(ptf.v1_),
+    currentVelocity_(ptf.currentVelocity_)
 {}
 
 
@@ -132,8 +136,8 @@ void bulletDisplacementPointPatchVectorField::updateCoeffs()
 
     scalar accelerationLength = barrelLength_-initialPosition_;
     scalar dvdx = (v1_ - v0_)/accelerationLength;
-    scalar curVel = min((currentPosition_ - initialPosition_)*dvdx, v1_);
-    currentPosition_ += mesh.time().deltaTValue() * curVel;
+    currentVelocity_ = min((currentPosition_ - initialPosition_)*dvdx, v1_);
+    currentPosition_ += mesh.time().deltaTValue() * currentVelocity_;
 
     Field<vector>::operator=(boltPosition_+aimVector_*currentPosition_);
 
