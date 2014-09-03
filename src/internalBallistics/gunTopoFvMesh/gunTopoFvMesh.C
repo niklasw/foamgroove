@@ -52,11 +52,11 @@ namespace Foam
 
 void Foam::gunTopoFvMesh::debugInfo()
 {
-    Info << "\tPiston info: "
+    Info << "\tBullet info: "
          <<"time:" << time().value()
          << " curMotionVel_:" << curMotionVel_
          << " growthLayerPosition:" << growthLayerPosition_ << endl;
-    Info << "\tPiston info: "
+    Info << "\tBullet info: "
          << "Current volume of domain = " << gSum(V()) << endl;
 
     return;
@@ -67,7 +67,7 @@ void Foam::gunTopoFvMesh::updateExtrudeLayerPosition()
     label zoneI = faceZones().findZoneID("extrusionFaces");
     growthLayerPosition_ = average
     (
-        faceZones()[zoneI]().localPoints().component(vector::Z)
+        faceZones()[zoneI]().localPoints().component(vector::X)
     );
 }
 
@@ -81,7 +81,7 @@ Foam::tmp<Foam::scalarField> Foam::gunTopoFvMesh::vertexMarkup
 
     forAll(p, pI)
     {
-        if (p[pI].x() < growthLayerPosition_+tolerance_) // CHECK DIRECTION!
+        if (p[pI].x() > growthLayerPosition_+tolerance_) // CHECK DIRECTION!
         {
             vertexMarkup[pI] = 1;
         }
@@ -249,17 +249,21 @@ void Foam::gunTopoFvMesh::updateMappedFaces(const mapPolyMesh& topoChangeMap )
         // Special handling for phi: set unmapped faces to recreated phi
         Info<< "rawTopoChangerFvMesh :"
             << " recreating phi for unmapped boundary values." << endl;
-        const volVectorField& U = lookupObject<volVectorField>("U");
-        surfaceScalarField& phi = const_cast<surfaceScalarField&>
-        (
-            lookupObject<surfaceScalarField>("phi")
-        );
-        setUnmappedValues
-        (
-            phi,
-            mappedFace,
-            (linearInterpolate(U) & Sf())()
-        );
+
+        if (foundObject<volVectorField>("U"))
+        {
+            const volVectorField& U = lookupObject<volVectorField>("U");
+            surfaceScalarField& phi = const_cast<surfaceScalarField&>
+            (
+                lookupObject<surfaceScalarField>("phi")
+            );
+            setUnmappedValues
+            (
+                phi,
+                mappedFace,
+                (linearInterpolate(U) & Sf())()
+            );
+        }
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -303,7 +307,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
             << abort(FatalError);
     }
 
-    aimVector_ /= mag(aimVector_+SMALL);
+    aimVector_ /= (mag(aimVector_)+SMALL);
 
     if
     (
@@ -346,6 +350,10 @@ bool Foam::gunTopoFvMesh::update()
 
     debugInfo();
 
+    // Calculate motion points displacement.
+    vectorField pointsDisplacement = motionMask_*aimVector_
+                                   * curMotionVel_*time().deltaT().value();
+
     if (topoChangeMap.valid())
     {
         Info<< "Topology change. Calculating motion points" << endl;
@@ -359,8 +367,7 @@ bool Foam::gunTopoFvMesh::update()
             motionMask_ = vertexMarkup(topoChangeMap().preMotionPoints());
 
             // Move points inside the motionMask
-            newPoints = topoChangeMap().preMotionPoints()
-                      + motionMask_*curMotionVel_*aimVector_*time().deltaT().value();
+            newPoints = topoChangeMap().preMotionPoints() + pointsDisplacement;
         }
         else
         {
@@ -369,16 +376,14 @@ bool Foam::gunTopoFvMesh::update()
             motionMask_ = vertexMarkup(points());
 
             // Move points inside the motionMask
-            newPoints = points()
-                      + motionMask_*curMotionVel_*time().deltaT().value();
+            newPoints = points() + pointsDisplacement;
         }
     }
     else
     {
         Info<< "No topology change" << endl;
         // Set the mesh motion
-        newPoints = points()
-                  + motionMask_*curMotionVel_*time().deltaT().value();
+        newPoints = points() + pointsDisplacement;
     }
 
     // The mesh now contains the cells with zero volume
@@ -398,13 +403,18 @@ Foam::vector Foam::gunTopoFvMesh::curPosition() const
 }
 */
 
-Foam::scalar Foam::gunTopoFvMesh::curMotionVel() const
+Foam::scalar Foam::gunTopoFvMesh::curMotionVel()
 {
+    /*
     scalar accelerationLength = barrelLength_-initialPosition_;
-    scalar dvdx = (initialVelocity_ - exitVelocity_)/accelerationLength;
+    scalar dvdx = (exitVelocity_ - initialVelocity_)/accelerationLength;
+    Info << "dvdx ::: " << dvdx << endl;
+    Info << "current pos ::: " << currentPosition_ << endl;
+    Info << "initial pos ::: " << initialPosition_ << endl;
     curMotionVel_= min((currentPosition_ - initialPosition_)*dvdx, exitVelocity_);
     currentPosition_ +=  this->time().deltaTValue() * curMotionVel_;
-    return  curMotionVel_;
+    */
+    return 10;// curMotionVel_;
 }
 
 // ************************************************************************* //

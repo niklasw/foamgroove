@@ -61,7 +61,7 @@ class gunTopoFvMesh
         dictionary motionDict_;
 
         //- Barrel information
-        const vector aimVector_;
+        vector aimVector_;
 
         const vector boltPosition_;
 
@@ -146,7 +146,7 @@ public:
         // vector curPosition() const;
 
         //- Present bullet velocity, defined positive upwards
-        vector curMotionVel() const;
+        scalar curMotionVel();
 };
 
 
