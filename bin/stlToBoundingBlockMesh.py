@@ -4,12 +4,13 @@ from stlTool import stlToolBox
 
 class BoundingBlockDict:
 
-    def __init__(self,fileName='',scale = 1.0,size=0.05):
+    def __init__(self,fileName='',scale = 1.0,size=0.05, offset=0.0):
         self.fileName = fileName
         self.rez = [1,1,1]
         self.block = range(8)
         self.scale = scale
         self.size = size
+        self.offset=offset
 
     def interactor(self):
         from interactor2 import interactor
@@ -17,6 +18,7 @@ class BoundingBlockDict:
         self.fileName, name = i.iFileSelector(path='constant/triSurface',suffix='.stl*')
         self.scale = i.get(prompt='Scale [m]', default=1.0,test=float)
         self.size = i.get(prompt='Base size [m]', default=0.05,test=float)
+        self.offset = i.get(prompt='Offset factor', default=0.05,test=float)
         self.infoRefinementLevels(self.size,1,8)
         self.output = i.get(test=str,default='constant/polyMesh/blockMeshDict')
 
@@ -37,7 +39,7 @@ class BoundingBlockDict:
         with open(self.output,'w') as fp:
             fp.write(self.__str__())
 
-    def createBlock(self, name='', offsetFactor=0.05):
+    def createBlock(self, name=''):
         from numpy import asarray,array
 
         tool = stlToolBox(self.fileName,'',False)
@@ -46,8 +48,8 @@ class BoundingBlockDict:
         max = asarray(max)
         min = asarray(min)
         # Extend the bounding box by 5% (ad hoc) in each direction
-        max += abs(max)*offsetFactor
-        min -= abs(min)*offsetFactor
+        max += abs(max)*self.offset
+        min -= abs(min)*self.offset
         diagonal = max - min
 
         block = self.block
@@ -79,11 +81,11 @@ if __name__=='__main__':
         try:
             offFactor = float(sys.argv[1])
         except:
-            print "Argument offsetFactor must be float"
+            print "Argument offset must be float"
     print "Offset factor set to ",offFactor
 
-    B = BoundingBlockDict()
+    B = BoundingBlockDict(offset=offFactor)
     B.interactor()
-    B.createBlock(offsetFactor=offFactor)
+    B.createBlock()
     print B
     B.write()

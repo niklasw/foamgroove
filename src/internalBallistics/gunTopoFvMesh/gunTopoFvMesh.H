@@ -75,7 +75,7 @@ class gunTopoFvMesh
         const scalar exitVelocity_;
 
         //- Information bearers
-        vector curMotionVel_;
+        scalar curMotionVel_;
 
         scalar currentPosition_;
 

@@ -284,7 +284,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
         ).subDict(typeName + "Coeffs")
     ),
     aimVector_(motionDict_.lookup("aimVector")),
-    boltPosition_(readScalar(motionDict_.lookup("boltPosition"))),
+    boltPosition_(motionDict_.lookup("boltPosition")),
     barrelLength_(readScalar(motionDict_.lookup("barrelLength"))),
     initialPosition_(readScalar(motionDict_.lookup("initialPosition"))),
     initialVelocity_(readScalar(motionDict_.lookup("initialVelocity"))),
@@ -292,9 +292,19 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     curMotionVel_(curMotionVel()),
     currentPosition_(initialPosition_),
     growthLayerPosition_(readScalar(motionDict_.lookup("growthLayerPosition"))),
-    tolerance_(1e-8)
+    tolerance_(SMALL)
     //tolerance_(readScalar(motionDict_.subDict("extrusion").lookup("tolerance")))
 {
+    //normalize aimVector
+    if ( mag(aimVector_) <= SMALL )
+    {
+        FatalErrorIn("gunTopoFvMesh::gunTopoFvMesh: ")
+            << "Aim vector too short."
+            << abort(FatalError);
+    }
+
+    aimVector_ /= mag(aimVector_+SMALL);
+
     if
     (
         motionDict_.subDict("extrusion").readIfPresent("tolerance",tolerance_)
@@ -350,7 +360,7 @@ bool Foam::gunTopoFvMesh::update()
 
             // Move points inside the motionMask
             newPoints = topoChangeMap().preMotionPoints()
-                      + motionMask_*curMotionVel_*time().deltaT().value();
+                      + motionMask_*curMotionVel_*aimVector_*time().deltaT().value();
         }
         else
         {
@@ -388,7 +398,7 @@ Foam::vector Foam::gunTopoFvMesh::curPosition() const
 }
 */
 
-Foam::vector Foam::gunTopoFvMesh::curMotionVel() const
+Foam::scalar Foam::gunTopoFvMesh::curMotionVel() const
 {
     scalar accelerationLength = barrelLength_-initialPosition_;
     scalar dvdx = (initialVelocity_ - exitVelocity_)/accelerationLength;
