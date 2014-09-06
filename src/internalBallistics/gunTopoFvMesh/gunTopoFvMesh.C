@@ -350,9 +350,10 @@ bool Foam::gunTopoFvMesh::update()
 
     debugInfo();
 
-    // Calculate motion points displacement.
-    vectorField pointsDisplacement = motionMask_*aimVector_
-                                   * curMotionVel_*time().deltaT().value();
+    Info << "Aim vector = " << aimVector_ << endl;
+
+    vector pointsDisplacement =
+        aimVector_ * curMotionVel_*time().deltaT().value();
 
     if (topoChangeMap.valid())
     {
@@ -367,7 +368,8 @@ bool Foam::gunTopoFvMesh::update()
             motionMask_ = vertexMarkup(topoChangeMap().preMotionPoints());
 
             // Move points inside the motionMask
-            newPoints = topoChangeMap().preMotionPoints() + pointsDisplacement;
+            newPoints = topoChangeMap().preMotionPoints()
+                      + pointsDisplacement * motionMask_;
         }
         else
         {
@@ -376,14 +378,17 @@ bool Foam::gunTopoFvMesh::update()
             motionMask_ = vertexMarkup(points());
 
             // Move points inside the motionMask
-            newPoints = points() + pointsDisplacement;
+            newPoints = points()
+                      + pointsDisplacement * motionMask_;
         }
     }
     else
     {
         Info<< "No topology change" << endl;
+
         // Set the mesh motion
-        newPoints = points() + pointsDisplacement;
+        newPoints = points()
+                  + pointsDisplacement * motionMask_;
     }
 
     // The mesh now contains the cells with zero volume
@@ -391,7 +396,7 @@ bool Foam::gunTopoFvMesh::update()
     movePoints(newPoints);
     //  The mesh now has got non-zero volume cells
 
-    updateExtrudeLayerPosition();
+    //updateExtrudeLayerPosition();
 
     return true;
 }
