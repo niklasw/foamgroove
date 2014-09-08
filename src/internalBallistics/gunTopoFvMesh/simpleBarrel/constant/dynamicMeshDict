@@ -33,7 +33,7 @@ gunTopoFvMeshCoeffs
     {
         minThickness        5e-4;   //- Minimum allowed layer thickness
         maxThickness        45e-4;  //- Maximum allowed layer thickness
-        tolerance               1e-12;
+        tolerance               1e-3;
     }
 }
 

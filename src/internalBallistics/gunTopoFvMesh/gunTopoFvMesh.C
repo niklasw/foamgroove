@@ -360,10 +360,11 @@ bool Foam::gunTopoFvMesh::update()
         Info<< "Topology change. Calculating motion points" << endl;
 
         updateMappedFaces(topoChangeMap());
-        
+
         const labelList& revMap = topoChangeMap().reversePointMap();
         const labelList& pointMap = topoChangeMap().pointMap();
 
+        Info << "revMap\tpointMap" << endl;
         forAll (revMap, i)
         {
             Info << revMap[i] <<"\t" << pointMap[i] << endl;
