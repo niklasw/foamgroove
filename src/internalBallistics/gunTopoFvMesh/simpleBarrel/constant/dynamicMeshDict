@@ -28,6 +28,8 @@ gunTopoFvMeshCoeffs
 
     growthLayerPosition     0.0;   //- Initial position at lower turn
 
+    barrelPointSet          barrelPoints;
+    extrusionFaceSet        extrusionFaces;
 
     extrusion
     {
