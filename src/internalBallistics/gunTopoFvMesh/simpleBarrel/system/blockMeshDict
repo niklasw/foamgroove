@@ -18,19 +18,19 @@ convertToMeters 0.01;
 
 vertices
 (
-    (0 0 -2)
-    (1 0 -2)
-    (1 1 -2)
-    (0 1 -2)
-    (0 0 10)
-    (1 0 10)
-    (1 1 10)
-    (0 1 10)
+    (0 0 -1)
+    (1 0 -1)
+    (1 1 -1)
+    (0 1 -1)
+    (0 0  1)
+    (1 0  1)
+    (1 1  1)
+    (0 1  1)
 );
 
 blocks
 (
-    hex (0 1 2 3 4 5 6 7) (3 3 120) simpleGrading (1 1 1)
+    hex (0 1 2 3 4 5 6 7) (3 3 10) simpleGrading (1 1 1)
 );
 
 edges
@@ -39,7 +39,7 @@ edges
 
 boundary
 (
-    pistonWall
+    backWall
     {
         type wall;
         faces
@@ -47,7 +47,7 @@ boundary
             (0 3 2 1)
         );
     }
-    linerWall
+    barrelWall
     {
         type wall;
         faces
@@ -58,7 +58,7 @@ boundary
             (3 7 6 2)
         );
     }
-    cylinderTopWall
+    bulletWall
     {
         type wall;
         faces
