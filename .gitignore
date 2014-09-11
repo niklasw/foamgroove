@@ -3,3 +3,4 @@
 *.swp
 processor*
 linux64GccDPOpt
+*log
