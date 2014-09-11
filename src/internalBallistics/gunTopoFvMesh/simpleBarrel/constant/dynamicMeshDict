@@ -28,12 +28,14 @@ gunTopoFvMeshCoeffs
 
     growthLayerPosition     0.0;   //- Initial position at lower turn
 
+    barrelPointSet          barrelPoints;
+    extrusionFaceSet        extrusionFaces;
 
     extrusion
     {
         minThickness        5e-4;   //- Minimum allowed layer thickness
         maxThickness        45e-4;  //- Maximum allowed layer thickness
-        tolerance               1e-12;
+        tolerance               1e-3;
     }
 }
 
