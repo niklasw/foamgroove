@@ -3,3 +3,4 @@ foamClearPolyMesh
 blockMesh -dict system/blockMeshDict
 changeDictionaryLight
 transformPoints -rotate "((0 0 1) (1 0 0))"
+topoSet

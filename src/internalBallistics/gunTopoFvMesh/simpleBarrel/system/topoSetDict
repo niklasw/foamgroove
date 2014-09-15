@@ -16,54 +16,18 @@ FoamFile
 
 actions
 (
-    // Get both sides of ami
-    // ~~~~~~~~~~~~~~~~~~~~~
-
-    // Create faceZone for patch couple1
-    {
-        name    couple1Faces;
-        type    faceSet;
-        action  new;
-        source  patchToFace;
-        sourceInfo
-        {
-            name    couple1;
-        }
-    }
-    {
-        name    couple1Faces;
-        type    faceZoneSet;
-        action  new;
-        source  setToFaceZone;
-        sourceInfo
-        {
-            faceSet couple1Faces;
-        }
-    }
-
-    // Create faceZone for patch couple2
-    {
-        name    couple2Faces;
-        type    faceSet;
-        action  new;
-        source  patchToFace;
-        sourceInfo
-        {
-            name    couple2;
-        }
-    }
-    {
-        name    couple2Faces;
-        type    faceZoneSet;
-        action  new;
-        source  setToFaceZone;
-        sourceInfo
-        {
-            faceSet couple2Faces;
-        }
-    }
 
     // Create the barrel mesh sets
+    {
+        name extrusionFaces;
+        type faceSet;
+        action new;
+        source  boxToFace;
+        sourceInfo
+        {
+            box (-1e-4 -10 -10) (1e-4 10 10);
+        }
+    }
 
     {
         name barrelPoints;
@@ -72,20 +36,31 @@ actions
         source boxToPoint;
         sourceInfo
         {
-            box (-10 -10 -10) (-0.1 10 0.001);
+            box (-10 -10 -10) (10 10 10);
+        }
+    }
+    {
+        name motionPoints;
+        type pointSet;
+        action new;
+        source pointToPoint;
+        sourceInfo
+        {
+           set barrelPoints;
         }
     }
 
     {
-        name barrelPoints;
-        type pointZoneSet;
-        action new;
-        source  setToPointZone;
+        name motionPoints;
+        type pointSet;
+        action subset;
+        source boxToPoint;
         sourceInfo
         {
-            set barrelPoints;
+            box (1e-4 -10 -10) (10 10 10);
         }
     }
+
 );
 
 // ************************************************************************* //

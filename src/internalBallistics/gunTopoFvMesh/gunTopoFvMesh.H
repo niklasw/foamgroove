@@ -130,6 +130,8 @@ class gunTopoFvMesh
         //- Add mixer zones and modifiers
         void addZonesAndModifiers();
 
+        // void updateFaceZone();
+
         void updateMappedFaces(const mapPolyMesh&);
 
         //- Find which points to move

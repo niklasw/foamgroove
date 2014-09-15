@@ -100,13 +100,10 @@ Foam::tmp<Foam::scalarField> Foam::gunTopoFvMesh::vertexMarkup
     forAll(motionPoints_, pI)
     {
         label gP = motionPoints_[pI];
-        if (p[gP].x() > growthLayerPosition_+tolerance_) // CHECK DIRECTION!
-        {
-            vertexMarkup[gP] = 1;
-        }
+        vertexMarkup[gP] = 1;
     }
 
-    Info << "\tBarrel info: "
+    Info << "\tFoam::gunTopoFvMesh::vertexMarkup "
          << "Number of vertices marked for motion = "
          << gSum(vertexMarkup) << endl;
 
@@ -122,13 +119,21 @@ List<label> Foam::gunTopoFvMesh::addedPoints(const mapPolyMesh& topoMap) const
 
     forAll(revMap,i)
     {
-        Info << revMap[i] << "\t"
-             << pointMap[i] << endl;
         if (revMap[i] != pointMap[i])
         {
             newPts.append(revMap[i]);
         }
     }
+
+    List<point>  newMeshPoints(newPts.size());
+    forAll(newPts,i)
+    {
+        newMeshPoints[i] = points()[newPts[i]];
+    }
+
+    Foam::boundBox bb(newMeshPoints);
+
+    Info << "Foam::gunTopoFvMesh::addedPoints bounding box:\n" << bb << endl;
 
     Info << "Foam::gunTopoFvMesh::addedPoints:\n" << newPts << endl;
     return newPts;
@@ -166,18 +171,24 @@ void Foam::gunTopoFvMesh::updateGunPointLabels
     label nMeshPoints = revPointMap.size();
     label nNewPoints = nMeshPoints - nOldPoints_;
 
+    //- Assumption: all new points will be motion points
     for ( int i=nOldPoints_; i<nMeshPoints; i++)
     {
         gunPoints_.append(revPointMap[i]);
-
+        motionPoints_.append(revPointMap[i]);
     }
 
     //- Only informative below.
     label pointCount = gunPoints_.size();
     reduce(pointCount, sumOp<label>());
-
-    Info << "\tBarrel info: "
+    Info << "\tFoam::gunTopoFvMesh::updateGunPointLabels : "
          << "Number of vertices marked for gun = "
+         << pointCount << " (+" << nNewPoints << ")"<< endl;
+
+    pointCount = motionPoints_.size();
+    reduce(pointCount, sumOp<label>());
+    Info << "\tFoam::gunTopoFvMesh::updateGunPointLabels: "
+         << "Number of vertices marked for motion = "
          << pointCount << " (+" << nNewPoints << ")"<< endl;
 
 }
@@ -216,7 +227,7 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
     // faceZone in mesh. Flipmap not OK now
     faceSet extrusionSet(*this, extrusionFaceSet_);
     SortableList<label> zone1(extrusionSet.toc());
-    List<bool> flipZone1(extrusionSet.size(), false);
+    List<bool> flipZone1(extrusionSet.size(), true);
 
     forAll(zone1, faceI)
     {
@@ -272,6 +283,30 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
 
     write();
 }
+
+/*
+void Foam::gunTopoFvMesh::updateFaceZone()
+{
+    const vectorField& fa = faceAreas();
+
+    faceZone& fz = faceZones()[0];
+
+    labelList faceZoneLabels = fz;
+    // Read faceSet and create and insert initial
+    // faceZone in mesh. Flipmap not OK now
+    List<bool> flipZone1(faceZoneLabels.size(), false);
+
+    forAll(fz, faceI)
+    {
+        if ((fa[faceI] & aimVector_) < 0)
+        {
+            flipZone1[faceI] = true;
+        }
+    }
+
+    fz.resetAddressing(faceZoneLabels,flipZone1);
+}
+*/
 
 void Foam::gunTopoFvMesh::updateMappedFaces(const mapPolyMesh& topoChangeMap )
 {
@@ -377,7 +412,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     exitVelocity_(readScalar(motionDict_.lookup("exitVelocity"))),
     curMotionVel_(curMotionVel()),
     currentPosition_(initialPosition_),
-    growthLayerPosition_(readScalar(motionDict_.lookup("growthLayerPosition"))),
+    growthLayerPosition_(0),
     tolerance_(SMALL),
     gunPoints_(0),
     motionPoints_(0),
@@ -393,6 +428,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
 
     aimVector_ /= (mag(aimVector_)+SMALL);
 
+    /*
     if
     (
         motionDict_.subDict("extrusion").readIfPresent("tolerance",tolerance_)
@@ -401,6 +437,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
         Info << "Point search tolerance read from dict = "
              << tolerance_ << endl;
     }
+    */
     Info<< "Initial time:" << time().value()
         << " Initial curMotionVel_:" << curMotionVel_
         << endl;
@@ -446,19 +483,14 @@ bool Foam::gunTopoFvMesh::update()
     {
         Info<< "Topology change. Calculating motion points" << endl;
 
-        addedPoints(topoChangeMap());
-        
-        /*
-        forAll (topoChangeMap().pointMap(), i)
-        {
-            Info << topoChangeMap().reversePointMap()[i] << "\t"
-                 << topoChangeMap().pointMap()[i] << endl;
-        }
-        */
-
         updateGunPointLabels(topoChangeMap().reversePointMap());
 
         updateMappedFaces(topoChangeMap());
+
+        forAll(points(),i)
+        {
+            Info << topoChangeMap().preMotionPoints()[i] - points()[i] << endl;
+        }
 
         if (topoChangeMap().hasMotionPoints())
         {
