@@ -146,21 +146,6 @@ void Foam::gunTopoFvMesh::gunMarkup()
 
     gunPoints_.append(barrelPoints.toc());
     motionPoints_.append(motionPoints.toc());
-
-    //- Only informative below.
-    label nPoints = gunPoints_.size();
-    label mPoints = motionPoints_.size();
-
-    reduce(nPoints, sumOp<label>());
-    reduce(mPoints, sumOp<label>());
-
-    Info << "\tBarrel info: "
-         << "Number of vertices marked for gun = "
-         << nPoints << endl;
-
-    Info << "\tBarrel info: "
-         << "Number of vertices marked for motion = "
-         << mPoints << endl;
 }
 
 void Foam::gunTopoFvMesh::updateGunPointLabels
@@ -169,7 +154,6 @@ void Foam::gunTopoFvMesh::updateGunPointLabels
 )
 {
     label nMeshPoints = revPointMap.size();
-    label nNewPoints = nMeshPoints - nOldPoints_;
 
     //- Assumption: all new points will be motion points
     for ( int i=nOldPoints_; i<nMeshPoints; i++)
@@ -177,20 +161,6 @@ void Foam::gunTopoFvMesh::updateGunPointLabels
         gunPoints_.append(revPointMap[i]);
         motionPoints_.append(revPointMap[i]);
     }
-
-    //- Only informative below.
-    label pointCount = gunPoints_.size();
-    reduce(pointCount, sumOp<label>());
-    Info << "\tFoam::gunTopoFvMesh::updateGunPointLabels : "
-         << "Number of vertices marked for gun = "
-         << pointCount << " (+" << nNewPoints << ")"<< endl;
-
-    pointCount = motionPoints_.size();
-    reduce(pointCount, sumOp<label>());
-    Info << "\tFoam::gunTopoFvMesh::updateGunPointLabels: "
-         << "Number of vertices marked for motion = "
-         << pointCount << " (+" << nNewPoints << ")"<< endl;
-
 }
 
 void Foam::gunTopoFvMesh::addZonesAndModifiers()
@@ -227,11 +197,13 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
     // faceZone in mesh. Flipmap not OK now
     faceSet extrusionSet(*this, extrusionFaceSet_);
     SortableList<label> zone1(extrusionSet.toc());
-    List<bool> flipZone1(extrusionSet.size(), true);
+    List<bool> flipZone1(extrusionSet.size(), false);
 
     forAll(zone1, faceI)
     {
-        if ((fa[faceI] & aimVector_) < 0)
+        label fzI = zone1[faceI];
+        Info << fa[fzI] << "\t" << aimVector_ << endl;
+        if ((fa[fzI] & aimVector_) < 0)
         {
             flipZone1[faceI] = true;
         }
@@ -250,7 +222,6 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
             0,
             faceZones()
         );
-
 
     addZones(pz, fz, cz);
 
@@ -283,30 +254,6 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
 
     write();
 }
-
-/*
-void Foam::gunTopoFvMesh::updateFaceZone()
-{
-    const vectorField& fa = faceAreas();
-
-    faceZone& fz = faceZones()[0];
-
-    labelList faceZoneLabels = fz;
-    // Read faceSet and create and insert initial
-    // faceZone in mesh. Flipmap not OK now
-    List<bool> flipZone1(faceZoneLabels.size(), false);
-
-    forAll(fz, faceI)
-    {
-        if ((fa[faceI] & aimVector_) < 0)
-        {
-            flipZone1[faceI] = true;
-        }
-    }
-
-    fz.resetAddressing(faceZoneLabels,flipZone1);
-}
-*/
 
 void Foam::gunTopoFvMesh::updateMappedFaces(const mapPolyMesh& topoChangeMap )
 {
@@ -428,16 +375,6 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
 
     aimVector_ /= (mag(aimVector_)+SMALL);
 
-    /*
-    if
-    (
-        motionDict_.subDict("extrusion").readIfPresent("tolerance",tolerance_)
-    )
-    {
-        Info << "Point search tolerance read from dict = "
-             << tolerance_ << endl;
-    }
-    */
     Info<< "Initial time:" << time().value()
         << " Initial curMotionVel_:" << curMotionVel_
         << endl;
@@ -487,11 +424,6 @@ bool Foam::gunTopoFvMesh::update()
 
         updateMappedFaces(topoChangeMap());
 
-        forAll(points(),i)
-        {
-            Info << topoChangeMap().preMotionPoints()[i] - points()[i] << endl;
-        }
-
         if (topoChangeMap().hasMotionPoints())
         {
             Info<< "Topology change. Has premotion points" << endl;
@@ -526,6 +458,7 @@ bool Foam::gunTopoFvMesh::update()
     // The mesh now contains the cells with zero volume
     Info << "Executing mesh motion" << endl;
     movePoints(newPoints);
+    Info << "Executed mesh motion" << endl;
     //  The mesh now has got non-zero volume cells
 
     //updateExtrudeLayerPosition();
