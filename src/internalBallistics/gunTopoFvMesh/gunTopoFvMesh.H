@@ -74,6 +74,7 @@ class gunTopoFvMesh
         const scalar barrelLength_;
 
         const word barrelPointSet_;
+        const word motionPointSet_;
 
         const word extrusionFaceSet_;
 
@@ -95,6 +96,7 @@ class gunTopoFvMesh
         scalar tolerance_;
 
         labelList gunPoints_;
+        labelList motionPoints_;
 
         label nOldPoints_;
         //- Vertex motion mask
@@ -130,12 +132,15 @@ class gunTopoFvMesh
 
         void updateMappedFaces(const mapPolyMesh&);
 
+        //- Find which points to move
+
         //- Markup motion vertices
         tmp<scalarField> vertexMarkup(const pointField& p) const;
 
+        List<label> addedPoints(const mapPolyMesh& topoMap) const;
         //- Use in constructor, to initiate points belonging to
         //  the barrel part of the mesh
-        void gunMarkup(const pointSet& p);
+        void gunMarkup();
 
         //- Insert newly creted points in the list of points
         //  belonging to the barrel part of the mesh

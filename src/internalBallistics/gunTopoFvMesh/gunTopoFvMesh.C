@@ -87,12 +87,19 @@ Foam::tmp<Foam::scalarField> Foam::gunTopoFvMesh::vertexMarkup
     const pointField& p
 ) const
 {
+    /*
+     * Try this instead: Get a list of moving points
+     * then a list of added points. Use the union of these
+     * to create mask
+     *
+     * Look for the addedPointMap
+     */
     tmp<scalarField> tvertexMarkup(new scalarField(p.size(),0.0));
     scalarField& vertexMarkup = tvertexMarkup();
 
-    forAll(gunPoints_, pI)
+    forAll(motionPoints_, pI)
     {
-        label gP = gunPoints_[pI];
+        label gP = motionPoints_[pI];
         if (p[gP].x() > growthLayerPosition_+tolerance_) // CHECK DIRECTION!
         {
             vertexMarkup[gP] = 1;
@@ -106,19 +113,49 @@ Foam::tmp<Foam::scalarField> Foam::gunTopoFvMesh::vertexMarkup
     return tvertexMarkup;
 }
 
-void Foam::gunTopoFvMesh::gunMarkup
-(
-    const Foam::pointSet& p
-)
+List<label> Foam::gunTopoFvMesh::addedPoints(const mapPolyMesh& topoMap) const
 {
-    gunPoints_.append(p.toc());
+    const List<label>& pointMap = topoMap.pointMap();
+    const List<label>& revMap = topoMap.reversePointMap();
+
+    List<label> newPts(0);
+
+    forAll(revMap,i)
+    {
+        Info << revMap[i] << "\t"
+             << pointMap[i] << endl;
+        if (revMap[i] != pointMap[i])
+        {
+            newPts.append(revMap[i]);
+        }
+    }
+
+    Info << "Foam::gunTopoFvMesh::addedPoints:\n" << newPts << endl;
+    return newPts;
+}
+
+void Foam::gunTopoFvMesh::gunMarkup()
+{
+    pointSet barrelPoints(*this,barrelPointSet_);
+    pointSet motionPoints(*this,motionPointSet_);
+
+    gunPoints_.append(barrelPoints.toc());
+    motionPoints_.append(motionPoints.toc());
+
+    //- Only informative below.
     label nPoints = gunPoints_.size();
+    label mPoints = motionPoints_.size();
 
     reduce(nPoints, sumOp<label>());
+    reduce(mPoints, sumOp<label>());
 
     Info << "\tBarrel info: "
          << "Number of vertices marked for gun = "
          << nPoints << endl;
+
+    Info << "\tBarrel info: "
+         << "Number of vertices marked for motion = "
+         << mPoints << endl;
 }
 
 void Foam::gunTopoFvMesh::updateGunPointLabels
@@ -135,6 +172,7 @@ void Foam::gunTopoFvMesh::updateGunPointLabels
 
     }
 
+    //- Only informative below.
     label pointCount = gunPoints_.size();
     reduce(pointCount, sumOp<label>());
 
@@ -332,6 +370,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     boltPosition_(motionDict_.lookup("boltPosition")),
     barrelLength_(readScalar(motionDict_.lookup("barrelLength"))),
     barrelPointSet_(motionDict_.lookupOrDefault<word>("barrelPointSet","barrelPoints")),
+    motionPointSet_(motionDict_.lookupOrDefault<word>("motionPointSet","motionPoints")),
     extrusionFaceSet_(motionDict_.lookupOrDefault<word>("extrusionFaceSet", "extrusionFaces")),
     initialPosition_(readScalar(motionDict_.lookup("initialPosition"))),
     initialVelocity_(readScalar(motionDict_.lookup("initialVelocity"))),
@@ -341,6 +380,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     growthLayerPosition_(readScalar(motionDict_.lookup("growthLayerPosition"))),
     tolerance_(SMALL),
     gunPoints_(0),
+    motionPoints_(0),
     nOldPoints_(0)
 {
     //normalize aimVector
@@ -369,9 +409,7 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
 
     updateExtrudeLayerPosition();
 
-    pointSet barrelPoints(*this,barrelPointSet_);
-
-    gunMarkup(barrelPoints);
+    gunMarkup();
 
     motionMask_ = vertexMarkup(points());
 }
@@ -401,14 +439,22 @@ bool Foam::gunTopoFvMesh::update()
 
     debugInfo();
 
-    Info << "Aim vector = " << aimVector_ << endl;
-
     vector pointsDisplacement =
         aimVector_ * curMotionVel_*time().deltaT().value();
 
     if (topoChangeMap.valid())
     {
         Info<< "Topology change. Calculating motion points" << endl;
+
+        addedPoints(topoChangeMap());
+        
+        /*
+        forAll (topoChangeMap().pointMap(), i)
+        {
+            Info << topoChangeMap().reversePointMap()[i] << "\t"
+                 << topoChangeMap().pointMap()[i] << endl;
+        }
+        */
 
         updateGunPointLabels(topoChangeMap().reversePointMap());
 
