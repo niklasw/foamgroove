@@ -48,6 +48,7 @@ SourceFiles
 #define oceanWaveInletPhaseFvPatchScalarField_H
 
 #include "fixedValueFvPatchFields.H"
+#include "oceanWaveFunctions.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -63,14 +64,8 @@ class oceanWaveInletPhaseFvPatchScalarField
     public fixedValueFvPatchScalarField
 {
     // Private data
-
-        scalar seaLevel_;
-        scalar waveHeight_;
-        scalar waveLength_;
-        scalar waterDepth_;
-        scalar waveVelocity_;
-        vector waveDirection_;
-        vector g_;
+    
+    oceanWaveFunctions owf_;
 
     // Private functions
         tmp<scalarField> surfacePosition();
