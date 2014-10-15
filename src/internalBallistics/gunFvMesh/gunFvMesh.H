@@ -113,7 +113,7 @@ class gunFvMesh
         //- Find which points to move
 
         //- Get bounding box for barrel mesh
-        const boundBox gunBounds() const;
+        const boundBox gunBounds(const List<label>& pointLabels) const;
 
         //- Markup motion vertices
         tmp<scalarField> motionMask() const;

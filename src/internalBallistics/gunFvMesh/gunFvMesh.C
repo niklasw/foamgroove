@@ -60,13 +60,13 @@ void Foam::gunFvMesh::debugInfo()
     return;
 }
 
-const boundBox Foam::gunFvMesh::gunBounds() const
+const boundBox Foam::gunFvMesh::gunBounds(const List<label>& pointLabels) const
 {
-    List<point> motionPointList(motionPoints_.size());
+    List<point> motionPointList(pointLabels.size());
 
-    forAll(motionPoints_,i)
+    forAll(pointLabels,i)
     {
-        motionPointList[i] = points()[motionPoints_[i]];
+        motionPointList[i] = points()[pointLabels[i]];
     }
     return  boundBox(motionPointList);
 }
@@ -76,17 +76,18 @@ Foam::tmp<Foam::scalarField> Foam::gunFvMesh::motionMask() const
     tmp<scalarField> tmotionMask(new scalarField(points().size(),0.0));
     scalarField& motionMask = tmotionMask();
 
-    boundBox motionBB = gunBounds();
+    boundBox barrelBB = gunBounds(gunPoints_);
+    boundBox motionBB = gunBounds(motionPoints_);
 
-    scalar expansionLength = motionBB.min().x() - boltPosition_.x();
+    scalar expansionLength = motionBB.min().x() - barrelBB.min().x();
 
     forAll(gunPoints_, i)
     {
         label curPointI = gunPoints_[i];
         point curPoint = points()[curPointI];
 
-        scalar boltDistance = curPoint.x()-boltPosition_.x();
-        
+        scalar boltDistance = curPoint.x()-barrelBB.min().x();
+
         motionMask[curPointI] = max(min(Foam::pow(boltDistance/expansionLength,0.8), 1.0),0.0);
     }
 
@@ -104,16 +105,39 @@ void Foam::gunFvMesh::gunMarkup()
 
 void Foam::gunFvMesh::linearizeU() const
 {
-    if (time().value() == 0.0)
+    if
+    (
+        (! foundObject<volVectorField>("U"))
+     || (! foundObject<volScalarField>("p"))
+     || (! foundObject<volScalarField>("rho"))
+    )
     {
+        return;
+    }
+    if (time().value() <= time().deltaT().value())
+    {
+        Info << "WARNING: Foam::gunFvMesh::linearizeU() sets linear U in barrel" << endl;
         volVectorField& U = const_cast<volVectorField&>
                             (
                                 lookupObject<volVectorField>("U")
                             );
 
-        boundBox bb = gunBounds();
+        volScalarField& p = const_cast<volScalarField&>
+                            (
+                                lookupObject<volScalarField>("p")
+                            );
+
+        volScalarField& rho = const_cast<volScalarField&>
+                            (
+                                lookupObject<volScalarField>("rho")
+                            );
+
+        boundBox bb = gunBounds(gunPoints_);
         scalar bbMin = bb.min().x();
         scalar bbLength = bb.max().x()-bb.min().x();
+
+        Info << "U is linearized in x > " << bb.min().x()
+                               << " x < " << bb.max().x() << endl;
 
         forAll (cellCentres(), i)
         {
@@ -122,11 +146,14 @@ void Foam::gunFvMesh::linearizeU() const
             if ( bb.contains(C) )
             {
                 scalar fraction = (C.x()-bbMin)/bbLength;
-                U[i] *= fraction;
+                U[i] = initialVelocity_*fraction*aimVector_;
+                p[i] -= 0.5*rho[i]*Foam::magSqr(U[i]);
             }
         }
+        U.write();
+        p.write();
     }
-} 
+}
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -179,6 +206,7 @@ Foam::gunFvMesh::gunFvMesh(const IOobject& io)
         << endl;
 
     gunMarkup();
+
 }
 
 
@@ -194,7 +222,6 @@ bool Foam::gunFvMesh::update()
 {
     linearizeU();
 
-    Info << "Entering Foam::gunFvMesh::update()" << endl;
     nOldPoints_ = points().size();
 
     pointField newPoints;
