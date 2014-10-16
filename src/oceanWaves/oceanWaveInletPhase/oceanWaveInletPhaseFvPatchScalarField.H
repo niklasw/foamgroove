@@ -26,16 +26,41 @@ Class
     Foam::oceanWaveInletPhaseFvPatchScalarField
 
 Description
-    Calculate turbulent kinetic energy from the intensity provided as a
-    fraction of the mean velocity
+    Inlet boundary condition to alpha.water derived from fixedValue.
+
+    Calculate wave elevation at inlet according to Stokes second order
+    ocean waves. This BC for alpha.water must be set together with
+    oceanWaveInletVelocity BC for the U inlet BC.
+
+    oceanWaveInletPhase and oceanWaveInletVelocity both depend on a 
+    constant/oceanWavesDict file, which reads
+
+    FoamFile
+    {
+        version     2.0;
+        format      ascii;
+        class       dictionary;
+        location    "constant";
+        object      oceanWavesDict;
+    }
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+    
+    seaLevel                   0;  // Still water sea level
+    waveHeight              0.05;
+    waveLength               0.4;
+    waterDepth               0.5;
+    freeStreamVelocity (0.8 0 0);
+    waveDirection        (1 0 0);
+    
+    // ************************************************************************* //
+
 
     Example of the boundary condition specification:
     @verbatim
         inlet
         {
             type        oceanWaveInletPhase;
-            intensity   0.05;           // 5% turbulence
-            value       uniform 1;      // placeholder
+            value       uniform 1;
         }
     @endverbatim
 
