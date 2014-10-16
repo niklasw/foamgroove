@@ -39,8 +39,8 @@ surfacePosition()
     scalarField X = patch().Cf() & owf_.waveDirection();
     scalar t = db().time().timeOutputValue();
 
-    tmp<scalarField> inletSurfaceTmp(new scalarField(this->size(),1.0));
-    scalarField& inletSurface = inletSurfaceTmp();
+    tmp<scalarField> tInletSurface(new scalarField(this->size(),1.0));
+    scalarField& inletSurface = tInletSurface();
 
     scalar h = owf_.elevation(t,0.0);
 
@@ -52,7 +52,7 @@ surfacePosition()
             inletSurface[faceI] = 0;
         }
     }
-    return inletSurfaceTmp;
+    return tInletSurface;
 }
 
 Foam::oceanWaveInletPhaseFvPatchScalarField::

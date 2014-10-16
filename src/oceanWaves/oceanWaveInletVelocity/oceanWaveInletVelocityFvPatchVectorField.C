@@ -35,7 +35,7 @@ License
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Foam::vectorField Foam::oceanWaveInletVelocityFvPatchVectorField::
+Foam::tmp<Foam::vectorField> Foam::oceanWaveInletVelocityFvPatchVectorField::
 inletVelocity()
 {
     /* Note: omega = c*k */
@@ -43,7 +43,8 @@ inletVelocity()
     scalarField X = patch().Cf() & owf_.waveDirection();
     scalar t = db().time().timeOutputValue();
 
-    vectorField inletVelocity(this->size(),vector(0,0,0));
+    tmp<vectorField> tInletVelocity(new vectorField(this->size(),vector(0,0,0)));
+    vectorField& inletVelocity = tInletVelocity();
 
     scalar h = owf_.elevation(t,0.0);
 
@@ -60,7 +61,7 @@ inletVelocity()
             inletVelocity[faceI] = owf_.waveVelocities(x,z,t);
         }
     }
-    return inletVelocity;
+    return tInletVelocity;
 }
 
 
@@ -79,14 +80,14 @@ Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVec
 
 Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVectorField
 (
-    const oceanWaveInletVelocityFvPatchVectorField& pivpvf,
+    const oceanWaveInletVelocityFvPatchVectorField& pvf,
     const fvPatch& p,
     const DimensionedField<vector, volMesh>& iF,
     const fvPatchFieldMapper& mapper
 )
 :
-    fixedValueFvPatchField<vector>(pivpvf, p, iF, mapper),
-    owf_(pivpvf.owf_)
+    fixedValueFvPatchField<vector>(pvf, p, iF, mapper),
+    owf_(pvf.owf_)
 {}
 
 
@@ -104,22 +105,22 @@ Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVec
 
 Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVectorField
 (
-    const oceanWaveInletVelocityFvPatchVectorField& pivpvf
+    const oceanWaveInletVelocityFvPatchVectorField& pvf
 )
 :
-    fixedValueFvPatchField<vector>(pivpvf),
-    owf_(pivpvf.owf_)
+    fixedValueFvPatchField<vector>(pvf),
+    owf_(pvf.owf_)
 {}
 
 
 Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVectorField
 (
-    const oceanWaveInletVelocityFvPatchVectorField& pivpvf,
+    const oceanWaveInletVelocityFvPatchVectorField& pvf,
     const DimensionedField<vector, volMesh>& iF
 )
 :
-    fixedValueFvPatchField<vector>(pivpvf, iF),
-    owf_(pivpvf.owf_)
+    fixedValueFvPatchField<vector>(pvf, iF),
+    owf_(pvf.owf_)
 {}
 
 

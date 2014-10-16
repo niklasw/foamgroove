@@ -58,9 +58,12 @@ class oceanWaveFunctions
     public:
         oceanWaveFunctions(const objectRegistry& db);
         oceanWaveFunctions();
-        oceanWaveFunctions(const oceanWaveFunctions& owf);
-        ~oceanWaveFunctions();
 
+        /* Probably, the automatic copy constructor suffice
+        oceanWaveFunctions(const oceanWaveFunctions& owf);
+
+        ~oceanWaveFunctions();
+        */
 
         scalar waveNumber();
 

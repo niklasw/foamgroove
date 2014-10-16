@@ -57,7 +57,7 @@ class oceanWaveInletVelocityFvPatchVectorField
     oceanWaveFunctions owf_;
 
     // Private functions
-        vectorField inletVelocity();
+    tmp<vectorField> inletVelocity();
 public:
 
     //- Runtime type information
