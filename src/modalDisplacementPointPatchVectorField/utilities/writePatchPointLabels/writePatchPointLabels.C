@@ -32,6 +32,7 @@ Description
 #include "fvCFD.H"
 #include "volFields.H"
 #include "IOobjectList.H"
+
 //#include "SortableList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -40,6 +41,7 @@ int main(int argc, char *argv[])
 {
     argList::noParallel();
     argList::addOption("patches","patches","Word list of patch names");
+    argList::addBoolOption("writePoints","Also write point lists");
 
 #   include "setRootCase.H"
 #   include "createTime.H"
@@ -98,6 +100,37 @@ int main(int argc, char *argv[])
         );
 
         patchPointLabels.write();
+
+        if (args.optionFound("writePoints"))
+        {
+            Info << "Writing patch points for patch "
+                 << patch.name() << "\n" << endl;
+
+            IOobject patchPointsHdr
+            (
+                "points_"+patch.name(),
+                runTime.constant(),
+                "structuralModes",
+                runTime,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            );
+
+            List<vector> pointList(patch.meshPoints().size());
+
+            forAll(patch.meshPoints(), i)
+            {
+                pointList[i] = mesh.points()[patch.meshPoints()[i]];
+            }
+
+            IOList<vector> patchPointsIO
+            (
+                patchPointsHdr,
+                pointList
+            );
+
+            patchPointsIO.write();
+        }
     }
 
     Info<< "End\n" << endl;
