@@ -41,7 +41,7 @@ def elevation(wh,wl,wd,t):
 
 wh = 0.2
 wl = 2.0
-wd = 2.2
+wd = 10.0
 g  = 9.81
 
 c = celerity(wl,wd,g)
@@ -52,7 +52,8 @@ T = arange(0,pi/2,0.01)
 
 h,h1,h2 = elevation(wh,wl,wd,T)
 
-plot(T,h)
-plot(T,h1)
-plot(T,h2)
+plot(T,h,label='h')
+plot(T,h1,label='h1')
+plot(T,h2,label='h2')
+legend()
 show()
