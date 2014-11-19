@@ -51,6 +51,9 @@ Description
     waterDepth               0.5;
     freeStreamVelocity (0.8 0 0);
     waveDirection        (1 0 0);
+    rampStart                 0.1;
+    rampDuration              0.5;  // Ramping is mandatory, since the wave
+                                    // functions are cosine
     
     // ************************************************************************* //
 

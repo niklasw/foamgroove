@@ -28,6 +28,8 @@ Class
 Description
     Foam::oceanWaveInletVelocityFvPatchVectorField
 
+    See oceanWaveInletPhaseFvPatchSalarField
+
 SourceFiles
     oceanWaveInletVelocityFvPatchVectorField.C
 

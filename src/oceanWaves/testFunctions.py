@@ -40,7 +40,7 @@ def elevation(wh,wl,wd,t):
 
 
 wh = 0.2
-wl = 2.0
+wl = 9.0
 wd = 10.0
 g  = 9.81
 
@@ -51,10 +51,9 @@ print 'k*a =a*2pi/L = {0}'.format(wh/2*2*pi/wl)
 
 T = arange(0,period(c,k),0.01)
 
-h,h1,h2 = elevation(wh,wl,wd,T)
-
-plot(T,h,label='h')
-plot(T,h1,label='h1')
-plot(T,h2,label='h2')
+for wl in arange(1.0,11,1):
+    h,h1,h2 = elevation(wh,wl,wd,T)
+    plot(T,h,label=str(wl))
 legend()
+grid()
 show()

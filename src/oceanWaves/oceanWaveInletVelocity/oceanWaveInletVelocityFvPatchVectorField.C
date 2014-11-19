@@ -38,7 +38,6 @@ License
 Foam::tmp<Foam::vectorField> Foam::oceanWaveInletVelocityFvPatchVectorField::
 inletVelocity()
 {
-    /* Note: omega = c*k */
     scalarField Z = (patch().Cf() & owf_.up()) - owf_.seaLevel();
     scalarField X = patch().Cf() & owf_.waveDirection();
     scalar t = db().time().timeOutputValue();
@@ -75,7 +74,11 @@ Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVec
 :
     fixedValueFvPatchField<vector>(p, iF),
     owf_(db())
-{}
+{
+ 
+    Info << "Constructor 1" << endl;
+    owf_.info();
+}
 
 
 Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVectorField
@@ -88,7 +91,10 @@ Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVec
 :
     fixedValueFvPatchField<vector>(pvf, p, iF, mapper),
     owf_(pvf.owf_)
-{}
+{
+    Info << "Constructor 2" << endl;
+    owf_.info();
+}
 
 
 Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVectorField
@@ -100,7 +106,10 @@ Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVec
 :
     fixedValueFvPatchField<vector>(p, iF),
     owf_(db())
-{}
+{
+    Info << "Constructor 3" << endl;
+    owf_.info();
+}
 
 
 Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVectorField
@@ -110,7 +119,10 @@ Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVec
 :
     fixedValueFvPatchField<vector>(pvf),
     owf_(pvf.owf_)
-{}
+{
+    Info << "Constructor 4" << endl;
+    owf_.info();
+}
 
 
 Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVectorField
@@ -121,7 +133,10 @@ Foam::oceanWaveInletVelocityFvPatchVectorField::oceanWaveInletVelocityFvPatchVec
 :
     fixedValueFvPatchField<vector>(pvf, iF),
     owf_(pvf.owf_)
-{}
+{
+    Info << "Constructor 5" << endl;
+    owf_.info();
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -133,16 +148,14 @@ void Foam::oceanWaveInletVelocityFvPatchVectorField::updateCoeffs()
         return;
     }
 
-    vectorField::operator=(inletVelocity());
+    vectorField::operator==(inletVelocity());
 
     fixedValueFvPatchVectorField::updateCoeffs();
 }
 
-
 void Foam::oceanWaveInletVelocityFvPatchVectorField::write(Ostream& os) const
 {
     fvPatchVectorField::write(os);
-    //os.writeKeyword("freeStreamVelocity") << freeStreamVelocity_ << token::END_STATEMENT << nl;
     writeEntry("value", os);
 }
 

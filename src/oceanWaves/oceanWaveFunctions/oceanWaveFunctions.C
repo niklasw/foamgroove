@@ -31,13 +31,29 @@ SourceFiles
 \*---------------------------------------------------------------------------*/
 
 #include "oceanWaveFunctions.H"
-#include "mathematicalConstants.H"
 #include "uniformDimensionedFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
+
+scalar oceanWaveFunctions::smoothStep
+(
+        const scalar s0,
+        const scalar s1,
+        scalar x
+) const
+{
+    scalar out = 1;
+    if ((s1 - s0) > SMALL)
+    {
+        x = min(max(x,s0),s1);
+        x = (x - s0)/(s1 - s0);
+        out = pow(x,3)*(x*(x*6 - 15) + 10);
+    }
+    return out;
+}
 
 oceanWaveFunctions::oceanWaveFunctions(const objectRegistry& db)
 :
@@ -61,6 +77,8 @@ oceanWaveFunctions::oceanWaveFunctions(const objectRegistry& db)
     waveDirection_ = oceanWavesDict.lookupOrDefault("waveDirection",vector(1,0,0));
     freeStreamVelocity_ =
          oceanWavesDict.lookupOrDefault("freeStreamVelocity",vector(0,0,0));
+    rampStart_ = oceanWavesDict.lookupOrDefault("rampStart",scalar(0.0));
+    rampDuration_ = oceanWavesDict.lookupOrDefault("rampDuration",scalar(0.0));
 
     Info<< "\nReading g" << endl;
     uniformDimensionedVectorField g
@@ -76,54 +94,47 @@ oceanWaveFunctions::oceanWaveFunctions(const objectRegistry& db)
 
     g_ = g.value();
 
-    Info << "oceanWaveFunctions:\n"
+    info();
+}
+
+void oceanWaveFunctions::info() const
+{
+    Info << "oceanWaveFunctions::info()\n"
          << "\n - sea level      = " << seaLevel_
          << "\n - wave height    = " << waveHeight_
          << "\n - wave length    = " << waveLength_
          << "\n - wave number    = " << waveNumber()
          << "\n - wave direction = " << waveDirection_
          << "\n - phase velocity = " << celerity() 
+         << "\n - omega          = " << omega() 
          << "\n - wave period    = " << period() << nl << endl;
-
 }
 
-/* Probably, the automatic copy constructor suffice
-oceanWaveFunctions::oceanWaveFunctions(const oceanWaveFunctions& owf)
-:
-    db_(owf.db_),
-    seaLevel_(owf.seaLevel_),
-    waveHeight_(owf.waveHeight_),
-    waveLength_(owf.waveLength_),
-    waterDepth_(owf.waterDepth_),
-    waveDirection_(owf.waveDirection_),
-    freeStreamVelocity_(owf.freeStreamVelocity_),
-    g_(owf.g_)
-{}
-
-oceanWaveFunctions::~oceanWaveFunctions()
-{}
-*/
-
-scalar oceanWaveFunctions::waveNumber()
+scalar oceanWaveFunctions::waveNumber() const
 {
-    const scalar pi = constant::mathematical::pi;
-    return 2*pi/waveLength_;
+    return 2*pi()/waveLength_;
 }
 
-scalar oceanWaveFunctions::celerity()
+scalar oceanWaveFunctions::ramplitude(const scalar t) const
 {
-    const scalar pi = constant::mathematical::pi;
-    return sqrt(mag(g_)*waveLength_/(2*pi)*tanh(2*pi*waterDepth_/waveLength_));
+    return 0.5*waveHeight_
+         * smoothStep(rampStart_,rampStart_+rampDuration_,t);
+    
 }
 
-scalar oceanWaveFunctions::omega()
+scalar oceanWaveFunctions::celerity() const
+{
+    return sqrt(mag(g_)*waveLength_/(2*pi())*tanh(2*pi()*waterDepth_/waveLength_));
+}
+
+scalar oceanWaveFunctions::omega() const
 {
     return celerity()*waveNumber();
 }
 
-scalar oceanWaveFunctions::period()
+scalar oceanWaveFunctions::period() const
 {
-    return 2*constant::mathematical::pi/omega();
+    return 2*pi()/omega();
 }
 
 scalar oceanWaveFunctions::elevation
@@ -132,22 +143,23 @@ scalar oceanWaveFunctions::elevation
     const scalar x
 )
 {
-    scalar A = waveHeight_/2;
+    scalar A = ramplitude(t);
     scalar k = waveNumber();
     scalar kh = k*waterDepth_;
     scalar w = omega();
 
+    scalar Phi = k*x - w*t;
+
     scalar h;
+    scalar sigma = tanh(kh);
+
+    h= A*(cos(Phi)+k*A*(3-pow(sigma,2))/(4*pow(sigma,3))*cos(2*Phi));
 
     /*
     h = A*cos(w*t)
         + sqr(A)*k*cosh(kh)/(4*pow(sinh(2*kh),3))
         * (2+cosh(2*kh))*cos(2*(w*t));
     */
-
-    h = A*sin(w*t)
-        + sqr(A)*k*sinh(kh)/(4*pow(cosh(2*kh),3))
-        * (2+sinh(2*kh))*sin(2*(w*t));
 
     return h;
 }
@@ -160,46 +172,35 @@ vector oceanWaveFunctions::waveVelocities
 
 )
 {
-    scalar A = waveHeight_/2;
+    scalar A = ramplitude(t);
     scalar g = mag(g_);
     scalar k = waveNumber();
     scalar kh = k*waterDepth_;
-    scalar omega = celerity()*k;
-    scalar zh = z+waterDepth_;
+    scalar w = omega();
+    scalar kzh = k*(z+waterDepth_);
 
-    /*
-    ux = A*g*k
-            * cos(omega*t)
-            * sinh(k*zh)/(omega*cosh(kh))
-       + sqr(A)*omega*k
-            * cos(2*(omega*t))
-            * cosh(2*k*zh)/pow(sinh(kh),4);
+    scalar Phi = k*x - w*t;
 
-    uz = A*g*k
-            * sin(omega*t)
-            * cosh(k*(zh))/(omega*sinh(kh))
-       + sqr(A)*omega*k
-            * sin(2*(omega*t))
-            * sinh(2*k*zh)/pow(cosh(kh),4);
-    */
-
-    scalar ux,uz;
+    scalar ux;
+    scalar uz;
 
     ux = A*g*k
-            * sin(omega*t)
-            * cosh(k*zh)/(omega*sinh(kh))
-       + sqr(A)*omega*k
-            * sin(2*(omega*t))
-            * sinh(2*k*zh)/pow(cosh(kh),4);
+            * cosh(kzh)/(w*cosh(kh))
+            * cos(Phi)
+       + sqr(A)*w*k
+            * cosh(2*kzh)/pow(sinh(kh),4)
+            * cos(2*(Phi));
 
     uz = A*g*k
-            * cos(omega*t)
-            * sinh(k*(zh))/(omega*cosh(kh))
-       + sqr(A)*omega*k
-            * cos(2*(omega*t))
-            * cosh(2*k*zh)/pow(sinh(kh),4);
+            * sinh(kzh)/(w*sinh(kh))
+            * sin(Phi)
+       + sqr(A)*w*k
+            * sinh(2*kzh)/pow(cosh(kh),4)
+            * sin(2*(Phi));
 
-    return freeStreamVelocity()+ux*waveDirection()+uz*up();
+    return freeStreamVelocity()
+         + ux * waveDirection()
+         + uz * up();
 }
 
 } // End namespace Foam

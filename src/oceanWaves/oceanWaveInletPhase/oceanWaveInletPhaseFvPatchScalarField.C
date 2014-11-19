@@ -117,8 +117,7 @@ oceanWaveInletPhaseFvPatchScalarField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void Foam::oceanWaveInletPhaseFvPatchScalarField::
-updateCoeffs()
+void Foam::oceanWaveInletPhaseFvPatchScalarField::updateCoeffs()
 {
     if (updated())
     {

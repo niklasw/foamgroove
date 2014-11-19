@@ -37,6 +37,7 @@ SourceFiles
 #include "objectRegistry.H"
 #include "IOdictionary.H"
 #include "Time.H"
+#include "mathematicalConstants.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -53,7 +54,16 @@ class oceanWaveFunctions
         scalar waterDepth_;
         vector waveDirection_;
         vector freeStreamVelocity_;
+        scalar rampStart_;
+        scalar rampDuration_;
         vector g_;
+
+        scalar smoothStep
+        (
+                const scalar s0,
+                const scalar s1,
+                scalar x
+        ) const;
 
     public:
         oceanWaveFunctions(const objectRegistry& db);
@@ -65,13 +75,22 @@ class oceanWaveFunctions
         ~oceanWaveFunctions();
         */
 
-        scalar waveNumber();
+        static scalar pi()
+        {
+            return constant::mathematical::pi;
+        };
 
-        scalar celerity();
+        void info() const;
 
-        scalar omega();
+        scalar waveNumber() const;
 
-        scalar period();
+        scalar ramplitude(const scalar t) const;
+
+        scalar celerity() const;
+
+        scalar omega() const;
+
+        scalar period() const;
 
         scalar elevation
         (
