@@ -32,7 +32,7 @@ Description
     ocean waves. This BC for alpha.water must be set together with
     oceanWaveInletVelocity BC for the U inlet BC.
 
-    oceanWaveInletPhase and oceanWaveInletVelocity both depend on a 
+    oceanWaveInletPhase and oceanWaveInletVelocity both depend on a
     constant/oceanWavesDict file, which reads
 
     FoamFile
@@ -44,26 +44,36 @@ Description
         object      oceanWavesDict;
     }
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-    
-    seaLevel                   0;  // Still water sea level
-    waveHeight              0.05;
-    waveLength               0.4;
-    waterDepth               0.5;
-    freeStreamVelocity (0.8 0 0);
+
+    seaLevel                   0;   // Still water sea level
+    waveHeight               0.1;   // (Amplitude x2)
+    waveLength               1.0;
+    waterDepth               2.0;   // Must be >= domain depth
+    freeStreamVelocity (0.8 0 0);   // Same as inlet velocity
     waveDirection        (1 0 0);
-    rampStart                 0.1;
+    rampStart                 0.1;  // Keep fixed value for this duration
     rampDuration              0.5;  // Ramping is mandatory, since the wave
-                                    // functions are cosine
-    
+                                    // functions are cosine and inlet position
+                                    // unknown (cos(kx-wt))
+
     // ************************************************************************* //
 
 
-    Example of the boundary condition specification:
+    Example of the boundary condition specification for "alpha.water":
     @verbatim
         inlet
         {
             type        oceanWaveInletPhase;
             value       uniform 1;
+        }
+    @endverbatim
+
+    Example of the boundary condition specification for "U":
+    @verbatim
+        inlet
+        {
+            type        oceanWaveInletVelocity;
+            value       $internalField;
         }
     @endverbatim
 

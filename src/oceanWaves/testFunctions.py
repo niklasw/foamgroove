@@ -1,4 +1,7 @@
 #!/usr/bin/python
+# Only for testing different formulations for wave elevation
+# based on Stokes second order ocean wave approximation
+#
 
 from pylab import *
 

@@ -1,0 +1,12 @@
+
+Please read header of oceanWaveInletPhase/oceanWaveInletPhaseFvPatchScalarField.H
+
+To use the oceanWaves library, build it in an OpenFOAM-2.3.x environment:
+
+    > wmake libso
+
+Then force interFoam to load the library runtime by adding the following line to
+case/system/controlDict:
+
+    libs ("liboceanWaves.so");
+
