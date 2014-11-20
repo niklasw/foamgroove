@@ -34,7 +34,6 @@ License
 Foam::tmp<Foam::scalarField> Foam::oceanWaveInletPhaseFvPatchScalarField::
 surfacePosition()
 {
-    /* Note: omega = c*k */
     scalarField Z = (patch().Cf() & owf_.up()) - owf_.seaLevel();
     scalarField X = patch().Cf() & owf_.waveDirection();
     scalar t = db().time().timeOutputValue();
@@ -42,11 +41,12 @@ surfacePosition()
     tmp<scalarField> tInletSurface(new scalarField(this->size(),1.0));
     scalarField& inletSurface = tInletSurface();
 
-    scalar h = owf_.elevation(t,0.0);
 
     forAll (Z, faceI)
     {
         scalar z = Z[faceI];
+        scalar x = X[faceI];
+        scalar h = owf_.elevation(t,x);
         if ( z > h )
         {
             inletSurface[faceI] = 0;
@@ -123,8 +123,12 @@ void Foam::oceanWaveInletPhaseFvPatchScalarField::updateCoeffs()
     {
         return;
     }
-
-    operator==(surfacePosition());
+    
+    if ( owf_.curTimeIndex() != this->db().time().timeIndex())
+    {
+        operator==(surfacePosition());
+        owf_.curTimeIndex() = this->db().time().timeIndex();
+    }
 
     fixedValueFvPatchField<scalar>::updateCoeffs();
 }

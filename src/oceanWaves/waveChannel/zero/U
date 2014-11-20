@@ -1,0 +1,76 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/constant/boundaryConditions/basic";
+
+dimensions      [ 0 1 -1 0 0 0 0 ];
+
+internalField   $velocity.initial;
+
+boundaryField
+{
+#   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+
+    inletGroup
+    {
+        type    oceanWaveInletVelocity;
+        value   $:velocity.initial;
+    }
+
+    wallGroup
+    {
+        type    fixedValue;
+        value   uniform (0 0 0);
+    }
+
+    movingWallGroup
+    {
+        type    movingWallVelocity;
+        value   uniform (0 0 0);
+    }
+
+    outflowGroup
+    {
+        type            outletPhaseMeanVelocity;
+        phi             phi;
+        inletValue      uniform ( 0 0 0 );
+        value           $:velocity.initial;
+        alpha           alpha.water;
+        Umean           $:velocity.reference;
+    }
+    ambienceGroup
+    {
+        type            pressureInletOutletVelocity;
+        phi             phi;
+        inletValue      uniform ( 0 0 0 );
+        tangentialVelocity uniform (1.5 0 0);
+        value           uniform ( 0 0 0 );
+    }
+
+    farfieldGroup
+    {
+        type    freeStream;
+        freestreamValue $:velocity.initial;
+    }
+
+    slipGroup
+    {
+        type        slip;
+    }
+}
+
+// ************************************************************************* //

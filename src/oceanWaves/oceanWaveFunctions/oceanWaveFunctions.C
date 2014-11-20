@@ -57,7 +57,8 @@ scalar oceanWaveFunctions::smoothStep
 
 oceanWaveFunctions::oceanWaveFunctions(const objectRegistry& db)
 :
-    db_(db)
+    db_(db),
+    curTimeIndex_(-1)
 {
     IOdictionary oceanWavesDict
     (
@@ -105,7 +106,7 @@ void oceanWaveFunctions::info() const
          << "\n - wave length    = " << waveLength_
          << "\n - wave number    = " << waveNumber()
          << "\n - wave direction = " << waveDirection_
-         << "\n - phase velocity = " << celerity() 
+         << "\n - wave velocity  = " << relativeCelerity() 
          << "\n - omega          = " << omega() 
          << "\n - wave period    = " << period() << nl << endl;
 }
@@ -124,12 +125,19 @@ scalar oceanWaveFunctions::ramplitude(const scalar t) const
 
 scalar oceanWaveFunctions::celerity() const
 {
-    return sqrt(mag(g_)*waveLength_/(2*pi())*tanh(2*pi()*waterDepth_/waveLength_));
+    scalar k = waveNumber();
+    scalar g = mag(g_);
+    return sqrt( g/k * tanh(k*waterDepth_) );
+}
+
+scalar oceanWaveFunctions::relativeCelerity() const
+{
+    return celerity()+(freeStreamVelocity_ & waveDirection_);
 }
 
 scalar oceanWaveFunctions::omega() const
 {
-    return celerity()*waveNumber();
+    return relativeCelerity()*waveNumber();
 }
 
 scalar oceanWaveFunctions::period() const
@@ -151,15 +159,13 @@ scalar oceanWaveFunctions::elevation
     scalar Phi = k*x - w*t;
 
     scalar h;
-    scalar sigma = tanh(kh);
 
-    h= A*(cos(Phi)+k*A*(3-pow(sigma,2))/(4*pow(sigma,3))*cos(2*Phi));
+    //scalar sigma = tanh(kh);
+    //h= A*(cos(Phi)+k*A*(3-pow(sigma,2))/(4*pow(sigma,3))*cos(2*Phi));
 
-    /*
-    h = A*cos(w*t)
+    h = A*cos(Phi)
         + sqr(A)*k*cosh(kh)/(4*pow(sinh(2*kh),3))
         * (2+cosh(2*kh))*cos(2*(w*t));
-    */
 
     return h;
 }

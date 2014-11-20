@@ -1,0 +1,280 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      autoHexMeshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+
+geometry
+{
+    waves
+    {
+        type searchableBox;
+        min (-100 -100 -0.13);
+        max ( 100  100  0.13);
+    }
+
+    wake
+    {
+       type searchableBox;
+       min (-0.6 -100 -1.02);
+       max ( 2.5    100 -0.775);
+
+    }
+
+    nearField
+    {
+       type searchableBox;
+       min (-1   -100 -1.2);
+       max ( 4    100 -0.1);
+    }
+
+    /*
+    example.stl
+    {
+        type triSurfaceMesh;
+
+        //tolerance   1E-5;   // optional:non-default tolerance on intersections
+        //maxTreeDepth 10;    // optional:depth of octree. Decrease only in case
+                              // of memory limitations.
+
+        regions
+        {
+            secondSolid
+            {
+                name mySecondPatch;
+            }
+        }
+    }
+    cylinder.stl
+    {
+        type triSurfaceMesh;
+    }
+    */
+
+    wall_naca.stl
+    {
+        type triSurfaceMesh;
+        regions
+        {
+            wall_naca
+            {
+                name wall_naca;
+            }
+        }
+    }
+
+};
+
+
+
+castellatedMeshControls
+{
+    maxLocalCells 3000000;
+
+    maxGlobalCells 20000000;
+
+    minRefinementCells 0;
+
+    maxLoadUnbalance 0.10;
+
+    nCellsBetweenLevels 2;
+
+    features
+    (
+    );
+
+    refinementSurfaces
+    {
+        wall_naca.stl
+        {
+            level (0 0);
+            regions
+            {
+                wall_naca
+                {
+                    level (5 5);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    resolveFeatureAngle 30;
+
+    refinementRegions
+    {
+        waves
+        {
+            mode inside;
+            levels ((1.0 3));
+        }
+
+        wake
+        {
+            mode inside;
+            levels ((1.0 3));
+        }
+
+        nearField
+        {
+            mode inside;
+            levels ((1.0 2));
+        }
+
+        /*
+        sphere.stl
+        {
+            mode distance;
+            levels ((1.0 5) (2.0 3));
+        }
+        */
+    }
+
+    locationInMesh (0.02 0.01 0);
+
+    allowFreeStandingZoneFaces true;
+}
+
+
+
+snapControls
+{
+    nSmoothPatch 3;
+
+    tolerance 2.0;
+
+    nSolveIter 30;
+
+    nRelaxIter 5;
+
+    nFeatureSnapIter 10;
+
+    implicitFeatureSnap false;
+
+    explicitFeatureSnap true;
+
+    multiRegionFeatureSnap false;
+}
+
+
+
+addLayersControls
+{
+    relativeSizes true;
+
+    // Layer thickness specification. This can be specified in one of four ways
+    // - expansionRatio and finalLayerThickness (cell nearest internal mesh)
+    // - expansionRatio and firstLayerThickness (cell on surface)
+    // - overall thickness and firstLayerThickness
+    // - overall thickness and finalLayerThickness
+
+        // //finalLayerThickness 0.3;
+    firstLayerThickness 0.2;
+    //expansionRatio 1.2;
+    thickness 1.2;
+
+    minThickness 0.025;
+
+    layers
+    {
+        wall_naca
+        {
+            nSurfaceLayers 4;
+        }
+    }
+
+
+    nGrow 1;
+
+    // Advanced settings
+
+    featureAngle 60;
+
+    slipFeatureAngle 30;
+
+    nRelaxIter 5;
+
+    nSmoothSurfaceNormals 1;
+
+    nSmoothNormals 3;
+
+    nSmoothThickness 10;
+
+    maxFaceThicknessRatio 0.5;
+
+    maxThicknessToMedialRatio 0.3;
+
+    minMedianAxisAngle 150; //90;
+
+    nBufferCellsNoExtrude 0;
+
+    nLayerIter 50;
+
+    nRelaxedIter 20;
+}
+
+
+
+meshQualityControls
+{
+    maxNonOrtho 70;
+
+    maxBoundarySkewness 20;
+
+    maxInternalSkewness 4;
+
+    maxConcave 80;
+
+    minVol 1e-30;
+
+    minTetQuality -1e30; //1e-9;
+
+    minArea -1;
+
+    minTwist 0.05;
+
+    minDeterminant 0.001;
+
+    minFaceWeight 0.05;
+
+    minVolRatio 0.01;
+
+    minTriangleTwist -1;
+
+    // Advanced
+
+    nSmoothScale 4;
+
+    errorReduction 0.75;
+
+    relaxed
+    {
+        maxNonOrtho 80;
+    }
+
+}
+
+
+// Advanced
+
+debug 0;
+
+mergeTolerance 1E-6;
+
+
+// ************************************************************************* //

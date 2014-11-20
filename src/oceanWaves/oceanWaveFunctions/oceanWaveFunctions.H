@@ -57,6 +57,7 @@ class oceanWaveFunctions
         scalar rampStart_;
         scalar rampDuration_;
         vector g_;
+        label curTimeIndex_;
 
         scalar smoothStep
         (
@@ -69,17 +70,12 @@ class oceanWaveFunctions
         oceanWaveFunctions(const objectRegistry& db);
         oceanWaveFunctions();
 
-        /* Probably, the automatic copy constructor suffice
-        oceanWaveFunctions(const oceanWaveFunctions& owf);
-
-        ~oceanWaveFunctions();
-        */
-
         static scalar pi()
         {
             return constant::mathematical::pi;
         };
 
+        //- Prints general wave input information
         void info() const;
 
         scalar waveNumber() const;
@@ -88,16 +84,22 @@ class oceanWaveFunctions
 
         scalar celerity() const;
 
+        scalar relativeCelerity() const;
+
         scalar omega() const;
 
         scalar period() const;
 
+        //- Second order Stokes approximation of wave elevation
+        //  for arbitrary depth waves (waveLenth < waterDepth/2)
         scalar elevation
         (
             const scalar t,
             const scalar x
         );
 
+        //- Second order Stokes approximation of wave induced velocity
+        //  for arbitrary depth waves (waveLenth < waterDepth/2)
         vector waveVelocities
         (
             const scalar x,
@@ -105,10 +107,12 @@ class oceanWaveFunctions
             const scalar t
         );
 
+        //- Whats up? Ask gravity.
         vector up()
         {
             return -g_/mag(g_);
         }
+
         //- Access
 
         scalar seaLevel() { return seaLevel_; };
@@ -118,6 +122,7 @@ class oceanWaveFunctions
         vector waveDirection() { return waveDirection_; }
         vector freeStreamVelocity() { return freeStreamVelocity_; }
         vector g() { return g_; }
+        label& curTimeIndex() { return curTimeIndex_; }
 };
 
 } // End namespace Foam
