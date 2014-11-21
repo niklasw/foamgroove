@@ -1,0 +1,55 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.4                                   |
+|   \\  /    A nd           | Web:      http://www.openfoam.org               |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    version         2.0;
+    format          ascii;
+
+    root            "";
+    case            "";
+    instance        "";
+    local           "";
+
+    class           dictionary;
+    object          bubbleInjectors;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+3
+(
+    injector0
+    {
+        origin origin [0 1 0 0 0 0 0] (0.2 0.2 0.8);
+        radius  radius [0 1 0 0 0 0 0] 0.1;
+        nBubbles 20;
+        avgDiameter avgDiameter [0 1 0 0 0 0 0] 1e-4;
+        twoD    false;
+    }
+
+    injector1
+    {
+        origin origin [0 1 0 0 0 0 0] (.8 .5 .5);
+        radius  radius [0 1 0 0 0 0 0] 0.2;
+        nBubbles 8;
+        avgDiameter avgDiameter [0 1 0 0 0 0 0] 5e-4;
+        twoD    false;
+    }
+
+    injector2
+    {
+        origin origin [0 1 0 0 0 0 0] (.5 .1 .5);
+        radius  radius [0 1 0 0 0 0 0] 0.3;
+        nBubbles 1000;
+        avgDiameter avgDiameter [0 1 0 0 0 0 0] 1e-3;
+        twoD    false;
+    }
+)
+
+// ************************************************************************* //
