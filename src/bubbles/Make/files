@@ -1,6 +1,5 @@
 bubbles.C
 bubblesIO.C
 bubblesCloud.C
-bubblesInjector.C
 
 LIB = $(FOAM_USER_LIBBIN)/libbubbles

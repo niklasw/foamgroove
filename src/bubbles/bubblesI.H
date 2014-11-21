@@ -92,6 +92,11 @@ inline Foam::scalar Foam::bubbles::d() const
     return d_;
 }
 
+inline Foam::scalar& Foam::bubbles::d() 
+{
+    return d_;
+}
+
 
 inline const Foam::vector& Foam::bubbles::U() const
 {

@@ -171,6 +171,8 @@ public:
             //- Return diameter
             inline scalar d() const;
 
+            inline scalar& d();
+
             //- Return velocity
             inline const vector& U() const;
 
