@@ -38,6 +38,9 @@ BEGIN {
 END {
     printf("%15s%10s%10s%10s", "time","p-iters", "U-iters", "clock\n")
     printf("\nNumber of time steps in file = %i\n", timeCounter)
+    printf("\nTotal number of p iterations = %i\n", totalPiters)
+    printf("\nTotal number of U iterations = %i\n", totalUiters)
+    printf("\nTotal number of p+U iterations = %i\n", totalUiters+totalPiters)
 }
 
 
