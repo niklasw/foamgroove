@@ -1,0 +1,43 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dynamicFvMesh   gunTopoFvMesh;
+
+gunTopoFvMeshCoeffs
+{
+    aimVector               (1 0 0);   //- Vector definition of stroke
+    boltPosition            (-0.02 0 0);
+    barrelLength            1;
+    initialPosition         0.1;
+    initialVelocity         10;
+    exitVelocity            100;
+
+    //growthLayerPosition     0.0;   //- Initial position at lower turn
+
+    barrelPointSet          barrelPoints;
+    extrusionFaceSet        extrusionFaces;
+
+    extrusion
+    {
+        minThickness        5e-4;   //- Minimum allowed layer thickness
+        maxThickness        45e-4;  //- Maximum allowed layer thickness
+        //tolerance               1e-3;
+    }
+}
+
+
+// ************************************************************************* //

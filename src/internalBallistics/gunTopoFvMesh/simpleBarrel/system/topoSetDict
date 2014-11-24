@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+actions
+(
+
+    // Create the barrel mesh sets
+    {
+        name extrusionFaces;
+        type faceSet;
+        action new;
+        source  boxToFace;
+        sourceInfo
+        {
+            box (-1e-4 -10 -10) (1e-4 10 10);
+        }
+    }
+
+    {
+        name barrelPoints;
+        type pointSet;
+        action new;
+        source boxToPoint;
+        sourceInfo
+        {
+            box (-10 -10 -10) (10 10 10);
+        }
+    }
+    {
+        name motionPoints;
+        type pointSet;
+        action new;
+        source pointToPoint;
+        sourceInfo
+        {
+           set barrelPoints;
+        }
+    }
+
+    {
+        name motionPoints;
+        type pointSet;
+        action subset;
+        source boxToPoint;
+        sourceInfo
+        {
+            box (1e-4 -10 -10) (10 10 10);
+        }
+    }
+
+);
+
+// ************************************************************************* //

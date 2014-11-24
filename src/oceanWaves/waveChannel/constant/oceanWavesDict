@@ -1,0 +1,27 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      oceanWavesDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+seaLevel                0;
+waveHeight            0.1;
+waveLength            1.0;
+waterDepth            1.8; // Cannot be smaller than domain depth
+freeStreamVelocity (0.8 0 0);
+waveDirection      (1   0 0);
+rampStart           0.0;
+rampDuration        1.0;
+
+// ************************************************************************* //

@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "/home/nikwik/OpenFOAM/nikwik-2.3.x/run/vof/submergedNACA/submerged0911_mesh";
+    object      setup.foam;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+transport
+{
+    kinematicViscosity 1e-06;
+}
+
+velocity
+{
+    flowrate        0.01;
+    inlet           uniform ( 0.8 0 0 );
+    ambient         uniform ( 0.8 0 0 );
+    initial         uniform ( 0.8 0 0 );
+    reference       0.8;
+}
+
+turbulence
+{
+    intensity       0.04;
+    mixingLength    0.05;
+    initialnuSgs    uniform 4e-06;
+    initialK        uniform 0.001536;
+    initialOmega    uniform 1.4310835;
+    initialnuTilda  uniform 0.0019595918;
+    initialEpsilon  uniform 0.00019783298;
+}
+
+pressure
+{
+    ambient         uniform 0;
+    outlet          uniform 0;
+}
+
+energy
+{
+    inletTemperature uniform 300;
+    ambientTemperature uniform 300;
+    initialTemperature uniform 300;
+}
+
+relaxation
+{
+    pressure        0.3;
+    velocity        0.7;
+    turbulence      0.3;
+    rho             0.01;
+    energy          0.5;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

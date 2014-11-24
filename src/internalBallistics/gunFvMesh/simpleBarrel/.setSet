@@ -1,0 +1,3 @@
+pointSet barrelPoints new boxToPoint (-100 -100 -100) (100 100 100)
+faceSet extrusionFaces new boxToFace (-1e4 -10 -10) (1e-4 10 10)
+quit

@@ -28,6 +28,10 @@ Description
     Sample topoChangerFvMesh that moves an object in x direction
     and introduces/removes layers.
 
+    Pre-processing needed:
+    Generation of faceSet containing extrusion faces
+    Generation of pointSet containing barrel points
+
 SourceFiles
     gunTopoFvMesh.C
 
@@ -38,6 +42,8 @@ SourceFiles
 
 #include "topoChangerFvMesh.H"
 #include "motionSolver.H"
+#include "pointSet.H"
+#include "faceSet.H"
 #include "fvCFD.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -67,6 +73,11 @@ class gunTopoFvMesh
 
         const scalar barrelLength_;
 
+        const word barrelPointSet_;
+        const word motionPointSet_;
+
+        const word extrusionFaceSet_;
+
         //- Bullet information
         const scalar initialPosition_;
 
@@ -84,6 +95,10 @@ class gunTopoFvMesh
         //- Search tolerance, for finding motion points.
         scalar tolerance_;
 
+        labelList gunPoints_;
+        labelList motionPoints_;
+
+        label nOldPoints_;
         //- Vertex motion mask
         scalarField motionMask_;
 
@@ -115,10 +130,26 @@ class gunTopoFvMesh
         //- Add mixer zones and modifiers
         void addZonesAndModifiers();
 
+        // void updateFaceZone();
+
         void updateMappedFaces(const mapPolyMesh&);
+
+        //- Find which points to move
 
         //- Markup motion vertices
         tmp<scalarField> vertexMarkup(const pointField& p) const;
+
+        List<label> addedPoints(const mapPolyMesh& topoMap) const;
+        //- Use in constructor, to initiate points belonging to
+        //  the barrel part of the mesh
+        void gunMarkup();
+
+        //- Insert newly creted points in the list of points
+        //  belonging to the barrel part of the mesh
+        void updateGunPointLabels
+        (
+            const labelList& revPointMap
+        );
 
 
 public:

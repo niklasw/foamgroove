@@ -22,12 +22,12 @@ License
     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
 
 Application
-    vorticity
+    calcMu
 
 Description
-    Calculates and writes the vorticity of velocity field U.
+    Calculates and writes the dynamic viscosity from thermo
 
-    The -noWrite option just outputs the max/min values without writing
+    The -noWrite option just outputs the values without writing
     the field.
 
 \*---------------------------------------------------------------------------*/
