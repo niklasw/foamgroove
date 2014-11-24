@@ -112,7 +112,8 @@ volScalarField mu
 word kinematicCloudName("bubbleCloud");
 
 Info<< "Constructing kinematicCloud " << kinematicCloudName << endl;
-basicKinematicCollidingCloud kinematicCloud
+//basicKinematicCollidingCloud kinematicCloud
+basicKinematicCloud kinematicCloud
 (
     kinematicCloudName,
     rhoInf,
