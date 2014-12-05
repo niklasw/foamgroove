@@ -1,0 +1,66 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "/home/nikwik/OpenFOAM/nikwik-2.2.2/run/TestCases/tanker";
+    object      setup.foam;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+transport
+{
+    kinematicViscosity 1e-06;
+}
+
+velocity
+{
+    flowrate        0.01;
+    inlet           uniform ( 6 0 0 );
+    ambient         uniform ( 6 0 0 );
+    initial         uniform ( 6 0 0 );
+    reference       6;
+}
+
+turbulence
+{
+    intensity       0.05;
+    mixingLength    0.5;
+    initialnuSgs    uniform 4e-06;
+    initialK        uniform 0.135;
+    initialOmega    uniform 1.3416408;
+    initialnuTilda  uniform 0.18371173;
+    initialEpsilon  uniform 0.016300936;
+}
+
+pressure
+{
+    reference       0;
+    ambient         uniform 0;
+    outlet          uniform 0;
+}
+
+energy
+{
+    inletTemperature uniform 300;
+    ambientTemperature uniform 300;
+    initialTemperature uniform 300;
+}
+
+relaxation
+{
+    pressure        0.3;
+    velocity        0.7;
+    turbulence      0.3;
+    rho             0.01;
+    energy          0.5;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
