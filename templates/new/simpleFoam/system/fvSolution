@@ -1,0 +1,110 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/setup.foam";
+#include "${FOAM_CASE}/system/include/solverDefinitions";
+
+solvers
+{
+    p
+    {
+        $gamg;
+    }
+
+    U
+    {
+        $pbicg;
+    }
+
+    "(k|epsilon|omega|nuTilda)"
+    {
+        $pbicg;
+    }
+
+    /* For transient solvers */
+
+    UFinal
+    {
+        $U;
+        relTol 0;
+    }
+
+    pFinal
+    {
+        $p;
+        relTol 0;
+    }
+
+    "(k|epsilon|omega|nuTilda)Final"
+    {
+        $pbicg;
+    }
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors    0;
+    pRefCell                    0;
+    pRefValue                   $:pressure.ambient;
+
+    residualControl
+    {
+        p                       1e-4;
+        U                       1e-4;
+        "(k|epsilon|omega)"     1e-3;
+    }
+
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors    20;
+    pRefCell                    0;
+    pRefValue                   $:pressure.reference;
+}
+
+PISO
+{
+    nCorrectors                 2;
+    nNonOrthogonalCorrectors    2;
+    pRefCell                    0;
+    pRefValue                   $:pressure.reference;
+}
+
+PIMPLE
+{
+    nOuterCorrectors            2;
+    nCorrectors                 2;
+    nNonOrthogonalCorrectors    1;
+    pRefCell                    0;
+    pRefValue                   $:pressure.reference;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p                           $:relaxation.pressure;
+    };
+    equations
+    {
+        U                           $:relaxation.velocity;
+        "(k|epsilon|omega|nuTilda)" $:relaxation.turbulence;
+    }
+}
+
+// ************************************************************************* //
