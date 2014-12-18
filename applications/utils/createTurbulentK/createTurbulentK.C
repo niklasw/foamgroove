@@ -60,8 +60,7 @@ int main(int argc, char *argv[])
 
         // Cache the turbulence fields
 
-        Info<< "\nRetrieving field k from turbulence model" << endl;
-        const volScalarField k(LESModel->k());
+        //const volScalarField k(LESModel->k());
 
         /*
         Info<< "\nRetrieving field epsilon from turbulence model" << endl;
@@ -73,9 +72,11 @@ int main(int argc, char *argv[])
 
         // Check availability of tubulence fields
 
-        if (!IOobject("k", runTime.timeName(), mesh).headerOk())
+        if (IOobject("k", runTime.timeName(), mesh).headerOk())
         {
+            Info<< "\nRetrieving field k from turbulence model" << endl;
             Info<< "\nWriting turbulence field k" << endl;
+            k.internalField() = LESModel->k()().internalField();
             k.write();
         }
         else
