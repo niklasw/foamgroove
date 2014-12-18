@@ -37,6 +37,7 @@ Source files:
 #include "fvCFD.H"
 #include "incompressible/singlePhaseTransportModel/singlePhaseTransportModel.H"
 #include "LESModel.H"
+#include "calculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -82,6 +83,25 @@ int main(int argc, char *argv[])
         else
         {
             Info<< "\nTurbulence k field already exists" << endl;
+        }
+        if (!IOobject("nuEff", runTime.timeName(), mesh).headerOk())
+        {
+            volScalarField nuEff
+            (
+                IOobject
+                (
+                    "nuEff",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                mesh,
+                dimensionedScalar("nut", LESModel->nuEff()->dimensions(),1e-6),
+                zeroGradientFvPatchField<scalar>::typeName
+            );
+            nuEff.internalField() = LESModel->nuEff()().internalField();
+            nuEff.write();
         }
 
         /*
