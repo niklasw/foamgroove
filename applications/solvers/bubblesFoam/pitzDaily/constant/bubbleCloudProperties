@@ -49,29 +49,45 @@ subModels
     {
         sphereDrag;
         gravity;
+        /*
+        SaffmanMeiLiftForce
+        {
+            UName       U;
+        };
+        */
     }
 
     injectionModels
     {
         model1
         {
-            type            manualInjection;
-            massTotal       0;
-            parcelBasisType fixed;
+            //type            manualInjection;
+            type            patchInjection;
+            cellZone        injectionCells;
+            //numberDensity   1e7;
+            //massFlowRate    1;
+            massTotal         1;
+            parcelBasisType number;
             nParticle       1;
-            SOI             0;
-            positionsFile   "kinematicCloudPositions";
+            SOI             0.0; //Start of injection (Time)
+            duration        0.5;
+            patchName       inlet;
+            parcelsPerSecond 5000;
+            flowRateProfile constant 1;
+
+            //positionsFile   "kinematicCloudPositions";
             U0              ( 0 0 0 );
             sizeDistribution
             {
                 type        normal;
                 normalDistribution
                 {
-                    minValue    0.5e-3;
-                    maxValue    2.0e-3;
-                    expectation 1.0e-3;
-                    variance    1.0;
+                    minValue    0.25e-3;
+                    maxValue    1.5e-3;
+                    expectation 0.75e-3;
+                    variance    0.25e-3;
                 }
+
                 fixedValueDistribution
                 {
                     value   0.005;
@@ -82,7 +98,14 @@ subModels
 
     dispersionModel none;
 
-    patchInteractionModel none;
+    patchInteractionModel standardWallInteraction;
+
+    standardWallInteractionCoeffs
+    {
+        type rebound;
+        e   0.7;
+        mu  1e-7;
+    }
 
     surfaceFilmModel none;
 
@@ -93,7 +116,7 @@ subModels
     pairCollisionCoeffs
     {
         // Maximum possible particle diameter expected at any time
-        maxInteractionDistance  0.006;
+        maxInteractionDistance  0.002;
 
         writeReferredParticleCloud no;
 
@@ -109,7 +132,7 @@ subModels
             collisionResolutionSteps 12;
         };
 
-        wallModel    wallLocalSpringSliderDashpot;
+        wallModel    none;
 
         wallLocalSpringSliderDashpotCoeffs
         {
@@ -119,9 +142,9 @@ subModels
             {
                 youngsModulus   1e10;
                 poissonsRatio   0.23;
-                alpha           0.12;
+                alpha           0.002;
                 b               1.5;
-                mu              0.43;
+                mu              1e-6;
                 cohesionEnergyDensity 0;
             }
             frontAndBack

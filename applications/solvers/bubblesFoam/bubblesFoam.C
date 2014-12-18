@@ -42,7 +42,24 @@ Description
 #include "IOporosityModelList.H"
 #include "IOMRFZoneList.H"
 #include "fixedFluxPressureFvPatchScalarField.H"
-#include "basicKinematicCollidingCloud.H"
+//#include "basicKinematicCollidingCloud.H"
+#include "basicKinematicCloud.H"
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+void doStuffToParcels( basicKinematicCloud& cloud )
+{
+    //- Example function to operate on parcel properties /nikwik
+    //  Loop over parcels
+    forAllIter(basicKinematicCloud, cloud, iter)
+    {
+        KinematicParcel<particle>& kp = iter();
+        Info << kp.d() << endl;
+        // There is already a non-const access to diameter in KP
+        kp.d() *= 2; // This will escalate rather quickly...
+        Info << kp.d() << endl;
+    }
+}
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -87,6 +104,9 @@ int main(int argc, char *argv[])
                 turbulence->correct();
             }
         }
+
+        //- Test
+        // doStuffToParcels(kinematicCloud);
 
         kinematicCloud.evolve();
 
