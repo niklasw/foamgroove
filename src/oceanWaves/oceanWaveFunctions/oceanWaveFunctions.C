@@ -165,7 +165,7 @@ scalar oceanWaveFunctions::elevation
 
     h = A*cos(Phi)
         + sqr(A)*k*cosh(kh)/(4*pow(sinh(2*kh),3))
-        * (2+cosh(2*kh))*cos(2*(w*t));
+        * (2+cosh(2*kh))*cos(2*(Phi));
 
     return h;
 }
