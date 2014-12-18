@@ -84,21 +84,24 @@ int main(int argc, char *argv[])
         {
             Info<< "\nTurbulence k field already exists" << endl;
         }
-        if (!IOobject("nut", runTime.timeName(), mesh).headerOk())
+        if (!IOobject("nuEff", runTime.timeName(), mesh).headerOk())
         {
-            volScalarField nut
+            volScalarField nuEff
             (
                 IOobject
                 (
-                    "nut",
+                    "nuEff",
                     runTime.timeName(),
                     mesh,
                     IOobject::NO_READ,
                     IOobject::NO_WRITE
                 ),
-                LESModel->nut()
+                mesh,
+                dimensionedScalar("nut", LESModel->nuEff()->dimensions(),1e-6),
+                zeroGradientFvPatchField<scalar>::typeName
             );
-            nut.write();
+            nuEff.internalField() = LESModel->nuEff()().internalField();
+            nuEff.write();
         }
 
         /*
