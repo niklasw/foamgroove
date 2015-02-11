@@ -5,6 +5,7 @@ BEGIN {
     totalPiters = 0;
     oldClockTime = 0;
     deltaTime = 0;
+    maxCourant = 1;
 }
 
 {
@@ -14,7 +15,7 @@ BEGIN {
         newTime = 1;
         totalUiters+=curUIters
         totalPiters+=curPIters;
-        printf("%15f%10i%10i%10is\n",curTime,curPIters,curUIters,deltaTime)
+        printf("%15f%10i%10i%10is%12.3f\n",curTime,curPIters,curUIters,deltaTime,maxCourant)
         curPIters=0;
         curUIters=0;
     }
@@ -33,13 +34,17 @@ BEGIN {
     if ( $2 == "Solving" && $4 == "p," ){
         curPIters += $15;
     }
+
+    if ( $1 == "Courant" && $2 == "Number"){
+        maxCourant = $6;
+    }
 }
 
 END {
-    printf("%15s%10s%10s%10s", "time","p-iters", "U-iters", "clock\n")
-    printf("\nNumber of time steps in file = %i\n", timeCounter)
-    printf("\nTotal number of p iterations = %i\n", totalPiters)
-    printf("\nTotal number of U iterations = %i\n", totalUiters)
+    printf("%15s%10s%10s%10s%12s", "time","p-iters", "U-iters", "clock", "CFL \n")
+    printf("\nNumber of time steps in file   = %i\n", timeCounter)
+    printf("\nTotal number of p iterations   = %i", totalPiters)
+    printf("\nTotal number of U iterations   = %i", totalUiters)
     printf("\nTotal number of p+U iterations = %i\n", totalUiters+totalPiters)
 }
 
