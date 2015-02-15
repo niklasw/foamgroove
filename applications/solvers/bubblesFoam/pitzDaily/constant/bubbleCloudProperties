@@ -28,6 +28,8 @@ solution
         rho             cell;
         U               cellPoint;
         mu              cell;
+        curlUcDt        cellPoint;
+        DUcDt           cellPoint;
     }
 
     integrationSchemes
@@ -53,6 +55,10 @@ subModels
         SaffmanMeiLiftForce
         {
             UName       U;
+        };
+        pressureGradient
+        {
+
         };
         */
     }

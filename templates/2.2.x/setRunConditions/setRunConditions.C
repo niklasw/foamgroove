@@ -88,6 +88,9 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
 
+    Info << "NOTE: this utility is for auto fixing nikwik's template based setup file." << nl
+         << "If you do not understand the meaning of this, do not use this app" << endl;
+
     fileName setupFile = "setup.foam";
 
     IOobject dictHdr
