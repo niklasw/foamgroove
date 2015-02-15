@@ -85,6 +85,8 @@ class structuralMode
 
         const dictionary dict_;
 
+        static const label nOdeData_ = 4;
+
         List<scalar> odeData_;
         label odeSubSteps_;
 
@@ -178,12 +180,14 @@ public:
 
     //- Work issued by pressure when displacing
     //  patch by mode.
-    scalar Q(const volScalarField& p) const;
+    scalar calcQ(const volScalarField& p) const;
 
     //- Calculate this modes coefficient by solving
     //  the modal analysis ODE with pressure as driving
     //  force.
     scalar solveMotionEquation(const volScalarField& p);
+    scalar simpleSolve(const volScalarField& p);
+    scalar NewmarkSolve(const volScalarField& p);
 
     //scalar solveMotionEquation2(const volScalarField& p);
 

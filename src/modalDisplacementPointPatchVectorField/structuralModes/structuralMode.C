@@ -84,7 +84,7 @@ Foam::structuralMode::structuralMode
     mesh_(BC.dimensionedInternalField().mesh()()),
     name_(is),
     dict_(is),
-    odeData_(2, 0.0),
+    odeData_(structuralMode::nOdeData_, 0.0),
     odeSubSteps_(10),
 
     modeShape_(dict_.subDict("modeShape"), BC),
@@ -104,7 +104,7 @@ Foam::structuralMode::structuralMode
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-scalar Foam::structuralMode::Q(const volScalarField& p) const
+scalar Foam::structuralMode::calcQ(const volScalarField& p) const
 {
     return gSum(p.boundaryField()[patch_.index()]*sweptVols_);
 }
@@ -149,6 +149,15 @@ scalar structuralMode::solveMotionEquation
     const volScalarField& p
 )
 {
+    //return simpleSolve(p);
+    return NewmarkSolve(p);
+}
+
+scalar structuralMode::simpleSolve
+(
+    const volScalarField& p
+)
+{
     // Solve the ODE using simple forward euler:
     // ddt2(a)+w^2 a = Q
     // Should include damping D so:
@@ -158,31 +167,81 @@ scalar structuralMode::solveMotionEquation
 
     scalar dT = (mesh_.time().deltaTValue())/odeSubSteps_;
 
-    scalar& a_0 = odeData_[0];
-    scalar& b_0 = odeData_[1];
+    scalar& a_0  = odeData_[0];
+    scalar& b_0  = odeData_[1];
+    scalar& Q_0  = odeData_[2];
+    scalar& Q_00 = odeData_[3];
 
     scalar a = 0;
     scalar b = 0;
 
-    // Calculate forcing (ODE RHS), as function of pressure
-    const scalar q = Q(p);
-
     scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
+
+    // Calculate forcing (ODE RHS), as function of pressure
+    const scalar Q = calcQ(p);
 
     for (int i=0; i<odeSubSteps_; i++)
     {
-        b = dT*( q-sqr(omega)*a_0-2*damping_*omega*b_0 )+b_0;
+        b = dT*( Q-sqr(omega)*a_0-2*damping_*omega*b_0 )+b_0;
         a = dT*b+a_0;
 
         a_0 = a; // relax*a+(1-relax)*a_0;
         b_0 = b; // relax*b+(1-relax)*b_0;
     }
-    Info << "Unit work by mode    \""<< name_ <<"\" = " << q << endl;
+
+    // Update Q_n-1 and Q_n-2 for later time derivative
+    // if ddt Q is needed for the solver. Not used presently.
+    Q_00 = Q_0;
+    Q_0  = Q;
+
+    Info << "Unit work by mode    \""<< name_ <<"\" = " << Q << endl;
     Info << "Coefficient for mode \""<< name_ <<"\" = " << a << endl;
 
     return a;
 }
 
+scalar structuralMode::NewmarkSolve(const volScalarField& p)
+{
+    scalar relax = 0.75;
+
+    //scalar dT = (mesh_.time().deltaTValue())/odeSubSteps_;
+    scalar dT = (mesh_.time().deltaTValue());
+    scalar rdT = 1.0/dT;
+    scalar sqrRdT = pow(rdT,2);
+
+    scalar q = 0.0;
+    scalar& q_0  = odeData_[0];
+    scalar& q_00 = odeData_[1];
+    scalar& Q_0  = odeData_[2];
+    scalar& Q_00 = odeData_[3];
+
+    const scalar& mMass = modeShape_.scalingFactor();
+    // Mode angular velocity from Eigen frequency
+    scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
+    scalar sqrHalfOmega = pow(0.5*omega,2);
+
+    scalar Q = calcQ(p);
+
+    for (int i=0; i<odeSubSteps_; i++)
+    {
+        scalar A0  = -2*sqrRdT+0.5*pow(omega,2);
+        scalar Ap1 = sqrRdT + damping_*omega*rdT + sqrHalfOmega;
+        scalar Am1 = sqrRdT - damping_*omega*rdT + sqrHalfOmega;
+        //? Whats this, overwrite Q beefore it is used?
+        Q          = (Q_00 + 2*Q_0 + Q)/4;
+
+        q = Q / (mMass * Ap1) - A0/Ap1*q_0 - Am1/Ap1*q_0;
+
+        q_00 = q_0;
+        q_0  = q;
+    }
+
+    // Store odeData for next step
+    Q_00 = Q_0;
+    Q_0  = Q;
+
+    return q;
+}
 
 void Foam::structuralMode::write() const
 {
