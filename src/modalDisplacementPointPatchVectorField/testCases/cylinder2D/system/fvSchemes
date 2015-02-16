@@ -68,6 +68,7 @@ fluxRequired
 {
     default         no;
     p               ;
+    pcorr           ;
 }
 #includeIfPresent "include/freeSurfaceFvSchemesI";
 

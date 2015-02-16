@@ -77,7 +77,17 @@ int main(int argc, char *argv[])
     #include "createTime.H"
     #include "createNamedDynamicFvMesh.H"
 
-    scalar rho = args.optionRead<scalar>("rho");
+    scalar rho = 1.0;
+    if ( args.optionFound("rho") )
+    {
+        rho = args.optionRead<scalar>("rho");
+    }
+    else
+    {
+        WarningIn(args.executable())
+            << "Density is not specified on command line" << nl
+            << "using -rho 1.0" << endl;
+    }
 
     Info<< "Time = " << runTime.timeName() << endl;
 
@@ -100,7 +110,7 @@ int main(int argc, char *argv[])
             //  the debugMode() member.
 
             const pointPatchField<vector>* Pptr = &curPatch;
-            
+
             modalDisplacementPointPatchField* BC =
             dynamic_cast<modalDisplacementPointPatchField* >
             (

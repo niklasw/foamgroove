@@ -29,8 +29,8 @@ boundaryField
     cylinderWall
     {
         type            modalDisplacement;
-        rampBegin       0;
-        rampEnd         100;
+        rampBegin       1000;
+        rampEnd         1200;
         writeDebugField no;
         value           uniform (0 0 0);
     }

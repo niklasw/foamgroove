@@ -85,7 +85,7 @@ t, Dx, Dy = collectDisplacement(log)
 plt.figure(1)
 plt.plot(t,Dx,'r',t,Dy,'g')
 
-plt.legend(['Axial displ.','Transverse displ.'])
+plt.legend(['Axial displ.','Transverse displ.'], loc='lower left')
 plt.grid(True)
 plt.savefig(log+'_displacements.png')
 

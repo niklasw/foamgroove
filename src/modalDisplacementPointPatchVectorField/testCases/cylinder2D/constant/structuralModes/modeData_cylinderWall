@@ -23,10 +23,10 @@ FoamFile
         {
             modeType rigid;
             amplitude (1 0 0);
-            scalingFactor 1;
+            scalingFactor 11.284;
         }
-        frequency   35;
-        damping 1e-3;
+        frequency   40;
+        damping 1e-2;
     }
 
     b
@@ -35,10 +35,10 @@ FoamFile
         {
             modeType rigid;
             amplitude (0 0 1);
-            scalingFactor 1;
+            scalingFactor 11.284;
         }
-        frequency  35;
-        damping 1e-3;
+        frequency  40;
+        damping 1e-2;
     }
 
 

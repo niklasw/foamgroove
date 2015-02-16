@@ -380,8 +380,7 @@ void modalDisplacementPointPatchField::updateCoeffs()
         (
             modesPtr_->calculatedModeDisplacement
             (
-                 smoothStep(rampBegin_, rampEnd_, tIndex)
-               * p
+                 smoothStep(rampBegin_, rampEnd_, tIndex) * p
             )
         );
     }

@@ -149,8 +149,11 @@ scalar structuralMode::solveMotionEquation
     const volScalarField& p
 )
 {
-    //return simpleSolve(p);
-    return NewmarkSolve(p);
+    scalar q = 0;
+    //q = simpleSolve(p);
+    q = NewmarkSolve(p);
+
+    return q;
 }
 
 scalar structuralMode::simpleSolve
@@ -159,8 +162,6 @@ scalar structuralMode::simpleSolve
 )
 {
     // Solve the ODE using simple forward euler:
-    // ddt2(a)+w^2 a = Q
-    // Should include damping D so:
     // ddt2(a)+D*w*ddt(a)+w^2 a = Q
 
     scalar relax = 0.75;
@@ -202,41 +203,33 @@ scalar structuralMode::simpleSolve
 
 scalar structuralMode::NewmarkSolve(const volScalarField& p)
 {
-    scalar relax = 0.75;
-
-    //scalar dT = (mesh_.time().deltaTValue())/odeSubSteps_;
     scalar dT = (mesh_.time().deltaTValue());
     scalar rdT = 1.0/dT;
-    scalar sqrRdT = pow(rdT,2);
 
-    scalar q = 0.0;
-    scalar& q_0  = odeData_[0];
-    scalar& q_00 = odeData_[1];
-    scalar& Q_0  = odeData_[2];
-    scalar& Q_00 = odeData_[3];
+    scalar  q    = 0.0;             // q(n+1)
+    scalar& q_0  = odeData_[0];     // q(n)
+    scalar& q_00 = odeData_[1];     // q(n-1)
+    scalar& Q_0  = odeData_[2];     // Q(n)
+    scalar& Q_00 = odeData_[3];     // Q(n-1)
 
     const scalar& mMass = modeShape_.scalingFactor();
+
     // Mode angular velocity from Eigen frequency
     scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
     scalar sqrHalfOmega = pow(0.5*omega,2);
 
-    scalar Q = calcQ(p);
+    scalar Q   = calcQ(p);
+    scalar A0  = -2*pow(rdT,2)+0.5*pow(omega,2);
+    scalar Ap1 = pow(rdT,2) + damping_*omega*rdT + sqrHalfOmega;
+    scalar Am1 = pow(rdT,2) - damping_*omega*rdT + sqrHalfOmega;
 
-    for (int i=0; i<odeSubSteps_; i++)
-    {
-        scalar A0  = -2*sqrRdT+0.5*pow(omega,2);
-        scalar Ap1 = sqrRdT + damping_*omega*rdT + sqrHalfOmega;
-        scalar Am1 = sqrRdT - damping_*omega*rdT + sqrHalfOmega;
-        //? Whats this, overwrite Q beefore it is used?
-        Q          = (Q_00 + 2*Q_0 + Q)/4;
+    scalar Qp = (Q + 2*Q_0 + Q_00)*0.25;
 
-        q = Q / (mMass * Ap1) - A0/Ap1*q_0 - Am1/Ap1*q_0;
+    q = 1/Ap1*(Qp/mMass - A0*q_0 - Am1*q_00);
 
-        q_00 = q_0;
-        q_0  = q;
-    }
+    q_00 = q_0;
+    q_0  = q;
 
-    // Store odeData for next step
     Q_00 = Q_0;
     Q_0  = Q;
 
