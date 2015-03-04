@@ -186,6 +186,7 @@ public:
     //  the modal analysis ODE with pressure as driving
     //  force.
     scalar solveMotionEquation(const volScalarField& p);
+    scalar solveMotionEquation(const volScalarField& p, const word& odeSover_);
     scalar simpleSolve(const volScalarField& p);
     scalar NewmarkSolve(const volScalarField& p);
 

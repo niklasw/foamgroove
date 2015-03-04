@@ -57,22 +57,30 @@ Foam::structuralModes::structuralModes(const modalDisplacementPointPatchField& B
     fluidDensity_(dimensionedScalar("fluidDensity",dimMass/dimVol,1.0))
 
 {
-    IOdictionary fluidProperties
+    IOdictionary modesDict
     (
         IOobject
         (
-            "fluidProperties",
+            "modesDict",
             BC.db().time().caseConstant(),
             "structuralModes",
             BC.db(),
             IOobject::MUST_READ
         )
     );
-    fluidDensity_ = fluidProperties.lookupOrDefault
+    fluidDensity_ = modesDict.lookupOrDefault
                     (
                         "fluidDensity",
                         dimensionedScalar("fluidDensity",dimMass/dimVol,1.0)
                     );
+
+    odeSolver_ = modesDict.lookupOrDefault<word>
+                 (
+                    "odeSolver",
+                    "Newmark"
+                 );
+
+    Info << "Selected ode solver " << odeSolver_ << endl;
 
     readODEData();
 }
@@ -109,7 +117,7 @@ Foam::vectorField Foam::structuralModes::calculatedModeDisplacement
         //  we need to cast off the const to be able to use
         //  the non-const motionSolver
         structuralMode& mode = const_cast<structuralMode&>(operator[](i));
-        scalar coeff = mode.solveMotionEquation(rho*p);
+        scalar coeff = mode.solveMotionEquation(rho*p, odeSolver_);
         sumDisplacements += mode.modeDisplacement()*coeff;
     }
     return sumDisplacements;

@@ -54,7 +54,7 @@ solvers
         $pFinal;
     }
 
-    cellDisplacement
+    "cellDisplacement.*"
     {
         $gamg;
         tolerance       1e-6;
@@ -95,7 +95,8 @@ PISO
 PIMPLE
 {
     nOuterCorrectors            1;
-    nCorrectors                 2;
+    momentumPredictor          yes;
+    nCorrectors                 4;
     nNonOrthogonalCorrectors    2;
     checkMeshCourantNo        yes;
     correctPhi                 no;
@@ -111,6 +112,7 @@ relaxationFactors
     };
     equations
     {
+        p                           $:relaxation.pressure;
         U                           $:relaxation.velocity;
         "(k|epsilon|omega|nuTilda)" $:relaxation.turbulence;
     }

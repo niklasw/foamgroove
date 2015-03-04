@@ -66,6 +66,8 @@ class structuralModes
 
         dimensionedScalar fluidDensity_;
 
+        word odeSolver_;
+
     // Private Member Functions
 
         //- Disallow default bitwise copy construct

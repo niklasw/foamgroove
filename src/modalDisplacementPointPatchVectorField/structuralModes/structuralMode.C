@@ -146,12 +146,19 @@ scalar structuralMode::solveMotionEquation2
 
 scalar structuralMode::solveMotionEquation
 (
-    const volScalarField& p
+    const volScalarField& p,
+    const word& odeSolver
 )
 {
     scalar q = 0;
-    //q = simpleSolve(p);
-    q = NewmarkSolve(p);
+    if ( odeSolver == "simple") q = simpleSolve(p);
+    else if (odeSolver == "Newmark") q = NewmarkSolve(p);
+    else
+    {
+        FatalErrorIn("structuralMode::solveMotionEquation")
+            << "Wrong solver selection: Select any of simple, Newmark"
+            <<  exit(FatalError);
+    }
 
     return q;
 }
@@ -164,7 +171,7 @@ scalar structuralMode::simpleSolve
     // Solve the ODE using simple forward euler:
     // ddt2(a)+D*w*ddt(a)+w^2 a = Q
 
-    scalar relax = 0.75;
+    // scalar relax = 0.75;
 
     scalar dT = (mesh_.time().deltaTValue())/odeSubSteps_;
 

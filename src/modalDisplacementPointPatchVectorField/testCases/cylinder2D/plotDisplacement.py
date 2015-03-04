@@ -2,7 +2,9 @@
 
 import re,sys
 import matplotlib.pyplot as plt
-from numpy import arange,asarray,loadtxt
+from numpy import arange,asarray,loadtxt,mean
+
+from Strouhal import Strouhal
 
 log=sys.argv[1]
 forceLog = ''
@@ -82,35 +84,61 @@ def collectForces(logFile):
 
 t, Dx, Dy = collectDisplacement(log)
 
-plt.figure(1)
-plt.plot(t,Dx,'r',t,Dy,'g')
+with open(log+'.displacements','w') as fp:
+    for i in range(len(t)):
+        fp.write('{0} {1} {2}\n'.format(t[i],Dx[i],Dy[i]))
 
-plt.legend(['Axial displ.','Transverse displ.'], loc='lower left')
-plt.grid(True)
-plt.savefig(log+'_displacements.png')
+
+Strouhal(0.01)
+print 'WARNING: Damping above, may not corr to below results'
+
+avgFx = 0
+avgFy = 0
 
 if forceLog:
     tf ,Fx, Fy = collectForces(forceLog)
-    plt.figure(5)
+    print 'Force averaging over last half of sample series'
+    nSamples = len(Fx)
+    avgFx = mean(Fx[-nSamples/2:])
+    avgFy = mean(Fy[-nSamples/2:])
+    plt.figure()
     plt.plot(tf,Fx,'r',tf,Fy,'g')
     plt.grid(True)
+    plt.title('Average Fx = {0:0.3e}, Fy = {1:0.3e}'.format(avgFx,avgFy))
     plt.legend(['Axial p. force','Transverse p. force'])
     plt.savefig(log+'_pressureForces.png')
 
-plt.figure(4)
+nSamples = len(t)
+
+plt.figure(figsize=(18,14))
+plt.subplot(221)
+plt.plot(t,Dx,'r',t,Dy,'g')
+avgDx = mean(Dx[-nSamples/2:])
+avgDy = mean(Dy[-nSamples/2:])
+plt.title('Average Dx = {0:0.3e}, Dy = {1:0.3e}'.format(avgDx,avgDy))
+plt.legend(['Axial displ.','Transverse displ.'], loc='lower left')
+plt.grid('on')
+
+print 'Axial spring coefficient from avg forces and displacements:'
+print '{0:0.3e}/{1:0.3e}={2:0.3e}'.format(avgFx,avgDx,avgFx/avgDx)
+
+plt.subplot(222)
 plt.plot(Dx,Dy)
 plt.title('Dx against Dy')
 plt.axis('equal')
-plt.savefig(log+'_kringla.png')
+plt.grid('on')
 
-plt.figure(2)
+plt.subplot(223)
 plt.grid(True)
-plt.title(log+'_FFT axial')
+plt.title('FFT axial')
 plotFFT(Dx,1/dt,maxFrq=40)
-plt.savefig(log+'_FFT-axial.png')
-plt.figure(3)
+
+plt.subplot(224)
 plt.grid(True)
-plt.title(log+'_FFT transverse')
+plt.title('FFT transverse')
 plotFFT(Dy,1/dt,maxFrq=40)
-plt.savefig(log+'_FFT-transverse.png')
-plt.show()
+plt.suptitle(log)
+plt.savefig(log+'_displacements.png')
+#plt.show()
+
+

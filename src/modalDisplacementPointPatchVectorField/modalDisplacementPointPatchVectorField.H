@@ -90,7 +90,7 @@ Description
     If an incompressible solver is used, the fluid density
     needs specification:
 
-    constant/structuralModes/fluidProperties
+    constant/structuralModes/modesDict
 
     fluidDensity              fluidDensity [ 1 -3 0 0 0 0 0 ] 1000;
 

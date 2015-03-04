@@ -26,27 +26,27 @@ namespace Foam
 
     void myODE::derivatives
     (
-        const scalar x,
+        const scalar t,
         const scalarField& y,
-        scalarField& dydx
+        scalarField& dydt
     ) const
     {
-        dydx[0] = y[1];
-        dydx[1] = Q_
+        dydt[0] = y[1];
+        dydt[1] = Q_
                 - 2*damping_*omega_*y[1]
                 - pow(omega_,2)*y[0];
     }
 
     void myODE::jacobian
     (
-        const scalar x,
+        const scalar t,
         const scalarField& y,
-        scalarField& dfdx,
+        scalarField& dfdt,
         scalarSquareMatrix& dfdy
     ) const
     {
-        dfdx[0] = 0.0;
-        dfdx[1] = 0.0;
+        dfdt[0] = 0.0;
+        dfdt[1] = 0.0;
 
         dfdy[0][0] = 0.0;
         dfdy[0][1] = 1.0;
