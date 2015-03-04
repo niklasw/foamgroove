@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
             //  the debugMode() member.
 
             const pointPatchField<vector>* Pptr = &curPatch;
-            
+
             modalDisplacementPointPatchField* BC =
             dynamic_cast<modalDisplacementPointPatchField* >
             (
