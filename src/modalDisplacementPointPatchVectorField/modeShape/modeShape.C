@@ -97,9 +97,9 @@ void Foam::modeShape::genPolynomialMode()
 
 void Foam::modeShape::genInterpolatedMode()
 {
-    tmp<vectorField> tmpDisplacement(dict_.lookup("modeDisplacement"));
+    vectorField displacement(dict_.lookup("modeDisplacement"));
     scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
-    displacement_ = scalingFactor_*tmpDisplacement();
+    displacement_ = scalingFactor_*displacement;
 
     Info << "Generated scaled displacement field from interpolated data"
          << endl;
