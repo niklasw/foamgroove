@@ -100,6 +100,9 @@ void Foam::modeShape::genInterpolatedMode()
     tmp<vectorField> tmpDisplacement(dict_.lookup("modeDisplacement"));
     scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
     displacement_ = scalingFactor_*tmpDisplacement();
+
+    Info << "Generated scaled displacement field from interpolated data"
+         << endl;
 }
 
 void Foam::modeShape::distributeParModeDisplacement()
@@ -118,6 +121,10 @@ void Foam::modeShape::distributeParModeDisplacement()
 
         displacement_.resize(BC_.patch().size());
         displacement_ = localModeDisplacement;
+    }
+    else
+    {
+        Info << "Serial run. No mode distribution needed" << endl;
     }
 }
 
