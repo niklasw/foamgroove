@@ -230,7 +230,7 @@ void modalDisplacementPointPatchField::findMyMonitors()
                 Tuple2<label,label>
                 (
                     i,
-                    allMonitors[i].second()
+                    localIndex(allMonitors[i].second())
                 )
             );
         }
@@ -359,6 +359,8 @@ modalDisplacementPointPatchField
 
 void modalDisplacementPointPatchField::updateCoeffs()
 {
+    clock timer;
+
     if (this->updated())
     {
         return;
@@ -390,13 +392,16 @@ void modalDisplacementPointPatchField::updateCoeffs()
     forAll (myMonitorMeshLabels_,i)
     {
         label monitorIndex = myMonitorMeshLabels_[i].first();
-        label meshLabel = myMonitorMeshLabels_[i].second();
-        label localLabel = localIndex(meshLabel);
+        //label meshLabel = myMonitorMeshLabels_[i].second();
+        //label localLabel = localIndex(meshLabel);
+        label localLabel = myMonitorMeshLabels_[i].second();
 
-        vector mDisp = this->operator[](localLabel);
+        const vector& mDisp = this->operator[](localLabel);
         Pout << "Monitor point " << monitorIndex
              << " displacement = " << mDisp  << endl;
     }
+    Info << "Updated displacement field patch " << this->patch().name()
+         << " in " << timer.elapsedClockTime() <<" s." << endl;
 }
 
 
