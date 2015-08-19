@@ -249,15 +249,15 @@ scalar structuralMode::NewmarkSolve(const volScalarField& p)
 scalar structuralMode::forcedMotion()
 {
     scalar T = mesh_.time().timeOutputValue();
-    scalar dT = (mesh_.time().deltaTValue());
-    scalar rdT = 1.0/dT;
 
     const scalar& mMass = modeShape_.scalingFactor();
 
     // Mode angular velocity from Eigen frequency
     scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
 
-    q = mMass * Foam::sin(omega * T);
+    scalar q = mMass * Foam::sin(omega * T);
+
+    return q;
 }
 
 void Foam::structuralMode::write() const

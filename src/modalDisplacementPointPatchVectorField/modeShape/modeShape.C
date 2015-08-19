@@ -52,7 +52,7 @@ const tmp<vectorField> Foam::modeShape::R()
 const tmp<vectorField> Foam::modeShape::Rn()
 {
     origin_ = dict_.lookup("origin");
-    vectorField r = R();
+    vectorField r(R());
     return r/(Foam::mag(r)+SMALL);
 }
 
@@ -68,7 +68,7 @@ void Foam::modeShape::genSphericalMode()
     amplitude_ = dict_.lookup("amplitude");
     scalar scalingFactor_ = readScalar(dict_.lookup("scalingFactor"));
     scalar A = Foam::mag(amplitude_);
-    displacement_ = vectorField(points_.size(), scalingFactor_*A*Rn());
+    displacement_ = vectorField(scalingFactor_*A*Rn());
 }
 
 void Foam::modeShape::genTrigonometricMode()
