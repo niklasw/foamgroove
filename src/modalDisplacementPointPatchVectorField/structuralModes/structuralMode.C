@@ -154,10 +154,12 @@ scalar structuralMode::solveMotionEquation
     scalar q = 0;
     if ( odeSolver == "simple") q = simpleSolve(p);
     else if (odeSolver == "Newmark") q = NewmarkSolve(p);
+    else if (odeSolver == "forcedMotion") q = forcedMotion();
     else
     {
         FatalErrorIn("structuralMode::solveMotionEquation")
-            << "Wrong solver selection: Select any of simple, Newmark"
+            << "Wrong solver selection: Select any of simple,"
+            << " Newmark or forcedMotion"
             <<  exit(FatalError);
     }
 
@@ -242,6 +244,20 @@ scalar structuralMode::NewmarkSolve(const volScalarField& p)
     Q_0  = Q;
 
     return q;
+}
+
+scalar structuralMode::forcedMotion()
+{
+    scalar T = mesh_.time().timeOutputValue();
+    scalar dT = (mesh_.time().deltaTValue());
+    scalar rdT = 1.0/dT;
+
+    const scalar& mMass = modeShape_.scalingFactor();
+
+    // Mode angular velocity from Eigen frequency
+    scalar omega = 2*Foam::constant::mathematical::pi*frequency_;
+
+    q = mMass * Foam::sin(omega * T);
 }
 
 void Foam::structuralMode::write() const
