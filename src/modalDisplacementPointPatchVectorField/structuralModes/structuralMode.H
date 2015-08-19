@@ -189,11 +189,12 @@ public:
     scalar solveMotionEquation(const volScalarField& p, const word& odeSover_);
     scalar simpleSolve(const volScalarField& p);
     scalar NewmarkSolve(const volScalarField& p);
+    scalar forcedMotion();
 
     //scalar solveMotionEquation2(const volScalarField& p);
 
     // Access
-    
+
     const modeShape& shape() const
     {
         return modeShape_;
