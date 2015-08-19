@@ -82,7 +82,13 @@ class modeShape
         // - Coordinate for analytical mode generation.
         const tmp<scalarField> X();
 
+        const tmp<vectorField> R();
+
+        const tmp<vectorField> Rn();
+
         void genRigidMode();
+
+        void genSphericalMode();
 
         void genTrigonometricMode();
 

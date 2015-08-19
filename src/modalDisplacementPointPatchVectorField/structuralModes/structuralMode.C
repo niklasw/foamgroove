@@ -99,6 +99,7 @@ Foam::structuralMode::structuralMode
 {
     modeShape_.generate();
     calculateSweptVols();
+    Info << "Added structuralMode " << name() << endl;
 }
 
 
