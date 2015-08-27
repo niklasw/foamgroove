@@ -51,14 +51,11 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::gunTopoFvMesh::debugInfo()
+void Foam::gunTopoFvMesh::gunInfo()
 {
-    Info << "\tBullet info: "
-         <<"time:" << time().value()
-         << " curMotionVel_:" << curMotionVel_
-         << " growthLayerPosition:" << growthLayerPosition_ << endl;
-    Info << "\tBullet info: "
+    Info << "\tGun info: "
          << "Current volume of domain = " << gSum(V()) << endl;
+    projPtr_->info();
 
     return;
 }
@@ -202,7 +199,7 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
     forAll(zone1, faceI)
     {
         label fzI = zone1[faceI];
-        Info << fa[fzI] << "\t" << aimVector_ << endl;
+        //Info << fa[fzI] << "\t" << aimVector_ << endl;
         if ((fa[fzI] & aimVector_) < 0)
         {
             flipZone1[faceI] = true;
@@ -232,6 +229,18 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
 
     List<polyMeshModifier*> tm(1);
 
+    scalar minCellThickness =
+        readScalar
+        (
+            motionDict_.subDict("extrusionCoeffs").lookup("minThickness")
+        );
+
+    scalar maxCellThickness =
+        readScalar
+        (
+            motionDict_.subDict("extrusionCoeffs").lookup("maxThickness")
+        );
+
     tm[0] =
         new layerAdditionRemoval
         (
@@ -239,14 +248,9 @@ void Foam::gunTopoFvMesh::addZonesAndModifiers()
             0,
             topoChanger_,
             extrusionFaceSet_,
-            readScalar
-            (
-                motionDict_.subDict("extrusion").lookup("minThickness")
-            ),
-            readScalar
-            (
-                motionDict_.subDict("extrusion").lookup("maxThickness")
-            )
+            minCellThickness,
+            maxCellThickness,
+            false
         );
 
     Info<< "Adding mesh modifier" << endl;
@@ -354,16 +358,12 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     barrelPointSet_(motionDict_.lookupOrDefault<word>("barrelPointSet","barrelPoints")),
     motionPointSet_(motionDict_.lookupOrDefault<word>("motionPointSet","motionPoints")),
     extrusionFaceSet_(motionDict_.lookupOrDefault<word>("extrusionFaceSet", "extrusionFaces")),
-    initialPosition_(readScalar(motionDict_.lookup("initialPosition"))),
-    initialVelocity_(readScalar(motionDict_.lookup("initialVelocity"))),
-    exitVelocity_(readScalar(motionDict_.lookup("exitVelocity"))),
-    curMotionVel_(curMotionVel()),
-    currentPosition_(initialPosition_),
     growthLayerPosition_(0),
     tolerance_(SMALL),
     gunPoints_(0),
     motionPoints_(0),
     nOldPoints_(0)
+
 {
     //normalize aimVector
     if ( mag(aimVector_) <= SMALL )
@@ -375,10 +375,6 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
 
     aimVector_ /= (mag(aimVector_)+SMALL);
 
-    Info<< "Initial time:" << time().value()
-        << " Initial curMotionVel_:" << curMotionVel_
-        << endl;
-
     addZonesAndModifiers();
 
     updateExtrudeLayerPosition();
@@ -386,6 +382,10 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     gunMarkup();
 
     motionMask_ = vertexMarkup(points());
+
+    projPtr_.set(new proj(motionDict_.subDict("projCoeffs"),*this));
+
+    gunInfo();
 }
 
 
@@ -400,6 +400,9 @@ Foam::gunTopoFvMesh::~gunTopoFvMesh()
 bool Foam::gunTopoFvMesh::update()
 {
     Info << "Entering Foam::gunTopoFvMesh::update()" << endl;
+
+    projPtr_->update();
+
     nOldPoints_ = points().size();
 
     // Do mesh changes (use inflation - put new points in topoChangeMap)
@@ -409,12 +412,10 @@ bool Foam::gunTopoFvMesh::update()
     // topological change has happened or not
     pointField newPoints;
 
-    curMotionVel_ = curMotionVel();
-
-    debugInfo();
+    gunInfo();
 
     vector pointsDisplacement =
-        aimVector_ * curMotionVel_*time().deltaT().value();
+        aimVector_ * projPtr_->currentVelocity()*time().deltaT().value();
 
     if (topoChangeMap.valid())
     {
@@ -472,19 +473,5 @@ Foam::vector Foam::gunTopoFvMesh::curPosition() const
     return A - A*Foam::cos(time().value() * 2*M_PI * frequency_);
 }
 */
-
-Foam::scalar Foam::gunTopoFvMesh::curMotionVel()
-{
-    /*
-    scalar accelerationLength = barrelLength_-initialPosition_;
-    scalar dvdx = (exitVelocity_ - initialVelocity_)/accelerationLength;
-    Info << "dvdx ::: " << dvdx << endl;
-    Info << "current pos ::: " << currentPosition_ << endl;
-    Info << "initial pos ::: " << initialPosition_ << endl;
-    curMotionVel_= min((currentPosition_ - initialPosition_)*dvdx, exitVelocity_);
-    currentPosition_ +=  this->time().deltaTValue() * curMotionVel_;
-    */
-    return initialVelocity_;// curMotionVel_;
-}
 
 // ************************************************************************* //
