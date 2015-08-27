@@ -155,7 +155,9 @@ class modalDisplacementPointPatchField
 
         List<label> patchPointProcAddressing_;
 
-        List<Tuple2<label,label> > myMonitorMeshLabels_;
+        List<Tuple2<label,label> > allMonitors_;
+
+        List<Tuple2<label,label> > myMonitors_;
 
         const polyMesh *meshPtr_;
 
@@ -331,6 +333,7 @@ public:
 
 
         //- Write
+        void writeMonitors() const;
         virtual void write(Ostream&) const;
 
         //- Access

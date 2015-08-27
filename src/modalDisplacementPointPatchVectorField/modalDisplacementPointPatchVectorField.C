@@ -28,6 +28,7 @@ License
 #include "addToRunTimeSelectionTable.H"
 #include "Time.H"
 #include "polyMesh.H"
+#include "labelIOList.H"
 #include "mathematicalConstants.H"
 #include "structuralModes/structuralModes.H"
 
@@ -190,7 +191,7 @@ Tuple2<label,label> modalDisplacementPointPatchField::primitiveNearestPointSearc
 List<Tuple2<label,label> >
 modalDisplacementPointPatchField::findMonitorPoints()
 {
-    IOobject monitorsHdr
+    IOobject monitorPointsHdr
     (
         "monitorPoints_"+this->patch().name(),
         this->dimensionedInternalField().mesh().time().caseConstant(),
@@ -199,33 +200,55 @@ modalDisplacementPointPatchField::findMonitorPoints()
         IOobject::MUST_READ
     );
 
-    if (monitorsHdr.headerOk())
+    IOobject monitorLabelsHdr
+    (
+        "monitors_"+this->patch().name(),
+        this->dimensionedInternalField().mesh().time().timeName(),
+        "uniform",
+        this->db(),
+        IOobject::MUST_READ
+    );
+
+    List<Tuple2<label,label> > searchResult(0);
+
+    //if (monitorLabelsHdr.headerOk())
+    if (false)
     {
-        IOList<point> mPoints(monitorsHdr);
-        List<Tuple2<label,label> > searchResult(mPoints.size());
+        labelIOList mLabels(monitorLabelsHdr);
+        searchResult.setSize(mLabels.size());
+        forAll(mLabels, i)
+        {
+           // searchResult[i]
+        }
+    }
+    else if (monitorPointsHdr.headerOk())
+    {
+        IOList<point> mPoints(monitorPointsHdr);
+        searchResult.setSize(mPoints.size());
         forAll (mPoints, i)
         {
             searchResult[i] = primitiveNearestPointSearch(mPoints[i]);
         }
         Info << "Found " << mPoints.size() << " monitor points." << endl;
-        return searchResult;
     }
     else
     {
         Info << "Found no monitor points." << endl;
-        return List<Tuple2<label,label> >();
     }
+    return searchResult;
 }
 
 void modalDisplacementPointPatchField::findMyMonitors()
 {
     List<Tuple2<label,label> > allMonitors = findMonitorPoints();
+    allMonitors_.append(allMonitors);
+
     forAll(allMonitors, i)
     {
         label proc = allMonitors[i].first();
         if ( Pstream::myProcNo() == proc)
         {
-            myMonitorMeshLabels_.append
+            myMonitors_.append
             (
                 Tuple2<label,label>
                 (
@@ -253,7 +276,8 @@ modalDisplacementPointPatchField
     writeDebugField_(false),
     globalMeshToGlobalPatchIndexMap_(0),
     patchPointProcAddressing_(this->size()),
-    myMonitorMeshLabels_(0)
+    allMonitors_(0),
+    myMonitors_(0)
 {
     Info << "modalDisplacementPointPatchField:: In constructor 0\n" << endl;
 
@@ -283,7 +307,8 @@ modalDisplacementPointPatchField
     writeDebugField_(false),
     globalMeshToGlobalPatchIndexMap_(0),
     patchPointProcAddressing_(this->size()),
-    myMonitorMeshLabels_(0)
+    allMonitors_(0),
+    myMonitors_(0)
 {
     Info << "modalDisplacementPointPatchField:: In constructor 1\n" << endl;
 
@@ -322,7 +347,8 @@ modalDisplacementPointPatchField
     writeDebugField_(false),
     globalMeshToGlobalPatchIndexMap_(0),
     patchPointProcAddressing_(this->size()),
-    myMonitorMeshLabels_(0)
+    allMonitors_(0),
+    myMonitors_(0)
 {
     Info << "modalDisplacementPointPatchField:: In constructor 2" << endl;
 }
@@ -341,7 +367,8 @@ modalDisplacementPointPatchField
     writeDebugField_(false),
     globalMeshToGlobalPatchIndexMap_(0),
     patchPointProcAddressing_(this->size()),
-    myMonitorMeshLabels_(0)
+    allMonitors_(0),
+    myMonitors_(0)
 {
     Info << "modalDisplacementPointPatchField:: In constructor 3," << endl;
 
@@ -389,12 +416,10 @@ void modalDisplacementPointPatchField::updateCoeffs()
 
     fixedValuePointPatchField<vector>::updateCoeffs();
 
-    forAll (myMonitorMeshLabels_,i)
+    forAll (myMonitors_,i)
     {
-        label monitorIndex = myMonitorMeshLabels_[i].first();
-        //label meshLabel = myMonitorMeshLabels_[i].second();
-        //label localLabel = localIndex(meshLabel);
-        label localLabel = myMonitorMeshLabels_[i].second();
+        label monitorIndex = myMonitors_[i].first();
+        label localLabel = myMonitors_[i].second();
 
         const vector& mDisp = this->operator[](localLabel);
         Pout << "Monitor point " << monitorIndex
@@ -404,6 +429,26 @@ void modalDisplacementPointPatchField::updateCoeffs()
          << " in " << timer.elapsedClockTime() <<" s." << endl;
 }
 
+void modalDisplacementPointPatchField::writeMonitors() const
+{
+    IOobject monitorsHdr
+    (
+        "monitors_"+this->patch().name(),
+        this->dimensionedInternalField().mesh().time().timeName(),
+        "uniform",
+        this->db()
+    );
+
+    List<label> monitorLabels(0);
+    forAll(allMonitors_, i)
+    {
+        monitorLabels.append(allMonitors_[i].second());
+    }
+
+    labelIOList monitorData(monitorsHdr, monitorLabels);
+
+    monitorData.write();
+}
 
 void modalDisplacementPointPatchField::write(Ostream& os) const
 {
@@ -411,6 +456,8 @@ void modalDisplacementPointPatchField::write(Ostream& os) const
     os.writeKeyword("rampBegin") << rampBegin_ << token::END_STATEMENT << nl;
     os.writeKeyword("rampEnd") << rampEnd_ << token::END_STATEMENT << nl;
     writeEntry("value", os);
+
+    writeMonitors();
 
     modesPtr_->writeODEData();
 }
