@@ -355,9 +355,30 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     aimVector_(motionDict_.lookup("aimVector")),
     boltPosition_(motionDict_.lookup("boltPosition")),
     barrelLength_(readScalar(motionDict_.lookup("barrelLength"))),
-    barrelPointSet_(motionDict_.lookupOrDefault<word>("barrelPointSet","barrelPoints")),
-    motionPointSet_(motionDict_.lookupOrDefault<word>("motionPointSet","motionPoints")),
-    extrusionFaceSet_(motionDict_.lookupOrDefault<word>("extrusionFaceSet", "extrusionFaces")),
+    barrelPointSet_
+    (
+        motionDict_.lookupOrDefault<word>
+        (
+            "barrelPointSet",
+            "barrelPoints"
+        )
+    ),
+    motionPointSet_
+    (
+        motionDict_.lookupOrDefault<word>
+        (
+            "motionPointSet",
+            "motionPoints"
+        )
+    ),
+    extrusionFaceSet_
+    (
+        motionDict_.lookupOrDefault<word>
+        (
+            "extrusionFaceSet",
+            "extrusionFaces"
+        )
+    ),
     growthLayerPosition_(0),
     tolerance_(SMALL),
     gunPoints_(0),
@@ -387,7 +408,6 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
 
     gunInfo();
 }
-
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
