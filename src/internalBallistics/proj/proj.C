@@ -141,8 +141,8 @@ Foam::vector Foam::proj::pressureForce()
         forAll(patchLabels_, i)
         {
             label patchI = patchLabels_[i];
-            const fvPatchScalarField& patchPressure;
-            patchPressure = p.boundaryField()[patchI];
+            const fvPatchScalarField& patchPressure
+                                    = p.boundaryField()[patchI];
 
             forceIntegral += Foam::gSum
             (
