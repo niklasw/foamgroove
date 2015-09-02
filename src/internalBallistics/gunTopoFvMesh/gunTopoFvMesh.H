@@ -45,6 +45,7 @@ SourceFiles
 #include "pointSet.H"
 #include "faceSet.H"
 #include "fvCFD.H"
+#include "proj.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,6 +53,7 @@ namespace Foam
 {
 
 // Forward declaration of classes
+class proj;
 
 /*---------------------------------------------------------------------------*\
                       Class gunTopoFvMesh Declaration
@@ -73,32 +75,20 @@ class gunTopoFvMesh
 
         const scalar barrelLength_;
 
-        const word barrelPointSet_;
         const word motionPointSet_;
 
         const word extrusionFaceSet_;
-
-        //- Bullet information
-        const scalar initialPosition_;
-
-        const scalar initialVelocity_;
-
-        const scalar exitVelocity_;
-
-        //- Information bearers
-        scalar curMotionVel_;
-
-        scalar currentPosition_;
 
         scalar growthLayerPosition_;
 
         //- Search tolerance, for finding motion points.
         scalar tolerance_;
 
-        labelList gunPoints_;
         labelList motionPoints_;
 
         label nOldPoints_;
+
+        autoPtr<proj> projPtr_;
         //- Vertex motion mask
         scalarField motionMask_;
 
@@ -125,7 +115,7 @@ class gunTopoFvMesh
         //- Calculate current position of extrusion layer
         void updateExtrudeLayerPosition();
 
-        void debugInfo();
+        void gunInfo();
 
         //- Add mixer zones and modifiers
         void addZonesAndModifiers();
@@ -178,6 +168,16 @@ public:
 
         //- Present bullet velocity, defined positive upwards
         scalar curMotionVel();
+
+        const vector& aimVector() const
+        {
+            return aimVector_;
+        };
+
+        scalar barrelLength() const
+        {
+            return barrelLength_;
+        };
 };
 
 
