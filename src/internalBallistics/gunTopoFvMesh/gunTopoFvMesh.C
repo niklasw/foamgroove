@@ -138,10 +138,7 @@ List<label> Foam::gunTopoFvMesh::addedPoints(const mapPolyMesh& topoMap) const
 
 void Foam::gunTopoFvMesh::gunMarkup()
 {
-    pointSet barrelPoints(*this,barrelPointSet_);
     pointSet motionPoints(*this,motionPointSet_);
-
-    gunPoints_.append(barrelPoints.toc());
     motionPoints_.append(motionPoints.toc());
 }
 
@@ -155,7 +152,6 @@ void Foam::gunTopoFvMesh::updateGunPointLabels
     //- Assumption: all new points will be motion points
     for ( int i=nOldPoints_; i<nMeshPoints; i++)
     {
-        gunPoints_.append(revPointMap[i]);
         motionPoints_.append(revPointMap[i]);
     }
 }
@@ -355,14 +351,6 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     aimVector_(motionDict_.lookup("aimVector")),
     boltPosition_(motionDict_.lookup("boltPosition")),
     barrelLength_(readScalar(motionDict_.lookup("barrelLength"))),
-    barrelPointSet_
-    (
-        motionDict_.lookupOrDefault<word>
-        (
-            "barrelPointSet",
-            "barrelPoints"
-        )
-    ),
     motionPointSet_
     (
         motionDict_.lookupOrDefault<word>
@@ -381,7 +369,6 @@ Foam::gunTopoFvMesh::gunTopoFvMesh(const IOobject& io)
     ),
     growthLayerPosition_(0),
     tolerance_(SMALL),
-    gunPoints_(0),
     motionPoints_(0),
     nOldPoints_(0)
 

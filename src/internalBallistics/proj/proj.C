@@ -109,14 +109,16 @@ void Foam::proj::updateVelocity()
 {
     if (motionType_ == "dynamic")
     {
-        scalar dVel = Foam::mag(pressureForce())/mass_*mesh_.time().deltaT().value();
+        scalar dVel = Foam::mag(force())
+                    / mass_*mesh_.time().deltaT().value();
         currentVelocity_ += dVel;
     }
     else if (motionType_ == "linear")
     {
-        WarningIn("Foam::proj::updateVelocity()")
-            << "motionType_ " << motionType_
-            << " NOT IMPLEMENTED" << endl;
+        scalar deltaVelocity = exitVelocity_ - initialVelocity_;
+        scalar relativePosition =
+            (currentPosition_ - initialPosition_)/mesh_.barrelLength();
+        currentVelocity_ = initialVelocity_+deltaVelocity*relativePosition;
     }
 }
 
@@ -127,14 +129,6 @@ Foam::scalar Foam::proj::currentPosition() const
 
 Foam::scalar Foam::proj::currentVelocity() const
 {
-    if (motionType_ == "constant" )
-    {
-        return currentVelocity_;
-    }
-    else if (motionType_ == "linear")
-    {
-        return currentVelocity_;
-    }
     return currentVelocity_;
 }
 
@@ -147,12 +141,14 @@ Foam::vector Foam::proj::pressureForce()
         forAll(patchLabels_, i)
         {
             label patchI = patchLabels_[i];
-            const fvPatchScalarField& patchPressure = p.boundaryField()[patchI];
+            const fvPatchScalarField& patchPressure;
+            patchPressure = p.boundaryField()[patchI];
+
             forceIntegral += Foam::gSum
-                (
-                    patchPressure
-                  * mesh_.Sf().boundaryField()[patchI]
-                );
+            (
+                patchPressure
+              * mesh_.Sf().boundaryField()[patchI]
+            );
         }
 
         return (forceIntegral & mesh_.aimVector())*mesh_.aimVector();
@@ -163,5 +159,15 @@ Foam::vector Foam::proj::pressureForce()
             << "Pressure field, p, not found" << exit(FatalError);
     }
     return vector::zero;
+}
+
+Foam::vector Foam::proj::frictionForce()
+{
+    return vector::zero;
+}
+
+Foam::vector Foam::proj::force()
+{
+    return pressureForce()+frictionForce();
 }
 // ************************************************************************* //

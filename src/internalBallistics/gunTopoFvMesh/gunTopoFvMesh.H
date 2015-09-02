@@ -75,7 +75,6 @@ class gunTopoFvMesh
 
         const scalar barrelLength_;
 
-        const word barrelPointSet_;
         const word motionPointSet_;
 
         const word extrusionFaceSet_;
@@ -85,7 +84,6 @@ class gunTopoFvMesh
         //- Search tolerance, for finding motion points.
         scalar tolerance_;
 
-        labelList gunPoints_;
         labelList motionPoints_;
 
         label nOldPoints_;
@@ -174,6 +172,11 @@ public:
         const vector& aimVector() const
         {
             return aimVector_;
+        };
+
+        scalar barrelLength() const
+        {
+            return barrelLength_;
         };
 };
 

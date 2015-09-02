@@ -107,6 +107,10 @@ public:
         scalar currentVelocity() const;
 
         vector pressureForce();
+
+        vector frictionForce();
+
+        vector force();
 };
 
 
