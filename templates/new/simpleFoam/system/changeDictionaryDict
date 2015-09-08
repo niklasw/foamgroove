@@ -27,12 +27,6 @@ dictionaryReplacement
             inGroups         1(defaultGroup);
         }
 
-        "(.*[Ww]all.*|.*[Hh]ull.*)"
-        {
-            type            wall;
-            inGroups         1(wallGroup);
-        }
-
         "(.*[Ss]lip.*)"
         {
             type        wall;

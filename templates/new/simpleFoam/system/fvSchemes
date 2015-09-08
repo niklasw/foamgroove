@@ -38,10 +38,11 @@ divSchemes
 {
     default             $divMethod upwind;
     div(phi,U)          $divMethod linearUpwindV grad(U);
-    div(phi,k)          $divMethod linearUpwind gradLimiter;
-    div(phi,epsilon)    $divMethod linearUpwind gradLimiter;
-    div(phi,omega)      $divMethod linearUpwind gradLimiter;
-    div(phi,nuTilda)    $divMethod linearUpwind gradLimiter;
+    turbulence          $divMethod linearUpwind gradLimiter;
+    div(phi,k)          $turbulence;
+    div(phi,epsilon)    $turbulence;
+    div(phi,omega)      $turbulence;
+    div(phi,nuTilda)    $turbulence;
     div(R)              Gauss linear;
     div((nuEff*dev(T(grad(U))))) Gauss linear;
     div((muEff*dev(T(grad(U))))) Gauss linear;
