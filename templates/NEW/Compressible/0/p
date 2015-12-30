@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      p;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/constant/boundaryConditions/basic";
+
+flowType incompressible;
+
+dimensions      [ 1 -1 -2 0 0 0 0 ];
+
+internalField   $pressure.ambient;
+
+boundaryField
+{
+#   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+
+    defaultGroup { $:bc.default.p; }
+
+    inletGroup { $:bc.fixedInlet.p; }
+
+    wallGroup { $:bc.walls.p; }
+
+    slipGroup       { $:bc.slipWalls.p; }
+
+    movingWallGroup { $:bc.walls.p; }
+
+    ambienceGroup { $:bc.totalPressure.p; }
+
+    outflowGroup { $:bc.pressureOutlet.p; }
+
+    farfieldGroup { $:bc.freestream.p; }
+
+#   include "include/general.in";
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,88 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+dictionaryReplacement
+{
+
+    boundary
+    {
+        "(.*[Ww]all.*|.*[Hh]ull.*)"
+        {
+            type            wall;
+            inGroups         1(wallGroup);
+        }
+
+        "(.*[Ss]lip.*)"
+        {
+            type        wall;
+            inGroups     1(slipGroup);
+        }
+
+        ".*2[Dd].*"
+        {
+            type            empty;
+        }
+
+        ".*[Cc]yclic.*"
+        {
+            type cyclicAMI;
+        }
+
+        ".*[Ff]ront.*[Bb]ack.*"
+        {
+            type            empty;
+        }
+
+        "(.*[Ii]nlet.*|.*[Ii]nflow.*)"
+        {
+            type            patch;
+            inGroups         1(inletGroup);
+        }
+
+        "(.*[Oo]utlet.*|.*[Oo]utflow.*)"
+        {
+            type            patch;
+            inGroups         1(outflowGroup);
+        }
+
+        "(.*[Oo]pening.*|.*[Aa]mbien.*|.*[Aa]tmos.*)"
+        {
+            type            patch;
+            inGroups         1(ambienceGroup);
+        }
+
+        "(.*[Ff]ree[Ss]tream.*|.*[Ff]ar[Ff]ield.*)"
+        {
+            type        patch;
+            inGroups     1(farfieldGroup);
+        }
+
+        "(.*[Ss]ymmetr.*)"
+        {
+            type        symmetryPlane;
+        }
+
+        "(.*procBoundary.*)"
+        {
+            type  processor;
+        }
+    }
+}
+
+
+// ************************************************************************* //

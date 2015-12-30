@@ -42,6 +42,12 @@ setDecomposition()
 distributeZero()
 {
     [[ -d processor0 ]] || return 0
+
+    if [[ "$1" == "" ]]; then
+        sourceDir=0
+    else
+        sourceDir=$1
+
     for p in processor*; do
         rm -rf $p/0
         cp -rv 0 $p/0
@@ -88,5 +94,5 @@ runmePar $NP changeDictionaryLight
 
 runmePar $NP checkMesh
 
-runme distributeZero
+runme distributeZero zero
 
