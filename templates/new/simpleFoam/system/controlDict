@@ -31,7 +31,7 @@ writeInterval   100;
 
 purgeWrite      3;
 
-writeFormat     ascii;
+writeFormat     binary;
 
 writePrecision  8;
 
@@ -42,11 +42,6 @@ timeFormat      general;
 timePrecision   6;
 
 runTimeModifiable yes;
-
-// For free surface mostly.
-adjustTimeStep  no;
-maxCo           0.5;
-maxAlphaCo      0.5;
 
 libs            ();
 

@@ -42,7 +42,7 @@ namespace Foam
 scalar modalDisplacementPointPatchField::smoothStep
 (
         const scalar s0,
-        const scalar s1, 
+        const scalar s1,
         scalar x
 ) const
 {
@@ -50,7 +50,7 @@ scalar modalDisplacementPointPatchField::smoothStep
     if ((s1 - s0) > SMALL)
     {
         x = min(max(x,s0),s1);
-        x = (x - s0)/(s1 - s0); 
+        x = (x - s0)/(s1 - s0);
         out = x*x*x*(x*(x*6 - 15) + 10);
     }
     Info << "Ramp factor = " << out << endl;
