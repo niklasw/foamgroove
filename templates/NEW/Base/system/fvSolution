@@ -11,49 +11,72 @@ FoamFile
     format      ascii;
     class       dictionary;
     location    "system";
-    object      controlDict;
+    object      fvSolution;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-startFrom       latestTime;
+#include "${FOAM_CASE}/setup.foam";
+#include "${FOAM_CASE}/system/include/solverDefinitions";
 
-startTime       0;
-
-stopAt          endTime;
-
-endTime         1000;
-
-deltaT          1;
-
-writeControl    timeStep;
-
-writeInterval   100;
-
-purgeWrite      3;
-
-writeFormat     binary;
-
-writePrecision  8;
-
-writeCompression compressed;
-
-timeFormat      general;
-
-timePrecision   6;
-
-runTimeModifiable yes;
-
-libs            ();
-
-functions
+solvers
 {
-    #include "functionObjects/fieldMinMaxI";
-//    #include "functionObjects/fieldAverageI";
-//    #include "functionObjects/probesI";
-//    #include "functionObjects/forceCoeffsI";
-//    #include "functionObjects/forcesI";
-//    #include "functionObjects/slicePlaneI";
-//    #include "functionObjects/isoSurfaceI";
-};
+    p
+    {
+        $gamg;
+    }
+
+    U
+    {
+        $pbicg;
+    }
+
+    "(k|epsilon|omega|nuTilda)"
+    {
+        $pbicg;
+    }
+
+    /* For transient solvers */
+    pFinal
+    {
+        $p;
+        relTol 0;
+    }
+
+    UFinal
+    {
+        $U;
+        relTol 0;
+    }
+
+    "(k|epsilon|omega|nuTilda)Final"
+    {
+        $pbicg;
+    }
+
+    Phi
+    {
+        $p;
+    }
+}
+
+SIMPLE
+{
+}
+
+potentialFlow
+{
+}
+
+PISO
+{
+}
+
+PIMPLE
+{
+}
+
+relaxationFactors
+{
+}
 
 // ************************************************************************* //

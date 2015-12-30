@@ -247,19 +247,22 @@ void Foam::pistonTopoFvMesh::updateMappedFaces(const mapPolyMesh& topoChangeMap 
         zeroUnmappedValues<tensor, fvPatchField, volMesh>(mappedFace);
 
         // Special handling for phi: set unmapped faces to recreated phi
-        Info<< "rawTopoChangerFvMesh :"
-            << " recreating phi for unmapped boundary values." << endl;
-        const volVectorField& U = lookupObject<volVectorField>("U");
-        surfaceScalarField& phi = const_cast<surfaceScalarField&>
-        (
-            lookupObject<surfaceScalarField>("phi")
-        );
-        setUnmappedValues
-        (
-            phi,
-            mappedFace,
-            (linearInterpolate(U) & Sf())()
-        );
+        if (foundObject<volVectorField>("U"))
+        {
+            Info<< "rawTopoChangerFvMesh :"
+                << " recreating phi for unmapped boundary values." << endl;
+            const volVectorField& U = lookupObject<volVectorField>("U");
+            surfaceScalarField& phi = const_cast<surfaceScalarField&>
+            (
+                lookupObject<surfaceScalarField>("phi")
+            );
+            setUnmappedValues
+            (
+                phi,
+                mappedFace,
+                (linearInterpolate(U) & Sf())()
+            );
+        }
 }
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //

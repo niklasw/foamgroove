@@ -1,0 +1,70 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "$FOAM_CASE/setup.foam"
+
+startFrom       latestTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         1000;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   100;
+
+purgeWrite      3;
+
+writeFormat     binary;
+
+writePrecision  8;
+
+writeCompression compressed;
+
+timeFormat      general;
+
+timePrecision   6;
+
+runTimeModifiable yes;
+
+<<<<<<< HEAD:templates/new/simpleFoam/system/controlDict
+=======
+// For free surface mostly.
+adjustTimeStep  no;
+maxCo           0.5;
+maxAlphaCo      0.5;
+
+>>>>>>> 13a7f324f564b969e75c654b88f95378f0dc2c48:templates/NEW/Base/system/controlDict
+libs            ();
+
+functions
+{
+    #include "functionObjects/fieldMinMax";
+    #include "functionObjects/probes";
+//  #include "functionObjects/fieldAverage";
+//  #include "functionObjects/faceSources";
+//  #include "functionObjects/forceCoeffs";
+//  #include "functionObjects/forces";
+//  #include "functionObjects/isoSurface";
+//  #include "functionObjects/slicePlane";
+};
+
+// ************************************************************************* //

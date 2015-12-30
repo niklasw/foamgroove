@@ -1,0 +1,72 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+Correction          limited corrected 0.33;
+ConvectionModel     Gauss;
+
+ddtSchemes
+{
+    default         backward;
+    ddt(alpha)      CrankNicholson 0.9;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+    grad(U)         cellLimited Gauss linear 1;
+}
+
+divSchemes
+{
+    div(rhoPhi,U)    $ConvectionModel linearUpwind grad(U);
+    div(phi,alpha)   $ConvectionModel vanLeer;
+    div(phirb,alpha) $ConvectionModel linear;
+
+    turbulence          $ConvectionModel linearUpwind grad(U);
+    div(phi,k)          $turbulence;
+    div(phi,epsilon)    $turbulence;
+    div(phi,omega)      $turbulence;
+    div(phi,nuTilda)    $turbulence;
+
+    div((muEff*dev(T(grad(U))))) Gauss linear;
+}
+
+laplacianSchemes
+{
+    default         Gauss linear $Correction;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         $Correction;
+}
+
+fluxRequired // Obsolete for version > 3
+{
+    default         no;
+    pcorr;
+    p_rgh;
+    alpha.water;
+    Phi;            // For v>2.3 of potentialFoam
+}
+
+// ************************************************************************* //

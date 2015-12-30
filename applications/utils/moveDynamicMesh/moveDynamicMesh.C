@@ -30,10 +30,12 @@ Description
 \*---------------------------------------------------------------------------*/
 
 #include "argList.H"
+#include "fvCFD.H"
 #include "Time.H"
 #include "dynamicFvMesh.H"
 #include "vtkSurfaceWriter.H"
 #include "cyclicAMIPolyPatch.H"
+#include "zeroGradientFvPatchFields.H"
 
 using namespace Foam;
 
@@ -134,11 +136,86 @@ int main(int argc, char *argv[])
         Info<< "Writing VTK files with weights of AMI patches." << nl << endl;
     }
 
+    mesh.update();
+
+    volScalarField surfaceSumMeshPhi
+    (
+        IOobject
+        (
+            "surfaceSumMeshPhi",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        fvc::surfaceSum(mesh.phi())
+    );
+
+    surfaceScalarField meshPhi
+    (
+        IOobject
+        (
+            "meshPhi",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh.phi()
+    );
+
+    volScalarField V
+    (
+        IOobject
+        (
+            "V",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("v",dimVolume,1.0)
+    );
+
+    volScalarField dVdt
+    (
+        IOobject
+        (
+            "dVdt",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("v",dimVolume,1.0)/dimensionedScalar("t",dimTime,1.0)
+    );
+
+    volScalarField constantScalarField
+    (
+        IOobject
+        (
+            "constantScalarField",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh.C().component(vector::X),
+        zeroGradientFvPatchScalarField::typeName
+    );
+
+
     while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << endl;
 
         mesh.update();
+
+        V.internalField() = mesh.V();
+        dVdt.internalField() = fvc::ddt(V);
+
         if (checkMesh)
         {
             mesh.checkMesh(true);
@@ -148,6 +225,32 @@ int main(int argc, char *argv[])
         {
             writeWeights(mesh);
         }
+
+
+        if (mesh.moving())
+        {
+            surfaceSumMeshPhi = fvc::surfaceSum(mesh.phi());
+            meshPhi = mesh.phi();
+            /*
+             * Here seems to be a bug in OF fvMesh. mesh.Sf() is not
+             * correctly updated on mesh changes?
+            surfaceVectorField faceNormals
+            (
+                IOobject
+                (
+                    "surfaceNormals",
+                    runTime.timeName(),
+                    mesh,
+                    IOobject::NO_READ,
+                    IOobject::AUTO_WRITE
+                ),
+                mesh.Sf()
+            );
+            */
+        }
+
+        Info << "Min, max div(mesh.phi()) "
+             << gMax(surfaceSumMeshPhi) << " " << gMin(surfaceSumMeshPhi) << endl;
 
         runTime.write();
 
