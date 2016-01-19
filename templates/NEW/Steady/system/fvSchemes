@@ -32,24 +32,13 @@ gradSchemes
 
 divSchemes
 {
-<<<<<<< HEAD:templates/new/simpleFoam/system/fvSchemes
-    default             $divMethod upwind;
-    div(phi,U)          $divMethod linearUpwindV grad(U);
-    turbulence          $divMethod linearUpwind gradLimiter;
-=======
     //default             $ConvectionModel upwind;
-    div(phi,U)          $ConvectionModel linearUpwind grad(U);
-
+    div(phi,U)          $ConvectionModel linearUpwindV grad(U);
     turbulence          $ConvectionModel linearUpwind grad(U);
->>>>>>> 13a7f324f564b969e75c654b88f95378f0dc2c48:templates/NEW/Steady/system/fvSchemes
     div(phi,k)          $turbulence;
     div(phi,epsilon)    $turbulence;
     div(phi,omega)      $turbulence;
     div(phi,nuTilda)    $turbulence;
-<<<<<<< HEAD:templates/new/simpleFoam/system/fvSchemes
-=======
-
->>>>>>> 13a7f324f564b969e75c654b88f95378f0dc2c48:templates/NEW/Steady/system/fvSchemes
     div(R)              Gauss linear;
     div((nuEff*dev(T(grad(U))))) Gauss linear;
 }
