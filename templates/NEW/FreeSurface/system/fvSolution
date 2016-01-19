@@ -1,0 +1,125 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/setup.foam";
+
+solvers
+{
+    "alpha.water.*"
+    {
+        nAlphaCorr      1;
+        nAlphaSubCycles 2;
+        cAlpha          1;
+        icAlpha         0;
+
+        /* Probably only with LTS:
+        MULESCorr       no;
+        nLimiterIter    10;
+        alphaApplyPrevCorr  yes;
+
+        solver          smoothSolver;
+        smoother        symGaussSeidel;
+        tolerance       1e-8;
+        relTol          0;
+        minIter         1;
+        */
+    }
+
+    "pcorr.*"
+    {
+        $:solver.pcg;
+
+        preconditioner
+        {
+            $:solver.gamg;
+        };
+        relTol          0;
+    };
+
+    p_rgh
+    {
+        $:solver.gamg;
+
+        tolerance       1e-7;
+        relTol          0.01;
+    };
+
+    p_rghFinal
+    {
+        $p_rgh;
+        relTol          0;
+    }
+
+    "(U|k|omega).*"
+    {
+        $:solver.smoothSolver;
+    };
+
+    "p|Phi"  // Phi and p for potentialFlow intitialisation
+    {
+        $:solver.gamg;
+        tolerance       1e-8;
+        relTol          0.01;
+    };
+
+
+}
+
+PIMPLE
+{
+    momentumPredictor   yes;
+
+    nOuterCorrectors    1;
+    nCorrectors         2;
+    nNonOrthogonalCorrectors 2;
+
+    maxCo               10; // LTS
+    maxAlphaCo          5;  // LTS
+
+    rDeltaTSmoothingCoeff 0.05;
+    rDeltaTDampingCoeff 0.5;
+    nAlphaSpreadIter    0;
+    nAlphaSweepIter     0;
+    maxDeltaT           1;
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors    20;
+    pRefCell                    0;
+    pRefValue                   $:pressure.reference;
+}
+
+
+relaxationFactors
+{
+    fields
+    {
+    }
+    equations
+    {
+        ".*" 1;
+    }
+}
+
+cache
+{
+    grad(U);
+}
+
+
+// ************************************************************************* //

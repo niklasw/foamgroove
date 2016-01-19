@@ -1,0 +1,106 @@
+/*--------------------------------*- C++ -*----------------------------------*\\
+|==========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.0.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1;
+
+xMin    -20;
+xMax     40;
+yMin    -10;
+yMax    #calc "0-($yMin)";
+zMin    #calc "$yMin";
+zMax    #calc "0-($zMin)";
+
+baseSize    0.5;
+
+nX      #calc "round(($xMax-($xMin))/$baseSize)";
+nY      #calc "round(($yMax-($yMin))/$baseSize)";
+nZ      #calc "round(($zMax-($zMin))/$baseSize)";
+
+
+vertices
+(
+    ($xMin $yMin $zMin)
+    ($xMax $yMin $zMin)
+    ($xMax $yMax $zMin)
+    ($xMin $yMax $zMin)
+
+    ($xMin $yMin $zMax)
+    ($xMax $yMin $zMax)
+    ($xMax $yMax $zMax)
+    ($xMin $yMax $zMax)
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($nX $nY $nZ) simpleGrading (1 1 1)
+);
+
+edges ();
+boundary
+(
+    symmetrySide0
+    {
+        type symmetryPlane;
+        faces
+        (
+            (1 5 4 0)
+        );
+    }
+
+    symmetrySide1
+    {
+        type symmetryPlane;
+        faces
+        (
+            (3 7 6 2)
+        );
+    }
+
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (2 6 5 1)
+        );
+    }
+    symmetryBottom
+    {
+        type symmetryPlane;
+        faces
+        (
+            (0 3 2 1)
+        );
+    }
+    symmetryTop
+    {
+        type symmetryPlane;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+);
+
+mergePatchPairs ();

@@ -1,0 +1,69 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      T;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/setup.foam";
+
+dimensions      [ 0 0 0 1 0 0 0 ];
+
+internalField   $energy.initialTemperature;
+
+boundaryField
+{
+#   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+
+    inletGroup
+    {
+        type fixedValue;
+        value $internalField;
+    }
+
+    wallGroup
+    {
+        type zeroGradient;
+    }
+
+    slipGroup
+    {
+        type slip;
+    }
+
+    movingWallGroup
+    {
+        $wallGroup;
+    }
+
+    outflowGroup
+    {
+        type inletOutlet;
+        inletValue $internalField;
+        value uniform 0;
+    }
+
+    ambienceGroup
+    {
+        $outflowGroup;
+    }
+
+    farfieldGroup
+    {
+        type freestream;
+        freestreamValue $internalField;
+    }
+
+}
+
+// ************************************************************************* //

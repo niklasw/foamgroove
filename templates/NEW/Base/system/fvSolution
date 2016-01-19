@@ -1,0 +1,81 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/setup.foam";
+
+solvers
+{
+    p
+    {
+        $:solver.gamg;
+    }
+
+    U
+    {
+        $:solver.pbicg;
+    }
+
+    "(k|epsilon|omega|nuTilda)"
+    {
+        $:solver.pbicg;
+    }
+
+    /* For transient solvers */
+    pFinal
+    {
+        $p;
+        relTol 0;
+    }
+
+    UFinal
+    {
+        $U;
+        relTol 0;
+    }
+
+    "(k|epsilon|omega|nuTilda)Final"
+    {
+        $:solver.pbicg;
+    }
+
+    Phi
+    {
+        $p;
+    }
+}
+
+SIMPLE
+{
+}
+
+potentialFlow
+{
+}
+
+PISO
+{
+}
+
+PIMPLE
+{
+}
+
+relaxationFactors
+{
+}
+
+// ************************************************************************* //
