@@ -16,23 +16,22 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "${FOAM_CASE}/setup.foam";
-#include "${FOAM_CASE}/system/include/solverDefinitions";
 
 solvers
 {
     p
     {
-        $gamg;
+        $:solver.gamg;
     }
 
     U
     {
-        $pbicg;
+        $:solver.pbicg;
     }
 
     "(k|epsilon|omega|nuTilda)"
     {
-        $pbicg;
+        $:solver.pbicg;
     }
 
     /* For transient solvers */
@@ -50,7 +49,7 @@ solvers
 
     "(k|epsilon|omega|nuTilda)Final"
     {
-        $pbicg;
+        $:solver.pbicg;
     }
 
     Phi

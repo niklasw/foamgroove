@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "${FOAM_CASE}/constant/boundaryConditions/basic";
+#include "${FOAM_CASE}/setup.foam";
 
 dimensions      [ 1 -1 -1 0 0 0 0 ];
 
@@ -25,23 +25,22 @@ boundaryField
 {
 #   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
 
-    defaultGroup { $:bc.default.alphat }
+    ".*"
+    {
+        type calculated;
+        value $internalField;
+    }
 
-    inletGroup { $:bc.fixedInlet.alphat; }
+    wallGroup
+    {
+        type  compressible::alphatWallFunction;
+        value uniform 0;
+    }
 
-    wallGroup { $:bc.walls.alphat; }
-
-    slipGroup       { $:bc.slipWalls.alphat; }
-
-    movingWallGroup { $:bc.walls.alphat; }
-
-    ambienceGroup { $:bc.totalPressure.alphat; }
-
-    outflowGroup { $:bc.pressureOutlet.alphat; }
-
-    farfieldGroup { $:bc.freestream.alphat; }
-
-#   include "include/general.in";
+    movingWallGroup
+    {
+        $wallGroup;
+    }
 }
 
 // ************************************************************************* //

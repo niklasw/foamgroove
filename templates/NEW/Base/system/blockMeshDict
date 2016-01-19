@@ -1,9 +1,10 @@
-/*--------------------------------*- C++ -*----------------------------------*\\
+
+/*--------------------------------*- C++ -*----------------------------------*\
 |==========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.0.0                                 |
-|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
-|    \\/     M anipulation  |                                                 |
+| \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \    /   O peration     | Version:  2.0.0                                 |
+|   \  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -14,53 +15,32 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-convertToMeters 1;
-
-xMin    -20;
-xMax     40;
-yMin    -10;
-yMax    #calc "0-($yMin)";
-zMin    #calc "$yMin";
-zMax    #calc "0-($zMin)";
-
-baseSize    0.5;
-
-nX      #calc "round(($xMax-($xMin))/$baseSize)";
-nY      #calc "round(($yMax-($yMin))/$baseSize)";
-nZ      #calc "round(($zMax-($zMin))/$baseSize)";
-
+convertToMeters 1.0;
 
 vertices
 (
-    ($xMin $yMin $zMin)
-    ($xMax $yMin $zMin)
-    ($xMax $yMax $zMin)
-    ($xMin $yMax $zMin)
+	( -2.114550 -0.085725 -2.114550 )
+	( 4.440555 -0.085725 -2.114550 )
+	( 4.440555 0.085725 -2.114550 )
+	( -2.114550 0.085725 -2.114550 )
+	( -2.114550 -0.085725 2.114550 )
+	( 4.440555 -0.085725 2.114550 )
+	( 4.440555 0.085725 2.114550 )
+	( -2.114550 0.085725 2.114550 )
 
-    ($xMin $yMin $zMax)
-    ($xMax $yMin $zMax)
-    ($xMax $yMax $zMax)
-    ($xMin $yMax $zMax)
 );
 
 blocks
 (
-    hex (0 1 2 3 4 5 6 7) ($nX $nY $nZ) simpleGrading (1 1 1)
+    hex (0 1 2 3 4 5 6 7) (19 2  12) simpleGrading (1 1 1)
+    //hex (0 1 2 3 4 5 6 7) (38 2  25) simpleGrading (1 1 1)
+    //hex (0 1 2 3 4 5 6 7) (76 2  49) simpleGrading (1 1 1)
 );
 
 edges ();
 boundary
 (
-    symmetrySide0
-    {
-        type symmetryPlane;
-        faces
-        (
-            (1 5 4 0)
-        );
-    }
-
-    symmetrySide1
+    symmetryPlane0
     {
         type symmetryPlane;
         faces
@@ -68,7 +48,14 @@ boundary
             (3 7 6 2)
         );
     }
-
+    symmetryPlane1
+    {
+        type symmetryPlane;
+        faces
+        (
+            (1 5 4 0)
+        );
+    }
     inlet
     {
         type patch;
@@ -85,22 +72,16 @@ boundary
             (2 6 5 1)
         );
     }
-    symmetryBottom
+    slipSides
     {
-        type symmetryPlane;
+        type wall;
         faces
         (
             (0 3 2 1)
-        );
-    }
-    symmetryTop
-    {
-        type symmetryPlane;
-        faces
-        (
             (4 5 6 7)
         );
     }
 );
 
 mergePatchPairs ();
+

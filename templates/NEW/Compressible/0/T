@@ -15,9 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "${FOAM_CASE}/constant/boundaryConditions/basic";
+#include "${FOAM_CASE}/setup.foam";
 
-dimensions      [ 0 0 1 0 0 0 0 ];
+dimensions      [ 0 0 0 1 0 0 0 ];
 
 internalField   $energy.initialTemperature;
 
@@ -25,23 +25,45 @@ boundaryField
 {
 #   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
 
-    defaultGroup { $:bc.default.T }
+    inletGroup
+    {
+        type fixedValue;
+        value $internalField;
+    }
 
-    inletGroup { $:bc.fixedInlet.T; }
+    wallGroup
+    {
+        type zeroGradient;
+    }
 
-    wallGroup { $:bc.walls.T; }
+    slipGroup
+    {
+        type slip;
+    }
 
-    slipGroup       { $:bc.slipWalls.T; }
+    movingWallGroup
+    {
+        $wallGroup;
+    }
 
-    movingWallGroup { $:bc.walls.T; }
+    outflowGroup
+    {
+        type inletOutlet;
+        inletValue $internalField;
+        value uniform 0;
+    }
 
-    ambienceGroup { $:bc.totalPressure.T; }
+    ambienceGroup
+    {
+        $outflowGroup;
+    }
 
-    outflowGroup { $:bc.pressureOutlet.T; }
+    farfieldGroup
+    {
+        type freestream;
+        freestreamValue $internalField;
+    }
 
-    farfieldGroup { $:bc.freestream.T; }
-
-#   include "include/general.in";
 }
 
 // ************************************************************************* //

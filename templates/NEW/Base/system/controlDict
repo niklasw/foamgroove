@@ -45,14 +45,11 @@ timePrecision   6;
 
 runTimeModifiable yes;
 
-<<<<<<< HEAD:templates/new/simpleFoam/system/controlDict
-=======
 // For free surface mostly.
 adjustTimeStep  no;
 maxCo           0.5;
 maxAlphaCo      0.5;
 
->>>>>>> 13a7f324f564b969e75c654b88f95378f0dc2c48:templates/NEW/Base/system/controlDict
 libs            ();
 
 functions

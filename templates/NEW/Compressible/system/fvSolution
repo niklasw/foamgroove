@@ -16,13 +16,12 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #include "${FOAM_CASE}/setup.foam";
-#include "${FOAM_CASE}/system/include/solverDefinitions";
 
 solvers
 {
     p
     {
-        $gamg;
+        $:solver.gamg;
     }
 
     pcorr
@@ -34,17 +33,17 @@ solvers
 
     U
     {
-        $pbicg;
+        $:solver.pbicg;
     }
 
     "(rho|k|epsilon|omega|e|h)"
     {
-        $smoothSolver;
+        $:solver.smoothSolver;
     }
 
     "(rho|k|epsilon|omega|e|h)Final"
     {
-        $pbicg;
+        $:solver.pbicg;
     }
 
     /* For transient solvers */

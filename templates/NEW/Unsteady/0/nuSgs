@@ -29,7 +29,7 @@ boundaryField
         value           $internalField;
     }
 
-    #includeEtc "caseDicts/setConstraintTypes"
+    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
 
     slipGroup
     {

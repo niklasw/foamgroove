@@ -47,6 +47,7 @@ distributeZero()
         sourceDir=0
     else
         sourceDir=$1
+    fi
 
     for p in processor*; do
         rm -rf $p/0
