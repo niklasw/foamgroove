@@ -56,6 +56,13 @@ solvers
     {
         $p;
     }
+
+    cellDisplacement
+    {
+        $:solver.gamg;
+        tolerance   1e-6;
+        relTol      0;
+    }
 }
 
 SIMPLE

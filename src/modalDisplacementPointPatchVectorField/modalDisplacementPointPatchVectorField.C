@@ -95,10 +95,6 @@ void modalDisplacementPointPatchField::readPointProcAddressing()
 
 void modalDisplacementPointPatchField::createSerialIndexMap()
 {
-    /*
-     * A labelList, size of the _serial_ pointPatch mapping Global mesh point
-     * label to index of corresponding point in the serial patch.
-     */
     labelList tmpPatchLabels(0);
     if (Pstream::master())
     {
@@ -284,7 +280,8 @@ modalDisplacementPointPatchField
     /*
     meshPtr_ = & this->dimensionedInternalField().mesh()();
 
-    initIndexMaps();
+    createSerialIndexMap();
+    readPointProcAddressing();
 
     findMyMonitors();
 
@@ -319,7 +316,8 @@ modalDisplacementPointPatchField
 
     dict.readIfPresent("writeDebugField",writeDebugField_);
 
-    initIndexMaps();
+    createSerialIndexMap();
+    readPointProcAddressing();
 
     findMyMonitors();
 
@@ -374,7 +372,8 @@ modalDisplacementPointPatchField
 
     meshPtr_ = & this->dimensionedInternalField().mesh()();
 
-    initIndexMaps();
+    createSerialIndexMap();
+    readPointProcAddressing();
 
     findMyMonitors();
 

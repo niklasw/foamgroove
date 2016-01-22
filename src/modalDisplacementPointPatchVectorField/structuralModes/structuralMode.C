@@ -237,11 +237,8 @@ scalar structuralMode::NewmarkSolve(const volScalarField& p)
 
     q = 1/Ap1*(Qp/mMass - A0*q_0 - Am1*q_00);
 
-    q_00 = q_0;
-    q_0  = q;
-
-    Q_00 = Q_0;
-    Q_0  = Q;
+    inplaceRotateList(odeData_,1);
+    odeData_[0] = q;
 
     return q;
 }

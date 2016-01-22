@@ -25,7 +25,7 @@ checkEnv
 
 PS3="Your choice: "
 
-AVAILABLE_TEMPLATES="Base Steady Unsteady Incompressible Compressible \
+AVAILABLE_TEMPLATES="Base Steady Unsteady RAS LES Incompressible Compressible \
                      FreeSurface Extras"
 
 SELECTED_TEMPLATES=""

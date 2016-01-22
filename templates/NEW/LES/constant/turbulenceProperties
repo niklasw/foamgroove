@@ -19,18 +19,13 @@ simulationType  LES;
 
 LES
 {
-    LESModel        SpalartAllmarasDES; //dynamicKEqns;
+    LESModel            SpalartAllmarasDDES;
 
-    turbulence      on;
+    delta               cubeRootVol;
 
-    printCoeffs     on;
+    printCoeffs         on;
 
-    delta           cubeRootVol;
-
-    dynamicKEqnCoeffs
-    {
-        filter simple;
-    }
+    turbulence          on;
 
     cubeRootVolCoeffs
     {
@@ -44,7 +39,6 @@ LES
         {
             deltaCoeff      1;
         }
-
         smoothCoeffs
         {
             delta           cubeRootVol;
@@ -52,11 +46,9 @@ LES
             {
                 deltaCoeff      1;
             }
-
             maxDeltaRatio   1.1;
         }
-
-        Cdelta          0.158;
+        Cdelta           0.158;
     }
 
     vanDriestCoeffs
@@ -66,7 +58,6 @@ LES
         {
             deltaCoeff      1;
         }
-
         smoothCoeffs
         {
             delta           cubeRootVol;
@@ -74,12 +65,10 @@ LES
             {
                 deltaCoeff      1;
             }
-
             maxDeltaRatio   1.1;
         }
-
-        Aplus           26;
-        Cdelta          0.158;
+        Aplus            26;
+        Cdelta           0.158;
     }
 
     smoothCoeffs
@@ -89,7 +78,6 @@ LES
         {
             deltaCoeff      1;
         }
-
         maxDeltaRatio   1.1;
     }
 }
