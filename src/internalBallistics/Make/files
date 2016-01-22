@@ -1,5 +1,0 @@
-gunTopoFvMesh/gunTopoFvMesh.C
-gunFvMesh/gunFvMesh.C
-proj/proj.C
-
-LIB = $(FOAM_USER_LIBBIN)/libinternalBallistics
