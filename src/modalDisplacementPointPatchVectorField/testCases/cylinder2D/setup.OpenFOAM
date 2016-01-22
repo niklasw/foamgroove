@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  2.2.x                                 |
+|  \\    /   O peration     | Version:  3.0.x                                 |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -10,15 +10,15 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    location    "/home/niklas/OpenFOAM/foamGroove/templates/new/2.2/Base";
-    object      setup.OpenFOAM;
+    location    "/remote/soft/OpenFOAM/foamGroove/src/modalDisplacementPointPatchVectorField/testCases/cylinder2D";
+    object      setup.foam;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 transport
 {
     kinematicViscosity 1e-06;
-};
+}
 
 velocity
 {
@@ -27,40 +27,39 @@ velocity
     ambient         uniform ( 2 0 0 );
     initial         uniform ( 2 0 0 );
     reference       2;
-};
+}
 
 turbulence
 {
     intensity       0.05;
     mixingLength    0.05;
     initialnuSgs    uniform 4e-06;
-    initialK        uniform 1.5;
-    initialOmega    uniform 44.72136;
-    initialnuTilda  uniform 0.061237244;
-    initialEpsilon  uniform 6.0373835;
-};
+    initialK        uniform 0.015;
+    initialOmega    uniform 4.472136;
+    initialnuTilda  uniform 0.0061237244;
+    initialEpsilon  uniform 0.0060373835;
+}
 
 pressure
 {
     ambient         uniform 0;
     outlet          uniform 0;
-};
+}
 
 energy
 {
-    inletTemperature    uniform 300;
-    ambientTemperature  uniform 300;
-    initialTemperature  uniform 300;
-};
+    inletTemperature uniform 300;
+    ambientTemperature uniform 300;
+    initialTemperature uniform 300;
+}
 
 relaxation
 {
-    pressure            0.1;
+    pressure        0.1;
+    velocity        0.9;
+    turbulence      0.7;
+    rho             0.01;
+    energy          0.5;
+}
 
-    velocity            0.9;
-    turbulence          0.7;
-
-    rho                 0.01;
-    energy              0.5;
-};
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -175,18 +175,16 @@ class modalDisplacementPointPatchField
             const scalar s1,
             const scalar x
         ) const;
+
         //- We need a way to quickly get the index of a global points
         //  label in this patch, so create a HashTable at construction.
-
         void readPointProcAddressing();
 
+        //- A labelList, size of the _serial_ pointPatch, mapping Global mesh
+        //  point label to index of corresponding point in the serial patch.
+        //  The function reads the labels from a file, that must be created
+        //  serially, prior to this call.
         void createSerialIndexMap();
-
-        void initIndexMaps()
-        {
-            createSerialIndexMap();
-            readPointProcAddressing();
-        };
 
         //- Find closest point to coordinate p. Uses gather/scatter
         //  and returns processor and mesh label (local to processor)
