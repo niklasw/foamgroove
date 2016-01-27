@@ -1,3 +1,10 @@
+function versionIsNewerThan()                                                       
+{                                                                               
+    [[ -z "$WM_PROJECT_VERSION" ]] && { echo "FOAM not correctlu loaded"; exit 1; }       
+    test $(echo -e "$1\n$WM_PROJECT_VERSION" | sort -V|head -1) != $1                    
+    echo $?                                                                     
+}                                                                               
+  
 runme()
 {
     echo -e "Running: $@"
@@ -43,14 +50,22 @@ mergeAndStitch()
 
 newBlock()
 {
-    runme foamClearPolyMesh
+    cleanMesh
     runme blockMesh -dict system/$1
 }
 
 getMesh()
 {
-    runme foamClearPolyMesh
+    cleanMesh
     runme mv $1/constant/polyMesh/* constant/polyMesh/.
 }
 
+cleanMesh()
+{
+    if [ $(versionIsNewerThan 2.9.9) == 1 ]; then
+        runme foamCleanPolyMesh
+    else
+        runme foamClearPolyMesh
+    fi
+}
 
