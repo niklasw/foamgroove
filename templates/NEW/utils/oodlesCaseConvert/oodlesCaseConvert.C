@@ -53,6 +53,56 @@ namespace Foam
         dict.set(name,word(os.str(),false));
     }
 
+    IOobject checkHeader
+    (
+        const word& name,
+        const fileName& path,
+        const Time& runTime
+    )
+    {
+        IOobject dictHdr
+        (
+            "fvSchemes",
+            runTime.caseSystem(),
+            runTime,
+            IOobject::MUST_READ,
+            IOobject::AUTO_WRITE
+        );
+        if (dictHdr.headerOk())
+        {
+            return dictHdr;
+        }
+        else
+        {
+            FatalErrorIn("Foam::checkHeader()")
+                << "Cannot open dict. " << name << exit(FatalError);
+        }
+    }
+
+    void updateFvSchemes(const Time& runTime)
+    {
+        IOdictionary dict
+        (
+            checkHeader("fvSchemes",runTime.caseSystem(),runTime)
+        );
+        dictionary& divSchemes = dict.subDict("divSchemes");
+        divSchemes.readEntry
+    }
+
+    void updateFvSolution()
+    {
+
+    }
+
+    void updateTurbulenceProperties()
+    {
+
+    }
+
+    void updateLESProperties()
+    {
+
+    }
 
     void setTurbulence(dictionary& dict)
     {
@@ -69,7 +119,7 @@ namespace Foam
         scalar eps    = pow(Cmu,0.75)*pow(k,1.5)/mixingLength;
         scalar omega  = eps/(Cmu*k);
         //scalar nut    = Cmu*pow(k,2)/eps;
-        scalar nuTilda= 1e-7; //k/(omega*pow(Cmu,0.25));
+        scalar nuTilda= k/(omega*pow(Cmu,0.25));
 
         setUniformValue(turbulence, "initialK", k);
         setUniformValue(turbulence, "initialEpsilon", eps);
@@ -88,12 +138,10 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
 
-    fileName setupFile = "setup.foam";
-
-    IOobject dictHdr
+    IOobject fvSchemesHdr
     (
-        setupFile,
-        runTime.path(),
+        "fvSchemes",
+        runTime.caseSystem(),
         runTime,
         IOobject::MUST_READ,
         IOobject::AUTO_WRITE
