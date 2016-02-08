@@ -63,7 +63,7 @@ namespace Foam
         IOobject dictHdr
         (
             "fvSchemes",
-            runTime.caseSystem(),
+            runTime.system(),
             runTime,
             IOobject::MUST_READ,
             IOobject::AUTO_WRITE
@@ -83,14 +83,22 @@ namespace Foam
     {
         IOdictionary dict
         (
-            checkHeader("fvSchemes",runTime.caseSystem(),runTime)
+            checkHeader("fvSchemes",runTime.system(),runTime)
         );
         dictionary& divSchemes = dict.subDict("divSchemes");
-        divSchemes.readEntry
     }
 
     void updateFvSolution()
     {
+        IOdictionary dict
+        (
+            checkHeader("fvSolution",runTime.system(),runTime)
+        );
+
+        const dictionary& pisoDict = dict.subDict("PISO");
+        const label nCorr  = pisoDict.lookupOrDefault<label>("nCorrectors",3);
+        const label nnCorr = pisoDict.lookupOrDefault<label>("nNonOrthogonalCorrectors",1);
+
 
     }
 
@@ -138,33 +146,7 @@ int main(int argc, char *argv[])
     #include "setRootCase.H"
     #include "createTime.H"
 
-    IOobject fvSchemesHdr
-    (
-        "fvSchemes",
-        runTime.caseSystem(),
-        runTime,
-        IOobject::MUST_READ,
-        IOobject::AUTO_WRITE
-    );
-
-    IOdictionary dict0(dictHdr);
-
-    setTurbulence(dict0);
-
-    OFstream of(setupFile);
-
-    dict0.writeHeader(of);
-    forAllConstIter (IDLList<entry>, dict0, i)
-    {
-        of << i() << endl;
-    }
-    dict0.writeDivider(of);
-
-    Info << dict0 << endl;
-
-    dict0.close();
-
-    Info << setupFile <<" file updated." << endl;
+    Info << "Case updated." << endl;
     Info << "\nEnd" << endl;
     return 0;
 }
