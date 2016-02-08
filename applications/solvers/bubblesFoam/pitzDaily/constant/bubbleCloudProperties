@@ -68,7 +68,7 @@ subModels
         model1
         {
             //type            manualInjection;
-            type            patchInjection;
+            type            atchInjection;
             cellZone        injectionCells;
             //numberDensity   1e7;
             //massFlowRate    1;
