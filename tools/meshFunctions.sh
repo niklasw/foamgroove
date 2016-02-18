@@ -69,7 +69,14 @@ distributeZero()
     done
 }
 
-
+doTopoRefine()                                                                                                         
+{                                                                                                                      
+    # refineMesh bugs out in parallel                                                                                  
+    for i in $@; do                                                                                                    
+        runme topoSet -dict system/topoSetDict.$i                                                                      
+        runme refineMesh -dict system/refineMeshDict.$i -overwrite                                                     
+    done                                                                                                               
+}    
 
 extrude()
 {
