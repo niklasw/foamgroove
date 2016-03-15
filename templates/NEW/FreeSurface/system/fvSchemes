@@ -21,28 +21,29 @@ ConvectionModel     Gauss;
 ddtSchemes
 {
     default         backward;
-    ddt(alpha)      CrankNicholson 0.9;
+    ddt(alpha)      CrankNicolson 0.9;
 }
 
 gradSchemes
 {
     default         Gauss linear;
-    grad(U)         cellLimited Gauss linear 1;
+    gradLimiter         cellLimited Gauss linear 1;
 }
 
 divSchemes
 {
-    div(rhoPhi,U)    $ConvectionModel linearUpwind grad(U);
+    div(rhoPhi,U)    $ConvectionModel linearUpwind gradLimiter;
     div(phi,alpha)   $ConvectionModel vanLeer;
     div(phirb,alpha) $ConvectionModel linear;
 
-    turbulence          $ConvectionModel linearUpwind grad(U);
+    turbulence          $ConvectionModel linearUpwind gradLimiter;
     div(phi,k)          $turbulence;
     div(phi,epsilon)    $turbulence;
     div(phi,omega)      $turbulence;
     div(phi,nuTilda)    $turbulence;
 
     div((muEff*dev(T(grad(U))))) Gauss linear;
+    div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
 }
 
 laplacianSchemes
@@ -59,6 +60,11 @@ snGradSchemes
 {
     default         $Correction;
 }
+
+wallDist                                                                        
+{                                                                               
+        method          meshWave;                                                   
+}                                                                               
 
 fluxRequired // Obsolete for version > 3
 {
