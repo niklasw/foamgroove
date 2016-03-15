@@ -27,14 +27,14 @@ gradSchemes
 {
     default         Gauss linear;
     grad(p)         Gauss linear;
-    grad(U)         cellLimited Gauss linear 1;
+    gradLimiter         cellLimited Gauss linear 1;
 }
 
 divSchemes
 {
     //default             $ConvectionModel upwind;
-    div(phi,U)          $ConvectionModel linearUpwindV grad(U);
-    turbulence          $ConvectionModel linearUpwind grad(U);
+    div(phi,U)          $ConvectionModel linearUpwindV gradLimiter;
+    turbulence          $ConvectionModel linearUpwind gradLimiter;
     div(phi,k)          $turbulence;
     div(phi,epsilon)    $turbulence;
     div(phi,omega)      $turbulence;
@@ -57,6 +57,11 @@ snGradSchemes
 {
     default         $Correction;
 }
+
+wallDist                                                                        
+{                                                                               
+        method          meshWave;                                                   
+}                                                                               
 
 fluxRequired
 {

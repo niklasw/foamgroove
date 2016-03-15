@@ -91,7 +91,7 @@ runme setDecomposition $NP
 
 runmePar $NP snappyHexMesh -overwrite
 
-runmePar $NP changeDictionaryLight
+runmePar $NP changeDictionary
 
 runmePar $NP checkMesh
 
