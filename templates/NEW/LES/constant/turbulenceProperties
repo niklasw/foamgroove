@@ -15,6 +15,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+#include "${FOAM_CASE}/setup.foam";
+
 simulationType  LES;
 
 LES
@@ -26,6 +28,19 @@ LES
     printCoeffs         on;
 
     turbulence          on;
+
+    SpalartAllmarasDDESCoeffs
+    {
+        $:turbulence.constants;
+        sigmaNut        0.66666;
+        Cb1             0.1355;
+        Cb2             0.622;
+        Cw2             0.3;
+        Cw3             2.0;
+        Cv1             7.1;
+        Cs              0.3;
+        CDES            0.65;
+    }
 
     cubeRootVolCoeffs
     {

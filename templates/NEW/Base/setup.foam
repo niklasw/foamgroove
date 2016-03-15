@@ -15,11 +15,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-transport
-{
-    kinematicViscosity 1e-06;
-}
-
 velocity
 {
     flowrate        0.01;
@@ -52,6 +47,7 @@ turbulence
         Ce              1.048;
         Cmu             0.09;
         E               9.8;
+        kappa           0.41;
         beta1           0.075;
         Ceps2           1.9;
     }
@@ -69,52 +65,6 @@ energy
     inletTemperature uniform 300;
     ambientTemperature uniform 300;
     initialTemperature uniform 300;
-}
-
-relaxation
-{
-    pressure        0.3;
-    velocity        0.7;
-    turbulence      0.3;
-    rho             0.01;
-    energy          0.5;
-}
-
-solver
-{
-    gamg
-    {
-        solver          GAMG;
-        tolerance       1e-08;
-        relTol          0.01;
-        smoother        GaussSeidel;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 20;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-    }
-    pcg
-    {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-06;
-        relTol          0.01;
-    }
-    smoothSolver
-    {
-        solver          smoothSolver;
-        smoother        GaussSeidel;
-        nSweeps         2;
-        tolerance       1e-07;
-        relTol          0.1;
-    }
-    pbicg
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-08;
-        relTol          0.01;
-    }
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

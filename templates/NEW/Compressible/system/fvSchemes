@@ -32,7 +32,7 @@ gradSchemes
 {
     default         Gauss linear;
     grad(p)         Gauss linear;
-    gradLimiter         cellLimited Gauss linear 1;
+    gradLimiter     cellLimited Gauss linear 1;
     gradLimited     cellLimited Gauss linear 1;
 }
 
@@ -52,7 +52,7 @@ divSchemes
     div(phi,K)          $ConvectionModel linear;
     div(phid,p)         $ConvectionModel upwind;
     div(phiv,p)         $ConvectionModel upwind;
-    div(phi,Ekp)      $ConvectionModel upwind;
+    div(phi,Ekp)        $ConvectionModel upwind;
     div((phi|interpolate(rho)),p) $ConvectionModel upwind;
 }
 
@@ -71,18 +71,18 @@ snGradSchemes
     default         $Correction;
 }
 
-wallDist                                                                        
-{                                                                               
-        method          meshWave;                                                   
-}                                                                               
+// Required for version > 3
+wallDist
+{
+    method          meshWave;
+}
 
-
+// Not required for version
 fluxRequired
 {
     default         no;
     p               ;
     pcorr           ;
 }
-#includeIfPresent "include/freeSurfaceFvSchemesI";
 
 // ************************************************************************* //

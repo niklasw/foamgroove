@@ -15,7 +15,44 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "${FOAM_CASE}/setup.foam";
+
+defaultSolvers
+{
+    gamg
+    {
+        solver          GAMG;
+        tolerance       1e-08;
+        relTol          0.01;
+        smoother        GaussSeidel;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 20;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+    pcg
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-06;
+        relTol          0.01;
+    }
+    smoothSolver
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        nSweeps         2;
+        tolerance       1e-07;
+        relTol          0.1;
+    }
+    pbicg
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-08;
+        relTol          0.01;
+    }
+}
+
 
 solvers
 {
@@ -41,18 +78,18 @@ solvers
 
     "pcorr.*"
     {
-        $:solver.pcg;
+        $:defaultSolvers.pcg;
 
         preconditioner
         {
-            $:solver.gamg;
+            $:defaultSolvers.gamg;
         };
         relTol          0;
     };
 
     p_rgh
     {
-        $:solver.gamg;
+        $:defaultSolvers.gamg;
 
         tolerance       1e-7;
         relTol          0.01;
@@ -66,17 +103,24 @@ solvers
 
     "(U|k|omega).*"
     {
-        $:solver.smoothSolver;
+        $:defaultSolvers.smoothSolver;
     };
 
     "p|Phi"  // Phi and p for potentialFlow intitialisation
     {
-        $:solver.gamg;
+        $:defaultSolvers.gamg;
         tolerance       1e-8;
         relTol          0.01;
     };
 
 
+}
+
+// Macro variable for use in all methods below
+referencePressure
+{
+    pRefCell                    0;
+    pRefValue                   0;
 }
 
 PIMPLE
@@ -95,13 +139,13 @@ PIMPLE
     nAlphaSpreadIter    0;
     nAlphaSweepIter     0;
     maxDeltaT           1;
+    $referencePressure;
 }
 
 potentialFlow
 {
     nNonOrthogonalCorrectors    20;
-    pRefCell                    0;
-    pRefValue                   $:pressure.reference;
+    $referencePressure;
 }
 
 

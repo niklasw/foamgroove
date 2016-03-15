@@ -15,8 +15,6 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "$FOAM_CASE/setup.foam"
-
 startFrom       latestTime;
 
 startTime       0;

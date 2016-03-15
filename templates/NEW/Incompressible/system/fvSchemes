@@ -46,7 +46,7 @@ divSchemes
 
 laplacianSchemes
 {
-    default                 Gauss linear $Correction;
+    default         Gauss linear $Correction;
 }
 
 interpolationSchemes
@@ -59,22 +59,19 @@ snGradSchemes
     default         $Correction;
 }
 
-wallDist                                                                        
-{                                                                               
-    method          meshWave;                                                   
-}                                                                               
+// Required for version > 3
+wallDist
+{
+    method          meshWave;
+}
 
+// Not required for version < 3
 fluxRequired
 {
     default         no;
     pcorr;
     p;
-    Phi;            // For v>2.3 of potentialFoam
-}
-
-wallDist
-{
-    method  meshWave;
+    Phi;            // For 2.3 < v < 3 of potentialFoam
 }
 
 // ************************************************************************* //

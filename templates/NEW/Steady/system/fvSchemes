@@ -27,7 +27,7 @@ gradSchemes
 {
     default         Gauss linear;
     grad(p)         Gauss linear;
-    gradLimiter         cellLimited Gauss linear 1;
+    gradLimiter     cellLimited Gauss linear 1;
 }
 
 divSchemes
@@ -58,11 +58,13 @@ snGradSchemes
     default         $Correction;
 }
 
-wallDist                                                                        
-{                                                                               
-        method          meshWave;                                                   
-}                                                                               
+// Required for version > 3.0
+wallDist
+{
+        method          meshWave;
+}
 
+// Not required for version > 3.0
 fluxRequired
 {
     default         no;

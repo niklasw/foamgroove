@@ -15,13 +15,50 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "${FOAM_CASE}/setup.foam";
+
+defaultSolvers
+{
+    gamg
+    {
+        solver          GAMG;
+        tolerance       1e-08;
+        relTol          0.01;
+        smoother        GaussSeidel;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 20;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+    pcg
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-06;
+        relTol          0.01;
+    }
+    smoothSolver
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        nSweeps         2;
+        tolerance       1e-07;
+        relTol          0.1;
+    }
+    pbicg
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-08;
+        relTol          0.01;
+    }
+}
+
 
 solvers
 {
     p
     {
-        $:solver.gamg;
+        $:defaultSolvers.gamg;
     }
 
     pcorr
@@ -33,17 +70,17 @@ solvers
 
     U
     {
-        $:solver.pbicg;
+        $:defaultSolvers.pbicg;
     }
 
     "(rho|k|epsilon|omega|e|h)"
     {
-        $:solver.smoothSolver;
+        $:defaultSolvers.smoothSolver;
     }
 
     "(rho|k|epsilon|omega|e|h)Final"
     {
-        $:solver.pbicg;
+        $:defaultSolvers.pbicg;
     }
 
     /* For transient solvers */
@@ -62,40 +99,44 @@ solvers
 
     cellDisplacement
     {
-        $:solver.gamg;
+        $:defaultSolvers.gamg;
         tolerance   1e-6;
         relTol      0;
     }
 }
 
+// Macro variable for use in all methods below
+referencePressure
+{
+    pRefCell                    0;
+    pRefValue                   1e5;
+}
+
 SIMPLE
 {
     nNonOrthogonalCorrectors 0;
-    pRefCell        0;
-    pRefValue       0;
     rhoMin          rhoMin [ 1 -3 0 0 0 ] 0.5;
     rhoMax          rhoMax [ 1 -3 0 0 0 ] 2.0;
-
     residualControl
     {
         p                       1e-4;
         U                       1e-4;
         "(k|epsilon|omega|e)"   1e-3;
     }
-
+    $referencePressure;
 }
 
 potentialFlow
 {
     nNonOrthogonalCorrectors    20;
+    $referencePressure;
 }
 
 PISO
 {
     nCorrectors                 2;
     nNonOrthogonalCorrectors    2;
-    pRefCell                    0;
-    pRefValue                   0;
+    $referencePressure;
 }
 
 PIMPLE
@@ -103,24 +144,23 @@ PIMPLE
     nOuterCorrectors            2;
     nCorrectors                 2;
     nNonOrthogonalCorrectors    1;
-    pRefCell                    0;
-    pRefValue                   0;
     rhoMin          rhoMin [ 1 -3 0 0 0 ] 0.5;
     rhoMax          rhoMax [ 1 -3 0 0 0 ] 10.0;
+    $referencePressure;
 }
 
 relaxationFactors
 {
     fields
     {
-        p               $:relaxation.pressure;
-        rho             $:relaxation.rho;
+        p                   0.3;
+        rho                 0.1;
     };
     equations
     {
-        U                   $:relaxation.velocity;
-        "(k|epsilon|omega)" $:relaxation.turbulence;
-        e                   $:relaxation.energy;
+        U                   0.7;
+        "(k|epsilon|omega)" 0.5;
+        e                   0.5;
     }
 }
 

@@ -15,11 +15,9 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#include "$FOAM_CASE/setup.foam"
-
 transportModel  Newtonian;
 
-nu              nu [ 0 2 -1 0 0 0 0 ] $:transport.kinematicViscosity;
+nu              nu [ 0 2 -1 0 0 0 0 ] 1e-6;
 
 CrossPowerLawCoeffs
 {

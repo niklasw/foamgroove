@@ -48,10 +48,10 @@ snGradSchemes
     default         $Correction;
 }
 
-wallDist                                                                        
-{                                                                               
-        method          meshWave;                                                   
-}                                                                               
+wallDist
+{
+    method          meshWave;
+}
 
 fluxRequired
 {

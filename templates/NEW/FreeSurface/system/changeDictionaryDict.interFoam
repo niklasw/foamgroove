@@ -29,17 +29,17 @@ dictionaryReplacement
                 type            outletPhaseMeanVelocity;
                 phi             phi;
                 inletValue      $:velocity.inlet;
-                value           $inletValue;
                 alpha           alpha.water;
                 Umean           $:velocity.reference;
+                value           $:velocity.inlet;
             }
             atmosphere
             {
                 type            pressureInletOutletVelocity;
                 phi             phi;
-                inletValue      uniform ( 0 0 0 );
+                inletValue      $:velocity.inlet;
                 tangentialVelocity ( 6.173 0 0 );
-                value           uniform ( 0 0 0 );
+                value           $:velocity.inlet;
             }
         }
     }
