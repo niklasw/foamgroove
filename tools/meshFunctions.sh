@@ -1,9 +1,9 @@
-function versionIsNewerThan()                                                       
-{                                                                               
-    [[ -z "$WM_PROJECT_VERSION" ]] && { echo "FOAM not correctlu loaded"; exit 1; }       
-    test $(echo -e "$1\n$WM_PROJECT_VERSION" | sort -V|head -1) != $1                    
-    echo $?                                                                     
-}                                                                               
+function versionIsNewerThan()
+{
+    [[ -z "$WM_PROJECT_VERSION" ]] && { echo "FOAM not correctlu loaded"; exit 1; }
+    test $(echo -e "$1\n$WM_PROJECT_VERSION" | sort -V|head -1) != $1
+    echo $?
+}
 
 #- Just a wrapper that informs and pipes stdout to log.
 runme()
@@ -69,14 +69,14 @@ distributeZero()
     done
 }
 
-doTopoRefine()                                                                                                         
-{                                                                                                                      
-    # refineMesh bugs out in parallel                                                                                  
-    for i in $@; do                                                                                                    
-        runme topoSet -dict system/topoSetDict.$i                                                                      
-        runme refineMesh -dict system/refineMeshDict.$i -overwrite                                                     
-    done                                                                                                               
-}    
+doTopoRefine()
+{
+    # refineMesh bugs out in parallel
+    for i in $@; do
+        runme topoSet -dict system/topoSetDict.$i
+        runme refineMesh -dict system/refineMeshDict.$i -overwrite
+    done
+}
 
 extrude()
 {
