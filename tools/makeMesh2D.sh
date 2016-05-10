@@ -38,6 +38,12 @@ runme setDecomposition $NP
 
 runmePar $NP snappyHexMesh -overwrite
 
+newTempCase tempCase
+
+runme extrudeMesh extrudeMeshDict.2d
+
+runme createPatch -dict system/createPatchDict.empty -overwrite
+
 runmePar $NP changeDictionary
 
 runmePar $NP checkMesh
