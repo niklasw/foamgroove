@@ -110,7 +110,7 @@ class ResultPicture:
 class DataTable:
     """Dict like. Store and present tabular data"""
 
-    def __init__(self,data=array(),colNames=[]):
+    def __init__(self,data=array()):
         self.dataDict = data
         self.columnNames = colNames
         self.assert()
@@ -126,6 +126,7 @@ class DataTable:
                     continue
                 else:
                     return False
+
     def fixColNames(self):
         pass
 

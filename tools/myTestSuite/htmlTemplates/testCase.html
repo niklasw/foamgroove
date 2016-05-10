@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=ANSI" />
+    <!--[if IE]>
+    <meta http-equiv="Content-type" content="text/html;charset=ANSI" />
+    <![endif]-->
+    <title>Torque logger</title>
+    <style>
+      body
+      {
+          background-color:#333333;
+          font-family: Arial, Helvetica, sans-serif;
+          margin-right: auto;
+          color:#aaa;
+      }
+
+      #content
+      {
+          width:500px;
+          margin-left: 100px;
+          margin-right: auto;
+          margin-top: 20px;
+          border: 1px solid #aaa;
+          padding:10px;
+          float: left;
+      }
+
+
+      h1
+      {
+          color: #aaa;
+      }
+
+      a
+      {
+          color: #aaa;
+          padding: 5px;
+          margin: 5px;
+          border: 1px solid #222222;
+          text-decoration: none;
+      }
+
+      a:hover
+      {
+          background-color: #414A4A;
+      }
+
+      #menu
+      {
+        margin-top:30px;
+        margin-left:100px;
+      }
+
+      #menu ul
+      {
+        list-style-type: none;
+        margin:0;
+        padding:0;
+      }
+      #menu li
+      {
+        display:inline;
+      }
+      #menu a
+      {
+          font-weight: bold;
+      }
+      table
+      {
+          border: 0px solid #000000;
+          border-collapse: collapse;
+          width:450px;
+          margin-left: auto;
+          margin-right:auto;
+      }
+
+      tr.head
+      {
+          background-color:#222222;
+          font-weight:bold;
+      }
+      tr.even
+      {
+        background-color: #414A4A;
+        text-align:right;
+      }
+      tr.odd
+      {
+        background-color: #333333;
+        text-align:right;
+      }
+
+      td
+      {
+          padding:10px;
+          margin:0px;
+          width:30%;
+      }
+
+      th
+      {
+          background-color:#222222;
+      }
+
+      .calendar
+      {
+        width:100px;
+        margin-left: 50px;
+        margin-right: auto;
+        margin-top: 20px;
+        border: 1px solid #aaa;
+        padding:10px;
+        float: left;
+      }
+
+      .calendar ul
+      {
+        list-style-type: none;
+        margin:0;
+        padding:0;
+      }
+
+      .calendar a
+      {
+          color: #aaa;
+          padding: 2px;
+          margin: 4px;
+          border: 0px solid #222222;
+          text-decoration: none;
+      }
+
+      .calendar a.current
+      {
+          font-weight: bold;
+          color: white;
+      }
+
+
+      .form0 form p
+      {
+        width:100px;
+      }
+
+    </style>
+</head>
+
+<body>
+
+  <div id="menu">
+    <ul>
+      <li><a href="index">Per project</a></li>
+      <li><a href="user">Per user</a></li>
+      <li><a href="$currentpage?action=update">Update database</a></li>
+    </ul>
+  </div>
+
+  <div id="content">
+    <div id="content1">
+      $content1
+    </div>
+
+    <div id="content2">
+      $content2
+      <span style="text-align:right">
+        <!-- <p><a href="download?page=$currentpage">Download data</a></p> -->
+        <p><a href="#">Download (not implemented)</a></p>
+      </span>
+    </div>
+  </div>
+
+  <div id="calendars">
+     <div class="calendar">
+       $content3
+     </div>
+
+     <div class="calendar">
+       $content4
+     </div>
+  </div>
+
+</body>
+</html>
+
+
