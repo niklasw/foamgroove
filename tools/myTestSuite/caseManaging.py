@@ -107,6 +107,31 @@ class ResultPicture:
         s+= '</div>'
         return s
 
+class DataTable:
+    """Dict like. Store and present tabular data"""
+
+    def __init__(self,data=array(),colNames=[]):
+        self.dataDict = data
+        self.columnNames = colNames
+        self.assert()
+
+    def assert(self):
+        if len(self.dataDict.keys()) == 0:
+            return True
+        else:
+            firstKey = self.dataDict.keys()[0]
+            rowLen = len(self.dataDict[firstKey])
+            for key in self.dataDict.keys():
+                if curRowLen == len(self.dataDict[key]):
+                    continue
+                else:
+                    return False
+    def fixColNames(self):
+        pass
+
+
+
+
 class Book:
     """Object keeping data saved for presenting
        for each subCase. Reponsible for carrying result
@@ -129,11 +154,20 @@ class Book:
             return Book(root)
 
     def __init__(self,caseRoot):
+        self.description = 'Add a file named description.txt to the case.'
         self.logData = dict()    # String dict with keys by command type name
         self.errData = dict()    # String dict with keys by command type name
         self.exitStatus = dict() # Integer dict with keys by command type name
         self.pictures = list()   # List of ResultPicture
+        self.dataTable = 
         self.root = caseRoot
+        readCaseDescription()
+
+    def readCaseDescription(self):
+        descFile = os.path.join(self.root,'description.txt')
+        if os.path.isfile(descFile):
+            with open(descFile,'r') as fp:
+                self.description = fp.read()
 
     def presentRoot(self):
         """Create presentation root from self.caseRoot"""
