@@ -108,29 +108,40 @@ class ResultPicture:
         return s
 
 class DataTable:
-    """Dict like. Store and present tabular data"""
+    """Dict like. Store and present tabular data. The data set is a
+    list of list: [row0, row1,...], that is, row major..."""
 
-    def __init__(self,data=array()):
-        self.dataDict = data
+    def __init__(self,data=[[]], colNames=[]):
+        self.data = data
         self.columnNames = colNames
-        self.assert()
+        self.fill()
 
-    def assert(self):
-        if len(self.dataDict.keys()) == 0:
-            return True
-        else:
-            firstKey = self.dataDict.keys()[0]
-            rowLen = len(self.dataDict[firstKey])
-            for key in self.dataDict.keys():
-                if curRowLen == len(self.dataDict[key]):
-                    continue
-                else:
-                    return False
+    def _assert(self):
+        rowLengths = [len(row) for row in self.data]
+        maxL,minL = (max(rowLengths), min(rowLengths))
+        return True if maxL == minL else False
 
-    def fixColNames(self):
-        pass
+    def fill(self):
+        """Fill rows that are shorter than max(len(row)) with mock data"""
+        from string import ascii_uppercase,ascii_lowercase
+        if not self._assert():
+            rowLengths = [len(row) for row in self.data]
+            maxL = max(rowLengths)
+            headerDone = False
+            letters = iter(list(ascii_uppercase+ascii_lowercase))
+            for row in self.data:
+                while len(row) < maxL:
+                    row.append('--')
+                if not headerDone:
+                    headerDone = True
+                    while len(row) < maxL:
+                        self.columnNames.append(letters.next())
 
-
+    def htmlPrint(self):
+        from htmlUtils import htmlTable
+        table = htmlTable(self.data)
+        table.new(cls='data_table',head=self.colNames)
+        return table.content
 
 
 class Book:
@@ -160,9 +171,9 @@ class Book:
         self.errData = dict()    # String dict with keys by command type name
         self.exitStatus = dict() # Integer dict with keys by command type name
         self.pictures = list()   # List of ResultPicture
-        self.dataTable = 
+        self.dataTables = [] 
         self.root = caseRoot
-        readCaseDescription()
+        self.readCaseDescription()
 
     def readCaseDescription(self):
         descFile = os.path.join(self.root,'description.txt')
@@ -194,9 +205,17 @@ class Book:
 
     def htmlPrint(self):
         """ Could build it's own html div """
-        pass
+        from htmlUtils import htmlDiv, htmlTemplate, htmlSection
+        div = htmlDiv(cls='result_book')
+        div.append(htmlSection(self.root,self.description,level=1).content)
+        for pic in self.pictures:
+            div.append(pic.htmlPrint())
+        for table in self.dataTables:
+            div.append(table.htmlPrint())
+        div.update()
+        return div.content
 
-
+        
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
@@ -278,6 +297,11 @@ class CaseManager:
         book.exitStatus['postProcess'] = status
         book.close()
 
+    def writeHtml(self):
+        from htmlUtils import htmlTemplate
+        doc = htmlTemplate('htmlTemplates/testCase.html')
+        pass
+
 
     def do(self):
         import shutil
@@ -287,6 +311,7 @@ class CaseManager:
         # Need to close book now, so post processing app can add to it...
         self.caseBook.close()
         self.postProcess()
+        self.writeHtml()
         if self.delete:
             print 'DELETE',self.case.root
             shutil.rmtree(self.case.root)

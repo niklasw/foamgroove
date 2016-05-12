@@ -14,5 +14,5 @@ for key in book.errData.keys():
     print book.errData[key]
 
 print book.logData.keys()
-for picture in book.pictures:
-    print picture.htmlPrint()
+
+print book.htmlPrint()

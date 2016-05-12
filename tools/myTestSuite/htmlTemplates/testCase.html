@@ -17,7 +17,7 @@
 
       #content
       {
-          width:500px;
+          width:800px;
           margin-left: 100px;
           margin-right: auto;
           margin-top: 20px;
@@ -30,6 +30,18 @@
       h1
       {
           color: #aaa;
+      }
+
+      .book
+      {
+          width:500px;
+          margin-left: 100px;
+          margin-right: auto;
+          margin-top: 20px;
+          border: 3px solid #aaa;
+          padding:10px;
+          float: left;
+         
       }
 
       a
@@ -103,7 +115,7 @@
           background-color:#222222;
       }
 
-      .calendar
+      .float
       {
         width:100px;
         margin-left: 50px;
@@ -114,14 +126,14 @@
         float: left;
       }
 
-      .calendar ul
+      .float ul
       {
         list-style-type: none;
         margin:0;
         padding:0;
       }
 
-      .calendar a
+      .float a
       {
           color: #aaa;
           padding: 2px;
@@ -130,7 +142,7 @@
           text-decoration: none;
       }
 
-      .calendar a.current
+      .float a.current
       {
           font-weight: bold;
           color: white;
@@ -149,34 +161,16 @@
 
   <div id="menu">
     <ul>
-      <li><a href="index">Per project</a></li>
-      <li><a href="user">Per user</a></li>
-      <li><a href="$currentpage?action=update">Update database</a></li>
+      <li><a href="index">Previous level</a></li>
+      <li><a href="user">Log files</a></li>
     </ul>
   </div>
 
   <div id="content">
-    <div id="content1">
       $content1
-    </div>
-
-    <div id="content2">
       $content2
-      <span style="text-align:right">
-        <!-- <p><a href="download?page=$currentpage">Download data</a></p> -->
-        <p><a href="#">Download (not implemented)</a></p>
-      </span>
-    </div>
-  </div>
-
-  <div id="calendars">
-     <div class="calendar">
-       $content3
-     </div>
-
-     <div class="calendar">
-       $content4
-     </div>
+      $content3
+      $content4
   </div>
 
 </body>
