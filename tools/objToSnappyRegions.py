@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os
+import os,sys,re
 
 def getObjGroups(objFile):
     pat = re.compile(r'^g\s+(\w*)\s*')
