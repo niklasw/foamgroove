@@ -32,16 +32,34 @@
           color: #aaa;
       }
 
-      .book
+      .result_book
       {
-          width:500px;
-          margin-left: 100px;
+          width:700px;
+          margin-left: auto;
           margin-right: auto;
           margin-top: 20px;
           border: 3px solid #aaa;
           padding:10px;
+          float: none;
+          overflow:hidden;
+      }
+
+      .book_picture
+      {
+          width:300px;
+          margin-left: 10px;
+          margin-right: auto;
+          margin-top: 20px;
+          border: 1px solid #aaa;
+          padding:10px;
           float: left;
-         
+      }
+
+      .book_picture img
+      {
+          width:100%;
+          height:auto;
+          float:left;
       }
 
       a
@@ -58,31 +76,51 @@
           background-color: #414A4A;
       }
 
-      #menu
+      .menu
       {
         margin-top:30px;
+        margin-bottom:30px;
         margin-left:100px;
       }
 
-      #menu ul
+      .menu ul
       {
         list-style-type: none;
         margin:0;
         padding:0;
       }
-      #menu li
+      .menu li
       {
         display:inline;
       }
-      #menu a
+      .menu a
       {
           font-weight: bold;
       }
-      table
+
+      .book_table
+      {
+          margin-left: 10px;
+          margin-right: 10px;
+          margin-top: 20px;
+          border: 1px solid #aaa;
+          padding:10px;
+          float: left;
+      }
+
+      .book_table table
       {
           border: 0px solid #000000;
           border-collapse: collapse;
           width:450px;
+          margin-left: auto;
+          margin-right:auto;
+      }
+
+      .test_table table
+      {
+          border: 2px solid #000000;
+          border-collapse: collapse;
           margin-left: auto;
           margin-right:auto;
       }
@@ -154,16 +192,31 @@
         width:100px;
       }
 
+      .log_book
+      {
+          background-color: #555;
+      }
+
+      .log_book_err
+      {
+          background-color: #555;
+          color:      #f55;
+      }
+
     </style>
 </head>
 
 <body>
 
-  <div id="menu">
+  <div class="menu">
     <ul>
-      <li><a href="index">Previous level</a></li>
-      <li><a href="user">Log files</a></li>
+      <li><a href="../index.html">Previous level</a></li>
+      <li><a href="logs.html">Log files</a></li>
     </ul>
+  </div>
+
+  <div class="menu">
+    $menu
   </div>
 
   <div id="content">

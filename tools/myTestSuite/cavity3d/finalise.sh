@@ -1,4 +1,0 @@
-#!/usr/bin/sh
-
-#sample
-
