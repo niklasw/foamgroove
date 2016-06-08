@@ -6,12 +6,14 @@ import os,sys,glob,re
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class Borg:
-    '''Hivemind base class'''
+    '''Hivemind base class. Google "python borg singleton" '''
     _shared_state = {}
     def __init__(self):
         self.__dict__ = self._shared_state
 
-class BorgPaths(Borg):
+class Paths(Borg):
+    '''By subclassing Borg, this class variables are common to
+    all instances of Path(), in the main process'''
     
     SubCasePrefix = 'subCase_'
     SubCasePattern= SubCasePrefix+'.*'
@@ -32,7 +34,7 @@ class BorgPaths(Borg):
             try:
                 getattr(self,root)
             except(AttributeError):
-                Error('Missing path in BorgPaths: {}'.format(root))
+                Error('Missing path in Paths: {}'.format(root))
         if not os.path.isdir(self.TestRoot):
             Error('TestRoot does not exist: {}'.format(self.TestRoot))
         if not os.path.isdir(self.PresentRoot):
@@ -153,9 +155,9 @@ if __name__=='__main__':
 
     tr = '/home/soft/OpenFOAM/foamGroove/tools/myTestSuite'
 
-    p1 = BorgPaths(appRoot=sys.argv[0], testRoot = tr, presentRoot = sys.argv[1])
+    p1 = Paths(appRoot=sys.argv[0], testRoot = tr, presentRoot = sys.argv[1])
 
-    p2 = BorgPaths()
+    p2 = Paths()
 
     print p1.presentRoot(tr+'/rasTests/case0')
 

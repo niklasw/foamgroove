@@ -16,13 +16,14 @@ def signal_handler(signal, frame):
 if __name__=="__main__":
 
     if not len(sys.argv) > 1:
-        Error('Path to tests top level as sole argument needed')
+        Error('Path to tests top level as first argument needed')
 
     signal.signal(signal.SIGINT, signal_handler)
 
-    paths = BorgPaths(testRoot = os.getcwd(), \
-                      presentRoot = '/tmp/testSuite/results/', \
-                      appRoot = os.path.dirname(sys.argv[0]))
+    # Initiate Paths(Borg) to carry global data
+    paths = Paths(testRoot    = os.getcwd(), \
+                  presentRoot = '/tmp/testSuite/results/', \
+                  appRoot     = os.path.dirname(sys.argv[0]))
 
     Suite = SuiteRunner(sys.argv)
     if not 'norun' in sys.argv:

@@ -10,11 +10,11 @@ from caseBook import Book
 
 class FoamCase:
 
-    def __init__(self,caseRoot, skipNames=['.*\.test','.*.html','.*\.?log','.*\.json']):
+    def __init__(self,caseRoot,skipNames=['.*\.test','.*.html','.*\.?log','.*\.json']):
         self.root = caseRoot
-        skipNames.append(BorgPaths.SubCasePattern)
+        skipNames.append(Paths.SubCasePattern)
         self.skipNames = skipNames
-        self.skipNames.append('.*{0}.*'.format(BorgPaths.SubCasePrefix))
+        self.skipNames.append('.*{0}.*'.format(Paths.SubCasePrefix))
         self.skipPatterns = [ re.compile(p) for p in skipNames ]
         self.fileList = list(self._getFileTreeList())
         self.subRoots = []
@@ -30,23 +30,23 @@ class FoamCase:
                 fileNames = [ f for f in fileNames if not p.match(f) ]
             return fileNames
 
-        for root, dirs, files in os.walk(self.root):
+        for root,dirs,files in os.walk(self.root):
             for f in filterNames(files):
                 fPath = os.path.join(root,f)
                 yield fPath
 
     def clean(self):
         import shutil
-        subRoots = glob.glob(BorgPaths.SubCasePrefix+'*')
+        subRoots = glob.glob(Paths.SubCasePrefix+'*')
         for subCase in subRoots:
             shutil.rmtree(subCase)
 
     def mkSubCase(self):
-        """Create a copy of this case, avoiding to duplicate files
+        """Create a copy of this case,avoiding to duplicate files
         matching patterns in self.skipNames. Also avoiding already
         present subRoots."""
         import shutil
-        subCaseName = '{0}{1:03d}'.format(BorgPaths.SubCasePrefix,len(self.subRoots))
+        subCaseName = '{0}{1:03d}'.format(Paths.SubCasePrefix,len(self.subRoots))
         subCaseRoot = os.path.join(self.root,subCaseName)
 
         if os.path.isdir(subCaseRoot):
@@ -68,7 +68,7 @@ class FoamCase:
         self.subRoots.append(subCaseRoot)
         return FoamCase(subCaseRoot)
 
-    def annotate(self, astring):
+    def annotate(self,astring):
         with open(os.path.join(self.root,'caseParameters'),'a') as fp:
             fp.write('{0}\n'.format(astring))
 
@@ -76,7 +76,7 @@ class FoamCase:
 
 class CaseManager:
 
-    def __init__(self,foamCase, config, deleteAfter=False):
+    def __init__(self,foamCase,config,deleteAfter=False):
         self.config = config
         self.case = foamCase
         self.delete = deleteAfter
@@ -96,10 +96,10 @@ class CaseManager:
                 result = tpl.safe_substitute(**parametersDict)
             with open(f,'w') as fp:
                 fp.write(result)
-        for parameter, value in parametersDict.iteritems():
+        for parameter,value in parametersDict.iteritems():
             self.case.annotate('{0}:{1}'.format(parameter,value))
 
-    def runCommand(self,name='Noname', cmd='', writeToBook = True):
+    def runCommand(self,name='Noname',cmd='',writeToBook = True):
         """Call command through Popen and store data
         in 'Book' """
         import subprocess,time
@@ -131,7 +131,7 @@ class CaseManager:
     def run(self):
         cmd = []
         if self.config.nCores > 1:
-            cmd.extend(['mpirun', '-np '+str(self.config.nCores)])
+            cmd.extend(['mpirun','-np '+str(self.config.nCores)])
             cmd.extend([self.config.solver,'-parallel'])
         else:
             cmd.append(self.config.solver)
@@ -143,7 +143,7 @@ class CaseManager:
         if os.path.isfile(script):
             self.runCommand(cmd=script,name='finalise')
         if self.config.nCores > 1:
-            self.runCommand(cmd=['reconstructPar'], name='reconstruct')
+            self.runCommand(cmd=['reconstructPar'],name='reconstruct')
         # Need to write book to disk now, so post processing can add to it.
         # The post processing app, in turn, should open the book from file
         # in order to add pictures and data tables etc.
@@ -174,3 +174,4 @@ class CaseManager:
             shutil.rmtree(self.case.root)
         return True
 
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

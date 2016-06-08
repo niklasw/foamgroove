@@ -72,13 +72,35 @@ class ParamDict(dict):
         # To create an iterable of all combinations
         matrix = itertools.product(*keyValuePairs)
         for row in matrix:
-            yield dict(row)
+            if self.keepTest(dict(row)):
+                yield dict(row)
 
+    def keepTest(self,row):
+        '''Loop over all defined groups to filter tests'''
+        keep = True
+        for g in self.groups:
+            keep = self.keepCombination(row,g)
+        return keep
 
-    def collapseGroup(self,group):
-        for test in self.parameterMatrix():
-            for parameter in group:
-                pass
+    def keepCombination(self,combination,group):
+        def isUniformList(lst):
+            return not lst or lst.count(lst[0]) == len(lst)
+        lengths = [len(self.parameters.get(p)) for p in group ]
+        if not isUniformList(lengths):
+            Warning('Grouped parameters have different number of values. Grouping ignored')
+            return True
+        groupN = len(group)
+        groupMatrix = [self.parameters.get(p) for p in group]
+
+        for i in range(groupN):
+            groupedValues = [ a[i] for a in groupMatrix ]
+            groupedSet = dict(zip(group,groupedValues))
+            for param in group:
+                if not groupedSet[param] == combination[param]:
+                    print 'Dumping combination',combination
+                    print '*******************',groupedSet
+                    return False
+        return True
 
 
     def collapseGroups(self):
@@ -159,7 +181,7 @@ class TestRunner:
 
     def collectBooks(self):
         '''Iter return a Book, read from each subcase's presentation dir'''
-        pRoot = BorgPaths().presentRoot(self.case.root)
+        pRoot = Paths().presentRoot(self.case.root)
         bookPaths = findFiles(pRoot,Book.dbFile,dirname=True)
         bookPaths.sort()
         for root in bookPaths:
@@ -190,16 +212,16 @@ class TestRunner:
         div.append(testTable.content)
         div.update()
         
-        presentRoot = BorgPaths().presentRoot(self.case.root)
-        template = os.path.join(BorgPaths().HtmlTemplates,'testCase.html')
+        presentRoot = Paths().presentRoot(self.case.root)
+        template = os.path.join(Paths().HtmlTemplates,'testCase.html')
         doc = htmlTemplate(template,root=presentRoot, \
-                           relRoot=BorgPaths().PresentRoot)
+                           relRoot=Paths().PresentRoot)
         doc.addContent(content1=div.content)
 
         return doc.content
 
     def writeHtml(self):
-        presentRoot = BorgPaths().presentRoot(self.case.root)
+        presentRoot = Paths().presentRoot(self.case.root)
         if os.path.isdir(presentRoot):
             Debug('Writing index.html to {0}'.format(presentRoot))
             with open(os.path.join(presentRoot,'index.html'),'w') as fp:
@@ -230,9 +252,9 @@ class SuiteRunner:
             Test = TestRunner(root)
             Test.writeHtml()
         # Create the tree of recursive index.html files
-        template = os.path.join(BorgPaths().HtmlTemplates,'testCase.html')
-        htTree = htmlTree(BorgPaths().PresentRoot, \
-                          BorgPaths().SubCasePattern,template)
+        template = os.path.join(Paths().HtmlTemplates,'testCase.html')
+        htTree = htmlTree(Paths().PresentRoot, \
+                          Paths().SubCasePattern,template)
         htTree.makeIndexTree()
 
 

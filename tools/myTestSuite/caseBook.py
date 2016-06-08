@@ -129,10 +129,10 @@ class Book:
                 self.description = fp.read()
 
     def _makePresentRoot(self):
-        return BorgPaths().mkPresentRoot(self.root)
+        return Paths().mkPresentRoot(self.root)
 
     def presentRoot(self):
-        return BorgPaths().presentRoot(self.root)
+        return Paths().presentRoot(self.root)
 
     def _changeRoot(self, newRoot):
         """May be of use when switching to presentation dir"""
@@ -197,7 +197,7 @@ class Book:
 
         div.update()
         
-        template = os.path.join(BorgPaths().HtmlTemplates,'testCase.html')
+        template = os.path.join(Paths().HtmlTemplates,'testCase.html')
         doc = htmlTemplate(template)
         doc.addContent(content1=div.content)
 
@@ -217,7 +217,7 @@ class Book:
             div2.append(p.content)
         div2.update()
 
-        template = os.path.join(BorgPaths().HtmlTemplates,'testCase.html')
+        template = os.path.join(Paths().HtmlTemplates,'testCase.html')
         doc = htmlTemplate(template)
         doc.addContent(content1=div1, content2=div2)
 
