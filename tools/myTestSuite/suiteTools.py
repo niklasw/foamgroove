@@ -9,6 +9,29 @@ from caseBook import Book
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class ParamDict(dict):
+    ''' Read test config and create parameter matrix from json file.
+    config file example:
+
+    {
+        "comment1": "Normal comments are not allowed in JSON",
+        "comment2": "but comments can be hidden like this...",
+   
+        "parameters": {
+            "__les_model": [ "SMG", "Smagorinsky" ],
+            "__wall_model": [ "nutUSpaldingWallFunction", "zeroGradient" ]
+        },
+        "groups": {
+            "g1": ["__les_model","__wall_model"]
+        },
+        "solution": {
+            "nprocs": 1,
+            "nthreads": 8,
+            "solver": "pimpleFoam"
+        }
+    }
+    '''
+
+
     mandatorySections_ = ['solution','parameters']
 
     def __init__(self,fileName):
@@ -28,7 +51,7 @@ class ParamDict(dict):
         if self.has_key('groups'):
             self.groups = self.get('groups').values()
         else:
-            self.groups = {}
+            self.groups = []
 
     def _check(self):
         for ms in self.mandatorySections_:
@@ -51,25 +74,28 @@ class ParamDict(dict):
         for row in matrix:
             yield dict(row)
 
+
+    def collapseGroup(self,group):
+        for test in self.parameterMatrix():
+            for parameter in group:
+                pass
+
+
     def collapseGroups(self):
+        # "group1":  ["__velocity","__wall_model"],
         def isUniformList(lst):
             return not lst or lst.count(lst[0]) == len(lst)
-        
-        def keepTest(self,testDict):
-            for group in self.groups:
-                pairs = []
-                if isUniformList(groupedValues):
-                    pass
 
-        testMatrix = []
-        for paramSet in self.parameterMatrix():
-           pass
+        def getTestByKeyVal(key1,key2,value1,value2):
+            for row in self.parameterMatrix():
+                if row[key1] == value1 and row[key2] == value2:
+                    yield row
+        for group in self.groups:
+                paramVals = self.parameters.get(param)
+                pass
+        else:
+            print 'No Groups'
                 
-
-
-
-
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class TestRunner:
@@ -77,7 +103,6 @@ class TestRunner:
     def __init__(self,caseRoot):
         self.case = FoamCase(caseRoot)
         self.case.clean()
-        self.subRoots = [] 
 
     def run(self,testFile, cleanup=False):
         '''Run all rows in the parameter matrix'''
@@ -116,7 +141,6 @@ class TestRunner:
                     break
 
                 subCase = self.case.mkSubCase()
-                self.subRoots.append(subCase.root)
                 worker = CaseManager(subCase, config, deleteAfter=cleanup)
                 worker.setParameters(dict(parameterSet))
                 ps = Process(target=worker.do)
@@ -135,15 +159,11 @@ class TestRunner:
 
     def collectBooks(self):
         '''Iter return a Book, read from each subcase's presentation dir'''
-        bookPaths = \
-            findFiles(SuitePaths.presentRoot(self.case.root),Book.dbFile,dirname=True)
+        pRoot = SuitePaths.presentRoot(self.case.root)
+        bookPaths = findFiles(pRoot,Book.dbFile,dirname=True)
         bookPaths.sort()
         for root in bookPaths:
             yield Book.open(root)
-
-        #for root in self.subRoots:
-        #    pRoot = SuitePaths.presentRoot(root)
-        #    yield Book.open(pRoot)
 
     def createTestTable(self):
         from htmlUtils import htmlTable, htmlLink
@@ -172,7 +192,8 @@ class TestRunner:
         
         presentRoot = SuitePaths.presentRoot(self.case.root)
         template = os.path.join(SuitePaths.HtmlTemplates,'testCase.html')
-        doc = htmlTemplate(template,root=presentRoot,relRoot=SuitePaths.PresentRoot)
+        doc = htmlTemplate(template,root=presentRoot, \
+                           relRoot=SuitePaths.PresentRoot)
         doc.addContent(content1=div.content)
 
         return doc.content
@@ -180,7 +201,7 @@ class TestRunner:
     def writeHtml(self):
         presentRoot = SuitePaths.presentRoot(self.case.root)
         if os.path.isdir(presentRoot):
-            Debug('Writing index.html to {0}'.format(SuitePaths.presentRoot(self.case.root)))
+            Debug('Writing index.html to {0}'.format(presentRoot))
             with open(os.path.join(presentRoot,'index.html'),'w') as fp:
                 fp.write(self.printHtml())
 
@@ -210,7 +231,8 @@ class SuiteRunner:
             Test.writeHtml()
         # Create the tree of recursive index.html files
         template = os.path.join(SuitePaths.HtmlTemplates,'testCase.html')
-        htTree = htmlTree(SuitePaths.PresentRoot,SuitePaths.SubCasePattern,template)
+        htTree = htmlTree(SuitePaths.PresentRoot, \
+                          SuitePaths.SubCasePattern,template)
         htTree.makeIndexTree()
 
 
@@ -228,5 +250,6 @@ if __name__=='__main__':
         for testFile in testFiles:
             config = ParamDict(os.path.join(Test.case.root, testFile))
             matrix = config.parameterMatrix()
+            Info('Test matrix from test file {0}:'.format(testFile))
             for parameterSet in matrix:
                 print parameterSet

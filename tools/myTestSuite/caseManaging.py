@@ -10,7 +10,7 @@ from caseBook import Book
 
 class FoamCase:
 
-    def __init__(self,caseRoot, skipNames=['.*\.test','.*.html','.*\.?log']):
+    def __init__(self,caseRoot, skipNames=['.*\.test','.*.html','.*\.?log','.*\.json']):
         self.root = caseRoot
         skipNames.append(SuitePaths.SubCasePattern)
         self.skipNames = skipNames

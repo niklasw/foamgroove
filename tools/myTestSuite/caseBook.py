@@ -129,17 +129,7 @@ class Book:
                 self.description = fp.read()
 
     def _makePresentRoot(self):
-        pRoot = self.presentRoot()
-        try:
-            Debug('Present root ='+pRoot)
-            if os.path.exists(pRoot): # FIXME not safe could remove home...:-|
-                Debug('Removing all files in {0}'.format(pRoot))
-                (os.remove(f) for f in os.listdir(pRoot))
-            else:
-                os.makedirs(pRoot)
-        except:
-            Error('Cannot create presentation root dir {0}'.format(pRoot))
-        return pRoot
+        return SuitePaths.mkPresentRoot(self.root)
 
     def presentRoot(self):
         return SuitePaths.presentRoot(self.root)
