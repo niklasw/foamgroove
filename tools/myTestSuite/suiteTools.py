@@ -159,7 +159,7 @@ class TestRunner:
 
     def collectBooks(self):
         '''Iter return a Book, read from each subcase's presentation dir'''
-        pRoot = SuitePaths.presentRoot(self.case.root)
+        pRoot = BorgPaths().presentRoot(self.case.root)
         bookPaths = findFiles(pRoot,Book.dbFile,dirname=True)
         bookPaths.sort()
         for root in bookPaths:
@@ -190,16 +190,16 @@ class TestRunner:
         div.append(testTable.content)
         div.update()
         
-        presentRoot = SuitePaths.presentRoot(self.case.root)
-        template = os.path.join(SuitePaths.HtmlTemplates,'testCase.html')
+        presentRoot = BorgPaths().presentRoot(self.case.root)
+        template = os.path.join(BorgPaths().HtmlTemplates,'testCase.html')
         doc = htmlTemplate(template,root=presentRoot, \
-                           relRoot=SuitePaths.PresentRoot)
+                           relRoot=BorgPaths().PresentRoot)
         doc.addContent(content1=div.content)
 
         return doc.content
 
     def writeHtml(self):
-        presentRoot = SuitePaths.presentRoot(self.case.root)
+        presentRoot = BorgPaths().presentRoot(self.case.root)
         if os.path.isdir(presentRoot):
             Debug('Writing index.html to {0}'.format(presentRoot))
             with open(os.path.join(presentRoot,'index.html'),'w') as fp:
@@ -230,9 +230,9 @@ class SuiteRunner:
             Test = TestRunner(root)
             Test.writeHtml()
         # Create the tree of recursive index.html files
-        template = os.path.join(SuitePaths.HtmlTemplates,'testCase.html')
-        htTree = htmlTree(SuitePaths.PresentRoot, \
-                          SuitePaths.SubCasePattern,template)
+        template = os.path.join(BorgPaths().HtmlTemplates,'testCase.html')
+        htTree = htmlTree(BorgPaths().PresentRoot, \
+                          BorgPaths().SubCasePattern,template)
         htTree.makeIndexTree()
 
 

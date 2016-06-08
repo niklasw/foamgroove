@@ -25,11 +25,13 @@ class BorgPaths(Borg):
         if presentRoot:
             self.PresentRoot = presentRoot  # Top level presentation root
         self.assertRootsDefined()
-        HtmlTemplates = os.path.join(self.AppRoot,'htmlTemplates')
+        self.HtmlTemplates = os.path.join(self.AppRoot,'htmlTemplates')
 
     def assertRootsDefined(self):
-        for root in [self.TestRoot,self.PresentRoot,self.AppRoot]:
-            if not root:
+        for root in ['TestRoot','PresentRoot','AppRoot']:
+            try:
+                getattr(self,root)
+            except(AttributeError):
                 Error('Missing path in BorgPaths: {}'.format(root))
         if not os.path.isdir(self.TestRoot):
             Error('TestRoot does not exist: {}'.format(self.TestRoot))
@@ -56,49 +58,6 @@ class BorgPaths(Borg):
         except:
             Error('Cannot create presentation root dir {0}'.format(pRoot))
         return pRoot
-
-
-
-class SuitePaths:
-    PresentRoot = '/tmp/testSuite/results'
-    AppRoot = os.path.realpath(os.path.dirname(sys.argv[0]))
-    HtmlTemplates = os.path.join(AppRoot,'htmlTemplates')
-    SubCasePrefix = 'subCase_'
-    SubCasePattern= SubCasePrefix+'.*'
-
-    @staticmethod
-    def presentRoot(currentRoot):
-        """Create presentation root from self.caseRoot"""
-        realCurrentRoot = os.path.realpath(currentRoot)
-        aPL = len(SuitePaths.AppRoot)
-        appRelativeRoot = realCurrentRoot[aPL+1:]
-        pRoot = os.path.join(SuitePaths.PresentRoot,appRelativeRoot)
-        return  pRoot
-
-    @staticmethod
-    def presentRoot2(currentRoot):
-        """Create presentation root from self.caseRoot"""
-        realCurrentRoot = os.path.realpath(currentRoot)
-        aPL = len(SuitePaths.AppRoot)
-        appRelativeRoot = realCurrentRoot[aPL+1:]
-        pRoot = os.path.join(SuitePaths.PresentRoot,appRelativeRoot)
-        return  pRoot
-
-    @staticmethod
-    def mkPresentRoot(currentRoot):
-        pRoot = SuitePaths.presentRoot(currentRoot)
-        try:
-            Debug('Present root ='+pRoot)
-            if os.path.exists(pRoot): # FIXME not safe could remove home...:-|
-                Debug('Removing all files in {0}'.format(pRoot))
-                (os.remove(f) for f in os.listdir(pRoot))
-            else:
-                os.makedirs(pRoot)
-        except:
-            Error('Cannot create presentation root dir {0}'.format(pRoot))
-        return pRoot
-
-
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -12,9 +12,9 @@ class FoamCase:
 
     def __init__(self,caseRoot, skipNames=['.*\.test','.*.html','.*\.?log','.*\.json']):
         self.root = caseRoot
-        skipNames.append(SuitePaths.SubCasePattern)
+        skipNames.append(BorgPaths.SubCasePattern)
         self.skipNames = skipNames
-        self.skipNames.append('.*{0}.*'.format(SuitePaths.SubCasePrefix))
+        self.skipNames.append('.*{0}.*'.format(BorgPaths.SubCasePrefix))
         self.skipPatterns = [ re.compile(p) for p in skipNames ]
         self.fileList = list(self._getFileTreeList())
         self.subRoots = []
@@ -37,7 +37,7 @@ class FoamCase:
 
     def clean(self):
         import shutil
-        subRoots = glob.glob(SuitePaths.SubCasePrefix+'*')
+        subRoots = glob.glob(BorgPaths.SubCasePrefix+'*')
         for subCase in subRoots:
             shutil.rmtree(subCase)
 
@@ -46,7 +46,7 @@ class FoamCase:
         matching patterns in self.skipNames. Also avoiding already
         present subRoots."""
         import shutil
-        subCaseName = '{0}{1:03d}'.format(SuitePaths.SubCasePrefix,len(self.subRoots))
+        subCaseName = '{0}{1:03d}'.format(BorgPaths.SubCasePrefix,len(self.subRoots))
         subCaseRoot = os.path.join(self.root,subCaseName)
 
         if os.path.isdir(subCaseRoot):

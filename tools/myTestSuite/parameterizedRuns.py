@@ -3,6 +3,7 @@
 
 import os,sys,glob,re
 from suiteTools import SuiteRunner
+from testSuiteUtils import *
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -19,9 +20,11 @@ if __name__=="__main__":
 
     signal.signal(signal.SIGINT, signal_handler)
 
+    paths = BorgPaths(testRoot = os.getcwd(), \
+                      presentRoot = '/tmp/testSuite/results/', \
+                      appRoot = os.path.dirname(sys.argv[0]))
+
     Suite = SuiteRunner(sys.argv)
     if not 'norun' in sys.argv:
         Suite.run()
     Suite.present()
-
-    #signal.pause()
