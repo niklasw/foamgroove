@@ -5,7 +5,6 @@ import os,sys,glob,re
 from testSuiteUtils import *
 from caseBook import Book
 
-
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class FoamCase:

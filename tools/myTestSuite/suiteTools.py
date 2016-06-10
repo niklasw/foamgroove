@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os,sys,glob,re
-from testSuiteUtils import *
+from testSuiteUtils import Info,Warning,Error,Debug,Paths
 from caseManaging import FoamCase, CaseManager
 from caseBook import Book
 
@@ -15,7 +15,7 @@ class ParamDict(dict):
     {
         "comment1": "Normal comments are not allowed in JSON",
         "comment2": "but comments can be hidden like this...",
-   
+
         "parameters": {
             "__les_model": [ "SMG", "Smagorinsky" ],
             "__wall_model": [ "nutUSpaldingWallFunction", "zeroGradient" ]
@@ -30,7 +30,6 @@ class ParamDict(dict):
         }
     }
     '''
-
 
     mandatorySections_ = ['solution','parameters']
 
@@ -72,52 +71,28 @@ class ParamDict(dict):
         # To create an iterable of all combinations
         matrix = itertools.product(*keyValuePairs)
         for row in matrix:
-            if self.keepTest(dict(row)):
-                yield dict(row)
+            rowDict = dict(row)
+            yield rowDict
 
     def keepTest(self,row):
-        '''Loop over all defined groups to filter tests'''
+        '''Loop over all defined groups to filter tests.
+        Check equal length of grouped parameters.'''
         keep = True
         for g in self.groups:
-            keep = self.keepCombination(row,g)
+            l = [len(self.parameters.get(p)) for p in g ]
+            if not l or not l.count(l[0]) == len(l):
+                Warning('Grouped parameters have different number of values. Grouping ignored')
+
+            # Transposed array
+            groupMatrix = zip(*[self.parameters.get(p) for p in g])
+
+            keep = (keep and self.keepCombination(row,g,groupMatrix))
         return keep
 
-    def keepCombination(self,combination,group):
-        def isUniformList(lst):
-            return not lst or lst.count(lst[0]) == len(lst)
-        lengths = [len(self.parameters.get(p)) for p in group ]
-        if not isUniformList(lengths):
-            Warning('Grouped parameters have different number of values. Grouping ignored')
-            return True
-        groupN = len(group)
-        groupMatrix = [self.parameters.get(p) for p in group]
-
-        for i in range(groupN):
-            groupedValues = [ a[i] for a in groupMatrix ]
-            groupedSet = dict(zip(group,groupedValues))
-            for param in group:
-                if not groupedSet[param] == combination[param]:
-                    print 'Dumping combination',combination
-                    print '*******************',groupedSet
-                    return False
+    def keepCombination(self,combination,group,groupMatrix):
         return True
 
 
-    def collapseGroups(self):
-        # "group1":  ["__velocity","__wall_model"],
-        def isUniformList(lst):
-            return not lst or lst.count(lst[0]) == len(lst)
-
-        def getTestByKeyVal(key1,key2,value1,value2):
-            for row in self.parameterMatrix():
-                if row[key1] == value1 and row[key2] == value2:
-                    yield row
-        for group in self.groups:
-                paramVals = self.parameters.get(param)
-                pass
-        else:
-            print 'No Groups'
-                
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 class TestRunner:
@@ -181,6 +156,7 @@ class TestRunner:
 
     def collectBooks(self):
         '''Iter return a Book, read from each subcase's presentation dir'''
+        from testSuiteUtils import findFiles
         pRoot = Paths().presentRoot(self.case.root)
         bookPaths = findFiles(pRoot,Book.dbFile,dirname=True)
         bookPaths.sort()
@@ -207,11 +183,11 @@ class TestRunner:
 
         header = htmlSection(self.case.name,self.case.root,level=1)
         testTable = self.createTestTable()
-        
+
         div.append(header.content)
         div.append(testTable.content)
         div.update()
-        
+
         presentRoot = Paths().presentRoot(self.case.root)
         template = os.path.join(Paths().HtmlTemplates,'testCase.html')
         doc = htmlTemplate(template,root=presentRoot, \
@@ -236,18 +212,23 @@ class SuiteRunner:
         if not os.path.isdir(self.root):
             Error('Not a directory: {0}'.format(self.root))
         self.tests = self.findTests()
+        if not self.tests:
+            Info('No tests found.')
 
     def findTests(self):
+        from testSuiteUtils import findFiles
         return findFiles(self.root,'.*\.json',dirname=True)
 
-    def run(self):
+    def run(self, cleanup=True):
         for root in self.tests:
             Info(root)
             Test = TestRunner(root)
-            Test.runAllTestFiles(cleanup=1)
+            Test.runAllTestFiles(cleanup=cleanup)
 
     def present(self):
         from htmlUtils import htmlTree
+        if not Paths().skipPresentation:
+            return
         for root in self.tests:
             Test = TestRunner(root)
             Test.writeHtml()
@@ -274,4 +255,4 @@ if __name__=='__main__':
             matrix = config.parameterMatrix()
             Info('Test matrix from test file {0}:'.format(testFile))
             for parameterSet in matrix:
-                print parameterSet
+               print parameterSet

@@ -35,7 +35,7 @@ class ResultPicture:
 
         # Write stored data to file at the target location
         if self.dataSet.size:
-            datFile =os.path.join(target,self.fileName+'.dat') 
+            datFile =os.path.join(target,self.fileName+'.dat')
             savetxt(datFile,self.dataSet.transpose())
 
     def printHtml(self):
@@ -79,7 +79,6 @@ class DataTable:
     def printHtml(self):
         from htmlUtils import htmlTable
         table = htmlTable(self.data,self.columnNames,'book_table',self.description)
-        #table.generate()
         return table.content
 
 
@@ -117,7 +116,7 @@ class Book:
         self.exitStatus = dict() # Integer dict with keys by command type name
         self.pictures = list()   # List of ResultPicture
         self.parameters = {}
-        self.dataTables = [] 
+        self.dataTables = []
         self.root = caseRoot
         self.name = os.path.basename(caseRoot)
         self._readCaseDescription()
@@ -181,14 +180,14 @@ class Book:
         procTimes = []
         for proc in self.timer.keys():
             procTimes.append('{0}: {1:0.2e} s'.format(proc,self.timer[proc]))
-        timesList = htmlList(procTimes,name='Case processing times')
+        timesList = htmlList(procTimes)
 
         runTime = htmlSection('Time to run',timesList.content,level=3)
-        
+
         div.append(header.content)
         div.append(params.content)
         div.append(runTime.content)
-        
+
         for pic in self.pictures:
             div.append(pic.printHtml())
 
@@ -196,7 +195,7 @@ class Book:
             div.append(table.printHtml())
 
         div.update()
-        
+
         template = os.path.join(Paths().HtmlTemplates,'testCase.html')
         doc = htmlTemplate(template)
         doc.addContent(content1=div.content)
@@ -234,13 +233,14 @@ class Book:
             fp.write(self.printLogs())
 
     def present(self):
+        if not Paths().skipPresentation:
+            return
         presentationRoot = self._makePresentRoot()
         for pic in self.pictures:
             pic.copyTo(presentationRoot)
         self.writeHtml()
         self.writeLogs()
         self.close(root=presentationRoot)
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

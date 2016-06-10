@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
 from string import Template
-import os
-from testSuiteUtils import *
+import os,re
+from testSuiteUtils import Info,Error,Debug,Warning,findDirs
 
 class htmlTemplate:
     def __init__(self, templateFile, root='',relRoot=''):
@@ -148,14 +148,8 @@ class htmlLink:
         return str(self.content)
 
 
-class listLink(htmlLink):
-    def __init__(self,name='**',href='#',cls=''):
-        htmlLink.__init__(self,name,href,cls)
-        self.content = '<li>{0}</li>'.format(self.generate())
-
-
 class htmlList:
-    def __init__(self,itemList=[], name='List'):
+    def __init__(self,itemList=[], name=''):
         self.items = itemList
         self.head = name
         self.content=self.generate()
@@ -190,6 +184,12 @@ class htmlImage:
 
 
 class htmlTree:
+    '''Write index.html files for navigation from presentationRoot
+    down to folder matching leafNamePattern. Starts by finding
+    leafNamePattern paths and backs up to presentationRoot.
+
+    FIXME: Can be done much neater.'''
+
     def __init__(self,presentationRoot,leafNamePattern, template):
         self.presentationRoot = presentationRoot
         self.leafNamePattern = leafNamePattern
@@ -225,19 +225,19 @@ class htmlTree:
     def writeHtml(self,root):
         if self.folderContains(root,self.leafNamePattern):
             return False
-        print root
         content = self.printHtml(root)
-        Debug('Writing tree index.html to {0}'.format(root))
         with open(os.path.join(root,'index.html'),'w') as fp:
             fp.write(content)
         return True
 
     def makeIndexTree(self):
+        Info('Generating index.html tree')
         leaves = findDirs(self.presentationRoot,self.leafNamePattern,dirname=True)
         for leaf in leaves:
             currentRoot = leaf
             while len(currentRoot) > len(self.presentationRoot) :
                 currentRoot = os.path.split(currentRoot)[0]
+                Debug('makeIndexTree: '+currentRoot)
                 self.writeHtml(currentRoot)
 
 

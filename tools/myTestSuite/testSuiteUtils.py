@@ -14,7 +14,7 @@ class Borg:
 class Paths(Borg):
     '''By subclassing Borg, this class variables are common to
     all instances of Path(), in the main process'''
-    
+
     SubCasePrefix = 'subCase_'
     SubCasePattern= SubCasePrefix+'.*'
 
@@ -28,6 +28,7 @@ class Paths(Borg):
             self.PresentRoot = presentRoot  # Top level presentation root
         self.assertRootsDefined()
         self.HtmlTemplates = os.path.join(self.AppRoot,'htmlTemplates')
+        self.skipPresentation = False
 
     def assertRootsDefined(self):
         for root in ['TestRoot','PresentRoot','AppRoot']:
@@ -68,10 +69,15 @@ def Info(astring):
     print '>>',astring
 
 def Debug(astring):
-    #Info('DEBUG: '+astring)
+    Info('DEBUG: '+astring)
     return
 
 def Error(s=''):
+    import inspect
+    errFile = inspect.stack()[1][1]
+    errLine =  inspect.stack()[1][2]
+    errCaller = inspect.stack()[1][3]
+    print 'Error() called from Function {0}\nin {2} line {1}'.format(errCaller,errLine,errFile)
     print 'ERROR:',s
     sys.exit(1)
 
@@ -99,6 +105,8 @@ def cleanPostProcessingData(postProcessingFile):
     Returns a list of strings void of parentheses (etc)"""
     import string
     stringList = None
+    if not os.path.isfile(postProcessingFile):
+        Error('Cannot read data file {}'.format(postProcessingFile))
     with open(postProcessingFile,'r') as fp:
         stringList = fp.readlines()
     dropPat = re.compile('^\s*(?![\(\)\#"\/a-zA-Z])')
@@ -108,6 +116,9 @@ def cleanPostProcessingData(postProcessingFile):
     return map(string.strip,filtered)
 
 def findFiles(startRoot, patternString, dirname=False, unique=False):
+    '''Return dirs or file paths containing file matching patternString.
+    If dirname=True containing dir is returned, otherwise the matching
+    file path. unique only speeds up the search...?'''
     import re
     pat = re.compile(patternString)
     paths = []
@@ -123,17 +134,20 @@ def findFiles(startRoot, patternString, dirname=False, unique=False):
     return list(set(paths)) # Just in case there are still duplicates...
 
 def findDirs(startRoot, patternString, dirname=False, unique=False):
+    '''Return dirs containing dir matching patternString. If dirname=
+    True containing dir is returned, otherwise the matching dir path.
+    unique only speeds up the search...?'''
     import re
     pat = re.compile(patternString)
     paths = []
     for root, dirs, files in os.walk(startRoot):
-        for f in dirs:
-            if pat.match(f):
+        for d in dirs:
+            if pat.match(d):
                 if dirname:
                     paths.append(root)
                     break
                 else:
-                    paths.append(os.path.join(root,f))
+                    paths.append(os.path.join(root,d))
                     if unique: break
     return list(set(paths)) # Just in case there are still duplicates...
 
@@ -153,7 +167,7 @@ if __name__=='__main__':
 
     print 'Present root'
 
-    tr = '/home/soft/OpenFOAM/foamGroove/tools/myTestSuite'
+    tr = os.getcwd()
 
     p1 = Paths(appRoot=sys.argv[0], testRoot = tr, presentRoot = sys.argv[1])
 
