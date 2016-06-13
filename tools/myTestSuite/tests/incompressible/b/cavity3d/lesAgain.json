@@ -1,0 +1,20 @@
+{
+    "parameters": {
+        "__les_model": [
+            "SMG", 
+            "Smagorinsky", 
+            "kEqn"
+        ], 
+        "__velocity": 10, 
+        "__wall_model": [
+            "nutUSpaldingWallFunction", 
+            "zeroGradient"
+        ], 
+        "name": "test2"
+    }, 
+    "solution": {
+        "nprocs": 4, 
+        "nthreads": 12, 
+        "solver": "pimpleFoam"
+    }
+}
