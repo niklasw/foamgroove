@@ -69,8 +69,10 @@ class ParamDict(dict):
         # To create an iterable of all combinations
         matrix = itertools.product(*keyValuePairs)
         for row in matrix:
-            rowDict = dict(row)
-            yield rowDict
+            # Check if row matches grouping criteria
+            if self.keepTest(row):
+                rowDict = dict(row)
+                yield rowDict
 
     def keepTest(self,row):
         '''Loop over all defined groups to filter tests.
@@ -80,16 +82,8 @@ class ParamDict(dict):
             l = [len(self.parameters.get(p)) for p in g ]
             if not l or not l.count(l[0]) == len(l):
                 Warning('Grouped parameters have different number of values. Grouping ignored')
-
-            # Transposed array
-            groupMatrix = zip(*[self.parameters.get(p) for p in g])
-
-            keep = (keep and self.keepCombination(row,g,groupMatrix))
-        return keep
-
-    def keepCombination(self,combination,group,groupMatrix):
+        # I give up! Return True...
         return True
-
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -243,7 +237,7 @@ if __name__=='__main__':
     if not len(sys.argv) > 1:
         Error('Path to tests top level as sole argument needed')
 
-    Suite = SuiteRunner(sys.argv)
+    Suite = SuiteRunner(sys.argv[1])
     for root in Suite.tests:
         Info(root)
         Test = TestRunner(root)
