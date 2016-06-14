@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import re,sys,os,string
+from caseBook import ResultPicture, Book, DataTable
+from testSuiteUtils import *
+
 import copy
 import matplotlib.pyplot as plt
 import numpy
-from caseBook import ResultPicture, Book, DataTable
-from testSuiteUtils import *
 
 caseRoot = os.getcwd()
 
@@ -51,10 +52,16 @@ tableData = []
 for row in data[20:25]:
     tableData.append(row[0:4])
 
-table = DataTable(tableData,columnNames=['I','Try','a','data table'])
-table.description = 'A random selection of integrated forces'
+table1 = DataTable(tableData,columnNames=['I','Try','a','data table'])
+table1.description = 'A random selection of integrated forces'
 
-caseBook.dataTables.append(table)
+tableData2 = copy.deepcopy(tableData)
+tableData2[2] = [9,9,9,9]
+table2 = DataTable(tableData2,columnNames=['I','Try','another','data table'])
+table2.description = 'Another dummy table'
+
+caseBook.dataTables.append(table1)
+caseBook.dataTables.append(table2)
 
 caseBook.close()
 

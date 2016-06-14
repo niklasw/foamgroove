@@ -75,10 +75,10 @@ class FoamCase:
 
 class CaseManager:
 
-    def __init__(self,foamCase,config,deleteAfter=False):
+    def __init__(self,foamCase,config):
         self.config = config
         self.case = foamCase
-        self.delete = deleteAfter
+        self.delete = Paths().deleteSubCases
         self.book = Book(foamCase.root)
 
     def setParameters(self,parametersDict):

@@ -29,6 +29,7 @@ class Paths(Borg):
         self.assertRootsDefined()
         self.HtmlTemplates = os.path.join(self.AppRoot,'htmlTemplates')
         self.skipPresentation = False
+        self.deleteSubCases = True
 
     def assertRootsDefined(self):
         for root in ['TestRoot','PresentRoot','AppRoot']:
@@ -69,7 +70,7 @@ def Info(astring):
     print '>>',astring
 
 def Debug(astring):
-    Info('DEBUG: '+astring)
+    #Info('DEBUG: '+astring)
     return
 
 def Error(s=''):

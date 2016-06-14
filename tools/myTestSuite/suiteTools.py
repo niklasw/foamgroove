@@ -25,7 +25,6 @@ class ParamDict(dict):
         },
         "solution": {
             "nprocs": 1,
-            "nthreads": 8,
             "solver": "pimpleFoam"
         }
     }
@@ -44,7 +43,6 @@ class ParamDict(dict):
         general = self.get('solution')
         self.solver = general.get('solver')
         self.nCores = general.get('ncores')
-        self.nThreads = general.get('nthreads')
         self.parameters = self.get('parameters')
         # List of groups. Discard the keys. Groups are optional.
         if self.has_key('groups'):
@@ -97,62 +95,63 @@ class ParamDict(dict):
 
 class TestRunner:
 
-    def __init__(self,caseRoot):
+    def __init__(self,caseRoot,nThreads=1):
         self.case = FoamCase(caseRoot)
         self.case.clean()
+        self.nThreads = nThreads
+        self.currentConfig = None
 
-    def run(self,testFile, cleanup=False):
-        '''Run all rows in the parameter matrix'''
+    def readConfig(self,testFile):
+        '''Need to separate this and carry currentConfig,
+           in order to use a generator for test series'''
+        self.currentConfig = ParamDict(os.path.join(self.case.root, testFile)) 
+        Info('Preparing test with file {0}\n\tin case {1}'.format(testFile, self.case.root))
 
-        Info('Running test file {0} in case {1}'.format(testFile, self.case.root))
+    def generateTests(self):
+        '''Yield a manager for every row in the parameter matrix.
+        Note: This is a generator. Must be looped for anyting to happen.'''
 
-        config = ParamDict(os.path.join(self.case.root, testFile))
-
-        for parameterSet in config.parameterMatrix():
+        for parameterSet in self.currentConfig.parameterMatrix():
             subCase = self.case.mkSubCase()
-
-            worker = CaseManager(subCase, config, deleteAfter=cleanup)
-            #worker.setParameters(dict(parameterSet))
+            worker = CaseManager(subCase, self.currentConfig)
             worker.setParameters(parameterSet)
+            yield worker
+
+    def run(self,testFile):
+        Info('Running test file {0} in case {1}'.format(testFile, self.case.root))
+        self.readConfig(testFile)
+        for worker in self.generateTests():
             worker.do()
 
-    def runThreaded(self,testFile,cleanup=False):
-        '''Not threaded! multi-processed. Threading did not
-           work with matplotlib in the post scripts'''
+    def runParallelTests(self,testFile):
         from multiprocessing import Process
-
         Info('Running test file {0} in case {1}'.format(testFile, self.case.root))
 
-        config = ParamDict(os.path.join(self.case.root,testFile))
-
-        setIterator = config.parameterMatrix()
-        allParamsDone = False
-        caseRoots = []
-        while not allParamsDone:
+        self.readConfig(testFile)
+        testGenerator = self.generateTests()
+        allDone = False
+        while not allDone:
             pss = []
-            for i in range(config.nThreads):
+            for i in range(self.nThreads):
                 try:
-                    parameterSet = setIterator.next()
+                    worker = testGenerator.next()
                 except:
-                    allParamsDone = True
+                    allDone = True
                     break
-
-                subCase = self.case.mkSubCase()
-                worker = CaseManager(subCase, config, deleteAfter=cleanup)
-                worker.setParameters(dict(parameterSet))
                 ps = Process(target=worker.do)
                 pss.append(ps)
                 ps.start()
-                Info('started thread {0}: {1}'.format(i,subCase.name))
+                Info('Started process {0}: {1}'.format(i,worker.case.name))
 
             # Wait for processes to end
             for i,ps in enumerate(pss):
                 ps.join()
             Debug('\tAll threads done')
 
-    def runAllTestFiles(self,cleanup=False):
+    def runAllTestFiles(self):
         for testFile in self.case.getTestFiles():
-            self.runThreaded(testFile, cleanup=cleanup)
+            #self.runThreaded(testFile)
+            self.runParallelTests(testFile)
 
     def collectBooks(self):
         '''Iter return a Book, read from each subcase's presentation dir'''
@@ -207,8 +206,8 @@ class TestRunner:
 
 class SuiteRunner:
 
-    def __init__(self, argv):
-        self.root = os.path.realpath(argv[1])
+    def __init__(self, root):
+        self.root = os.path.realpath(root)
         if not os.path.isdir(self.root):
             Error('Not a directory: {0}'.format(self.root))
         self.tests = self.findTests()
@@ -219,15 +218,16 @@ class SuiteRunner:
         from testSuiteUtils import findFiles
         return findFiles(self.root,'.*\.json',dirname=True)
 
-    def run(self, cleanup=True):
+    def run(self, nThreads = 1):
         for root in self.tests:
             Info(root)
-            Test = TestRunner(root)
-            Test.runAllTestFiles(cleanup=cleanup)
+            Test = TestRunner(root, nThreads)
+            Test.runAllTestFiles()
 
     def present(self):
         from htmlUtils import htmlTree
-        if not Paths().skipPresentation:
+        if Paths().skipPresentation:
+            Info('Presentation skipped')
             return
         for root in self.tests:
             Test = TestRunner(root)

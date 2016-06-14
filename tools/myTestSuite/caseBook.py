@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os,sys,glob,re
-from testSuiteUtils import *
+from testSuiteUtils import Paths,Info,Error,Debug
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -233,7 +233,7 @@ class Book:
             fp.write(self.printLogs())
 
     def present(self):
-        if not Paths().skipPresentation:
+        if Paths().skipPresentation:
             return
         presentationRoot = self._makePresentRoot()
         for pic in self.pictures:
@@ -243,4 +243,36 @@ class Book:
         self.close(root=presentationRoot)
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+if __name__=='__main__':
+    from numpy import array
+    try:
+        tgtDir = sys.argv[1]
+    except:
+        print 'Run with an existing folder as argument'
+        sys.exit(1)
+
+    # Initiate Paths(Borg) to carry global data
+    Paths(testRoot    = os.getcwd(), \
+          presentRoot = '/home/nikwik/tmp/results/html', \
+          appRoot     = os.path.dirname(sys.argv[0]))
+
+
+    testBook1 = Book(tgtDir)
+
+    testFig1 = ResultPicture(root='/tmp', \
+                             fileName='testFig.png', \
+                             description = 'This is figure caption', \
+                             data = array([[1,2,3],[4,5,6]]))
+
+    testBook1.pictures.append(testFig1)
+    testBook1.parameters = {'model':'funny','geometry':'nice'}
+
+    print testBook1.printHtml()
+
+    print testBook1.root
+    print testBook1.presentRoot()
+
+
 
