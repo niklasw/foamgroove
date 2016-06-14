@@ -36,12 +36,12 @@ class Paths(Borg):
             try:
                 getattr(self,root)
             except(AttributeError):
-                Error('Missing path in Paths: {}'.format(root))
+                Error('Missing path in Paths: {0}'.format(root))
         if not os.path.isdir(self.TestRoot):
-            Error('TestRoot does not exist: {}'.format(self.TestRoot))
+            Error('TestRoot does not exist: {0}'.format(self.TestRoot))
         if not os.path.isdir(self.PresentRoot):
             # A safety measure. User makes sure the presentation root exist.
-            Error('PresentRoot does not exist: {}'.format(self.PresentRoot))
+            Error('PresentRoot does not exist: {0}'.format(self.PresentRoot))
 
     def presentRoot(self,testRoot):
         fullPath = os.path.realpath(testRoot)
@@ -107,7 +107,7 @@ def cleanPostProcessingData(postProcessingFile):
     import string
     stringList = None
     if not os.path.isfile(postProcessingFile):
-        Error('Cannot read data file {}'.format(postProcessingFile))
+        Error('Cannot read data file {0}'.format(postProcessingFile))
     with open(postProcessingFile,'r') as fp:
         stringList = fp.readlines()
     dropPat = re.compile('^\s*(?![\(\)\#"\/a-zA-Z])')
