@@ -3,7 +3,7 @@
 
 import os,sys,glob,re
 from suiteTools import SuiteRunner
-from testSuiteUtils import Paths
+from testSuiteUtils import Paths,Error,Debug,Info
 
 progName = os.path.basename(sys.argv[0])
 
@@ -32,7 +32,7 @@ if __name__=="__main__":
 
     tests = sys.argv[1]
 
-    nThreads = 12
+    nThreads = 4
     presentationRoot = '/tmp/tests/results/'
     applicationRoot = os.path.realpath(os.path.dirname(sys.argv[0]))
     testRoot = os.getcwd()
