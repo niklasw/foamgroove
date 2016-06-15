@@ -14,11 +14,13 @@ class Borg:
 class Paths(Borg):
     '''By subclassing Borg, this class variables are common to
     all instances of Path(), in the main process'''
-
     SubCasePrefix = 'subCase_'
     SubCasePattern= SubCasePrefix+'.*'
 
     def __init__(self, testRoot=None, presentRoot=None, appRoot=None ):
+        '''First instance of this class must define the paths, then Paths
+        can then be instantiated without arguments; Thus the kwargs None
+        and the if statements below'''
         Borg.__init__(self)
         if testRoot:
             self.TestRoot = testRoot        # Top level test root

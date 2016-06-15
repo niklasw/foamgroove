@@ -41,9 +41,9 @@ class FoamCase:
             shutil.rmtree(subCase)
 
     def mkSubCase(self):
-        """Create a copy of this case,avoiding to duplicate files
+        '''Create a copy of this case,avoiding to duplicate files
         matching patterns in self.skipNames. Also avoiding already
-        present subRoots."""
+        present subRoots.'''
         import shutil
         subCaseName = '{0}{1:03d}'.format(Paths.SubCasePrefix,len(self.subRoots))
         subCaseRoot = os.path.join(self.root,subCaseName)
