@@ -50,12 +50,33 @@ class ParamDict(dict):
         else:
             self.groups = []
 
+        self.isGrouped = self.checkGroups()
+
     def _check(self):
         for ms in self.mandatorySections_:
             if not ms in self.keys():
                 Error('Fatal: missing section in JSON configuration: {0}'.format(ms))
 
-    def parameterMatrix(self):
+    def checkGroups(self):
+        # Check that groups contain valid parameter names,
+        # that they appear only once, and that number of values matches
+        params = self.parameters.keys()
+        isGrouped = dict(zip(params, len(params)*[False]))
+        for g in self.groups:
+            if(len(g) < 2):
+                Error('Fatal: group has fewer than two entries.')
+            for param in g:
+                if(not param in params):
+                    Error('Fatal: unknown parameter name in group: {0}'.format(param))
+                if(isGrouped.get(param)):
+                    Error('Fatal: Parameter appears in more than one group: {0}'.format(param))
+                isGrouped[param] = True
+            l = [len(self.parameters.get(p)) for p in g ]
+            if not l or not l.count(l[0]) == len(l):
+                Error('Fatal: Grouped parameters have different number of values.')
+        return isGrouped
+
+    def parameterMatrix_old(self):
         import itertools
         keyValuePairs = list()
         for param,values in self.parameters.iteritems():
@@ -74,18 +95,47 @@ class ParamDict(dict):
                 rowDict = dict(row)
                 yield rowDict
 
-    def keepTest(self,row):
-        '''Loop over all defined groups to filter tests.
-        Check equal length of grouped parameters.'''
-        keep = True
-        for g in self.groups:
-            l = [len(self.parameters.get(p)) for p in g ]
-            if not l or not l.count(l[0]) == len(l):
-                Warning('Grouped parameters have different number of values. Grouping ignored')
-        # I give up! Return True...
-        return True
+    def parameterMatrix(self):
+        import itertools
+        keyValuePairs = list()
 
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+        # Add grouped parameters first as single large tuple
+        for g in self.groups:
+            groupParamVals = None
+            for param in g:
+                values = self.parameters.get(param)
+                paramVals = None
+                if isinstance(values,list):
+                    paramVals = zip(len(values)*[param],values)
+                else:
+                    paramVals = [(param,values)]
+                if isinstance(groupParamVals,list):
+                    groupParamVals = [a + b for (a,b) in zip(groupParamVals,paramVals)]
+                else:
+                    groupParamVals = paramVals
+            keyValuePairs.append(groupParamVals)
+
+        # Now add non-grouped parameters
+        for param,values in self.parameters.iteritems():
+            if not self.isGrouped[param]:
+                paramVals = None
+                if isinstance(values,list):
+                    paramVals = zip(len(values)*[param],values)
+                else:
+                    paramVals = [(param,values)]
+                keyValuePairs.append(paramVals)
+
+        # Found this on da google...
+        # To create an iterable of all combinations
+        matrix = itertools.product(*keyValuePairs)
+
+        for row in matrix:
+            # Expand all grouped parameters to pairs
+            rowExpand = list()
+            for entry in row:
+                for i in range(0,len(entry),2):
+                    rowExpand.append((entry[i], entry[i+1]))
+            yield dict(rowExpand)
 
 class TestRunner:
 
@@ -98,8 +148,7 @@ class TestRunner:
     def readConfig(self,testFile):
         '''Need to separate this and carry currentConfig,
            in order to use a generator for test series'''
-        self.currentConfig = ParamDict(os.path.join(self.case.root, testFile)) 
-        Info('Preparing test with file {0}\n\tin case {1}'.format(testFile, self.case.root))
+        self.currentConfig = ParamDict(os.path.join(self.case.root, testFile))
 
     def generateTests(self):
         '''Yield a manager for every row in the parameter matrix.
@@ -112,15 +161,14 @@ class TestRunner:
             yield worker
 
     def run(self,testFile):
-        Info('Running test file {0} in case {1}'.format(testFile, self.case.root))
+        Info('Running test file {0}\n\tin case {1}'.format(testFile, self.case.root))
         self.readConfig(testFile)
         for worker in self.generateTests():
             worker.do()
 
     def runParallelTests(self,testFile):
         from multiprocessing import Process
-        Info('Running test file {0} in case {1}'.format(testFile, self.case.root))
-
+        Info('Running test file {0}\n\tin case {1}'.format(testFile, self.case.root))
         self.readConfig(testFile)
         testGenerator = self.generateTests()
         allDone = False
