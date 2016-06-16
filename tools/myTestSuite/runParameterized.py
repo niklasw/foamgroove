@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os,sys,glob,re
+
 from suiteTools import SuiteRunner
 from testSuiteUtils import Paths,Error,Debug,Info
 
@@ -16,7 +17,10 @@ def signal_handler(signal, frame):
     sys.exit(0)
 
 def setEnvironment():
-    os.environ['PYTHONPATH'] = Paths().AppRoot
+    #libDir = os.path.join(Paths().AppRoot,'parameterizeLib')
+    libDir = Paths().AppRoot
+    sys.path.append(libDir)
+    os.environ['PYTHONPATH'] = libDir
 
 def usage():
     print '''

@@ -38,6 +38,7 @@ class Paths(Borg):
             try:
                 getattr(self,root)
             except(AttributeError):
+                print self.__dict__
                 Error('Missing path in Paths: {0}'.format(root))
         if not os.path.isdir(self.TestRoot):
             Error('TestRoot does not exist: {0}'.format(self.TestRoot))
