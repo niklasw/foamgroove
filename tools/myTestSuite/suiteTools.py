@@ -160,13 +160,7 @@ class TestRunner:
             worker.setParameters(parameterSet)
             yield worker
 
-    def run(self,testFile):
-        Info('Running test file {0}\n\tin case {1}'.format(testFile, self.case.root))
-        self.readConfig(testFile)
-        for worker in self.generateTests():
-            worker.do()
-
-    def runParallelTests(self,testFile):
+    def runTests(self,testFile):
         from multiprocessing import Process
         Info('Running test file {0}\n\tin case {1}'.format(testFile, self.case.root))
         self.readConfig(testFile)
@@ -192,8 +186,7 @@ class TestRunner:
 
     def runAllTestFiles(self):
         for testFile in self.case.getTestFiles():
-            #self.runThreaded(testFile)
-            self.runParallelTests(testFile)
+            self.runTests(testFile)
 
     def collectBooks(self):
         '''Iter return a Book, read from each subcase's presentation dir'''
