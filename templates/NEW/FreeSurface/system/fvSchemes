@@ -16,7 +16,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 Correction          limited corrected 0.33;
-ConvectionModel     Gauss;
+DivMethod           Gauss;
 
 ddtSchemes
 {
@@ -32,11 +32,11 @@ gradSchemes
 
 divSchemes
 {
-    div(rhoPhi,U)       $ConvectionModel linearUpwind gradLimiter;
-    div(phi,alpha)      $ConvectionModel vanLeer;
-    div(phirb,alpha)    $ConvectionModel linear;
+    div(rhoPhi,U)       $DivMethod linearUpwind gradLimiter;
+    div(phi,alpha)      $DivMethod vanLeer;
+    div(phirb,alpha)    $DivMethod linear;
 
-    turbulence          $ConvectionModel linearUpwind gradLimiter;
+    turbulence          $DivMethod linearUpwind gradLimiter;
     div(phi,k)          $turbulence;
     div(phi,epsilon)    $turbulence;
     div(phi,omega)      $turbulence;

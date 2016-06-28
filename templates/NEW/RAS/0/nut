@@ -25,15 +25,10 @@ boundaryField
 {
     #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
 
-    inletGroup
+    inflowGroup
     {
         type            calculated;
         value           uniform 0;
-    }
-
-    slipGroup
-    {
-        type slip;
     }
 
     wallGroup
@@ -41,6 +36,11 @@ boundaryField
         type            $:turbulence.wallFunctions.nut;
         value           uniform 0;
         $:turbulence.constants;
+    }
+
+    slipGroup
+    {
+        type slip;
     }
 
     movingWallGroup

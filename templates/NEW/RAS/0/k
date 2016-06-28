@@ -25,21 +25,21 @@ boundaryField
 {
     #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
 
-    inletGroup
+    inflowGroup
     {
-        type fixedValue;
-        value $internalField;
+        type       fixedValue;
+        value      $internalField;
     }
 
     wallGroup
     {
-        type $:turbulence.wallFunctions.k;
-        value $internalField;
+        type       $:turbulence.wallFunctions.k;
+        value      $internalField;
     }
 
     slipGroup
     {
-        type slip;
+        type        slip;
     }
 
     movingWallGroup
@@ -49,9 +49,9 @@ boundaryField
 
     outflowGroup
     {
-        type inletOutlet;
-        inletValue $internalField;
-        value uniform 0;
+        type        inletOutlet;
+        inletValue  $internalField;
+        value      uniform 0;
     }
 
     ambienceGroup
@@ -61,8 +61,8 @@ boundaryField
 
     farfieldGroup
     {
-        type freestream;
-        freestreamValue $internalField;
+        type        freestream;
+        freestreamValue      $internalField;
     }
 }
 

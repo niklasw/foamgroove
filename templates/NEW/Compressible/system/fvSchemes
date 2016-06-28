@@ -17,9 +17,9 @@ FoamFile
 
 // * * * Scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
 
-Correction                 limited 0.33; // corrected;
+Correction      limited 0.33; // corrected;
 
-ConvectionModel            bounded Gauss;
+DivMethod       bounded Gauss;
 
 // * * * End scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -38,27 +38,26 @@ gradSchemes
 
 divSchemes
 {
-    default             none; //$ConvectionModel upwind;
-    div(phi,U)          $ConvectionModel linearUpwind gradLimiter;
-  //div(phi,U)          $ConvectionModel LUST unlimitedGrad(U);
-    div(phi,k)          $ConvectionModel limitedLinear 1;
-    div(phi,epsilon)    $ConvectionModel limitedLinear 1;
-    div(phi,omega)      $ConvectionModel limitedLinear 1;
-    div(phi,nuTilda)    $ConvectionModel limitedLinear 1;
+    default             none; //$DivMethod upwind;
+    div(phi,U)          $DivMethod linearUpwind gradLimiter;
+    div(phi,k)          $DivMethod limitedLinear 1;
+    div(phi,epsilon)    $DivMethod limitedLinear 1;
+    div(phi,omega)      $DivMethod limitedLinear 1;
+    div(phi,nuTilda)    $DivMethod limitedLinear 1;
 
-    div((muEff*dev2(T(grad(U))))) $ConvectionModel linear;
-    div(phi,e)          $ConvectionModel upwind;
-    div(phi,e)          $ConvectionModel upwind;
-    div(phi,K)          $ConvectionModel linear;
-    div(phid,p)         $ConvectionModel upwind;
-    div(phiv,p)         $ConvectionModel upwind;
-    div(phi,Ekp)        $ConvectionModel upwind;
-    div((phi|interpolate(rho)),p) $ConvectionModel upwind;
+    div((muEff*dev2(T(grad(U))))) $DivMethod linear;
+    div(phi,e)          $DivMethod upwind;
+    div(phi,e)          $DivMethod upwind;
+    div(phi,K)          $DivMethod linear;
+    div(phid,p)         $DivMethod upwind;
+    div(phiv,p)         $DivMethod upwind;
+    div(phi,Ekp)        $DivMethod upwind;
+    div((phi|interpolate(rho)),p) $DivMethod upwind;
 }
 
 laplacianSchemes
 {
-    default                 Gauss linear $Correction;
+    default         Gauss linear $Correction;
 }
 
 interpolationSchemes
@@ -71,18 +70,9 @@ snGradSchemes
     default         $Correction;
 }
 
-// Required for version > 3
 wallDist
 {
     method          meshWave;
-}
-
-// Not required for version
-fluxRequired
-{
-    default         no;
-    p               ;
-    pcorr           ;
 }
 
 // ************************************************************************* //

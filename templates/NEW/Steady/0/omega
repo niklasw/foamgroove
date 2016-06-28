@@ -25,7 +25,7 @@ boundaryField
 {
     #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
 
-    inletGroup
+    inflowGroup
     {
         type fixedValue;
         value $internalField;

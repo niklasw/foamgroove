@@ -51,7 +51,7 @@ dictionaryReplacement
         "(.*[Ii]nlet.*|.*[Ii]nflow.*)"
         {
             type            patch;
-            inGroups         1(inletGroup);
+            inGroups         1(inflowGroup);
         }
 
         "(.*[Oo]utlet.*|.*[Oo]utflow.*)"
