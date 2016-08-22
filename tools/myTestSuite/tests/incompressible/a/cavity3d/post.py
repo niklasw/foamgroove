@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import re,sys,os,string
-from caseBook import ResultPicture, Book, DataTable
-from testSuiteUtils import *
-
 import copy
 import matplotlib.pyplot as plt
 import numpy
+
+from parameterized.caseBook import Book, ResultPicture, DataTable
+from parameterized.testSuiteUtils import cleanPostProcessingData
 
 caseRoot = os.getcwd()
 
@@ -17,10 +17,6 @@ caseBook = Book.open(caseRoot)
 picture1 = ResultPicture(root=caseRoot,                           \
                          fileName='forces.png',                        \
                          description = 'Viscous force on moving wall')
-
-with open('fff','w') as fp:
-    fp.write(caseBook.description)
-
 
 # Extract arrays for a plot of integrated force
 forcesFile=os.path.join(caseRoot,'postProcessing/forces/0/forces.dat')
@@ -37,12 +33,13 @@ f = numpy.array(data)[:,4]
 # Add data to picture, optionally
 picture1.dataSet=numpy.array([t,f])
 
-# Create an image and save it to the ResultPicture (not on disk yet)
+# Create an image and store its information to the ResultPicture
 plt.plot(t,f)
 plt.grid('on')
 plt.savefig(picture1.path())
 
 caseBook.pictures.append(picture1)
+
 picture2 = copy.deepcopy(picture1)
 picture2.description = 'Another picture, but same'
 caseBook.pictures.append(picture2)
