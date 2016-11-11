@@ -30,7 +30,7 @@ gradSchemes
 
 divSchemes
 {
-    defaul          Gauss linear;
+    default          Gauss linear;
 }
 
 laplacianSchemes
