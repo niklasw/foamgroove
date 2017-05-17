@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  1.6                                   |
+|  \\    /   O peration     | Version:  2.3.0                                   |
 |   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-Correction          corrected; //limited 0.33;
+Correction          corrected; //corrected 0.33;
 DivMethod           bounded Gauss;
 
 ddtSchemes
@@ -25,42 +25,40 @@ ddtSchemes
 
 gradSchemes
 {
-    default         Gauss linear;
-    grad(p)         Gauss linear;
-    gradLimiter     cellLimited Gauss linear 1;
+    default             Gauss linear;
+    gradLimiter         cellLimited Gauss linear 1;
 }
 
 divSchemes
 {
-    //default           $DivMethod upwind;
-    div(phi,U)          $DivMethod linearUpwindV gradLimiter;
+    default             Gauss   linear;
+    div(phi,U)          $DivMethod linearUpwind gradLimiter;
     turbulence          $DivMethod linearUpwind gradLimiter;
     div(phi,k)          $turbulence;
     div(phi,epsilon)    $turbulence;
     div(phi,omega)      $turbulence;
     div(phi,nuTilda)    $turbulence;
-    div(R)                       Gauss linear;
-    div((nuEff*dev(T(grad(U))))) Gauss linear;
+    div(R)                          Gauss linear;
 }
 
 laplacianSchemes
 {
-    default             Gauss linear $Correction;
+    default         Gauss linear $Correction;
 }
 
 interpolationSchemes
 {
-    default             linear;
+    default         linear;
 }
 
 snGradSchemes
 {
-    default             $Correction;
+    default         $Correction;
 }
 
 wallDist
 {
-        method          meshWave;
+    method          meshWave;
 }
 
 // ************************************************************************* //

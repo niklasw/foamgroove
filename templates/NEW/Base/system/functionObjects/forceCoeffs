@@ -4,8 +4,8 @@ forceCoeffs1
 
     functionObjectLibs ( "libforces.so" );
 
-    outputControl   timeStep;
-    outputInterval  5;
+    writeControl   timeStep;
+    writeInterval  5;
 
     log         yes;
 

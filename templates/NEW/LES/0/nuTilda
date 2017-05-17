@@ -23,31 +23,21 @@ internalField   $:turbulence.initialnuTilda;
 
 boundaryField
 {
-    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+    #includeEtc "caseDicts/setConstraintTypes";
 
-    inflowGroup
+    inlet
     {
         type            fixedValue;
-        value           $:turbulence.initialnuTilda;
+        value           $internalField;
     }
 
-    wallGroup
+    wall
     {
         type            fixedValue;
         value           uniform 0;
     }
 
-    slipGroup
-    {
-        type slip;
-    }
-
-    movingWallGroup
-    {
-        $wallGroup;
-    }
-
-    outflowGroup
+    outlet
     {
         type            inletOutlet;
         inletValue      $internalField;

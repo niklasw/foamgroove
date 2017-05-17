@@ -19,44 +19,26 @@ FoamFile
 
 dimensions      [ 0 1 -1 0 0 0 0 ];
 
-internalField   $velocity.initial;
+U   $velocity.reference;
+
+internalField   uniform ($U 0 0);
 
 boundaryField
 {
-    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+    #includeEtc "caseDicts/setConstraintTypes";
 
-    inflowGroup
+    inlet
     {
         type fixedValue;
         value $internalField;
     }
 
-    wallGroup
+    wall
     {
-        type fixedValue;
-        value uniform (0 0 0);
+        type noSlip;
     }
 
-    slipGroup
-    {
-        type slip;
-    }
-
-    movingWallGroup
-    {
-        type movingWallVelocity;
-        value uniform (0 0 0);
-    }
-
-    ambienceGroup
-    {
-        type            pressureInletOutletVelocity;
-        phi             phi;
-        //tangentialVelocity $:velocity.ambient;
-        value           $:velocity.ambient;
-    }
-
-    outflowGroup
+    outlet
     {
         type            inletOutlet;
         phi             phi;
@@ -64,10 +46,18 @@ boundaryField
         value           uniform (0 0 0);
     }
 
+    ambience
+    {
+        type            pressureInletOutletVelocity;
+        phi             phi;
+        //tangentialVelocity $:velocity.ambient;
+        value           $internalField;
+    }
+
     farfieldGroup
     {
         type freestream;
-        freestreamValue $:velocity.ambient;
+        freestreamValue $internalField;
     }
 }
 

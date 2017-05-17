@@ -19,46 +19,31 @@ FoamFile
 
 dimensions      [ 0 0 0 1 0 0 0 ];
 
-internalField   $energy.initialTemperature;
+internalField   uniform $temperature.reference;
 
 boundaryField
 {
-#   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+    #includeEtc "caseDicts/setConstraintTypes";
 
-    inflowGroup
+    inlet
     {
         type fixedValue;
         value $internalField;
     }
 
-    wallGroup
+    wall
     {
         type zeroGradient;
     }
 
-    slipGroup
-    {
-        type slip;
-    }
-
-    movingWallGroup
-    {
-        $wallGroup;
-    }
-
-    outflowGroup
+    outlet
     {
         type inletOutlet;
         inletValue $internalField;
         value uniform 0;
     }
 
-    ambienceGroup
-    {
-        $outflowGroup;
-    }
-
-    farfieldGroup
+    farfield
     {
         type freestream;
         freestreamValue $internalField;

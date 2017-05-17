@@ -111,14 +111,17 @@ geometry
         max (2 2 2);
     }
 
+    cylinder
+    {
+        type searchableCylinder;
+        point1  (0 -0.5 0);
+        point2  (0  0.5 0);
+        radius 0.1;
+    }
+
     example.stl
     {
         type triSurfaceMesh;
-
-        //tolerance   1E-5;   // optional:non-default tolerance on intersections
-        //maxTreeDepth 10;    // optional:depth of octree. Decrease only in case
-                              // of memory limitations.
-
         regions
         {
             secondSolid
@@ -127,7 +130,7 @@ geometry
             }
         }
     }
-    cylinder.stl
+    cylinderExample.stl
     {
         type triSurfaceMesh;
     }
@@ -235,9 +238,9 @@ snapControls
 
     nFeatureSnapIter 10;
 
-    implicitFeatureSnap false;
+    implicitFeatureSnap true;
 
-    explicitFeatureSnap true;
+    explicitFeatureSnap false;
 
     multiRegionFeatureSnap false;
 }
@@ -299,6 +302,18 @@ addLayersControls
     nLayerIter 50;
 
     nRelaxedIter 20;
+
+    // Optional: limit the number of steps walking away from the surface.
+    // Default is unlimited.
+    //nMedialAxisIter 10;
+
+    // Optional: smooth displacement after medial axis determination.
+    // default is 0.
+    //nSmoothDisplacement 90;
+
+    // (wip)Optional: do not extrude a point if none of the surrounding points is
+    // not extruded. Default is false.
+    //detectExtrusionIsland true;
 }
 
 
@@ -404,10 +419,12 @@ castellatedMeshControls
 
     features
     (
+        /*
         {
             file "$featuresFile";
             level 0;
         }
+        */
     );
 
     refinementSurfaces

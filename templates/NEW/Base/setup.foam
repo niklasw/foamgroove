@@ -17,10 +17,6 @@ FoamFile
 
 velocity
 {
-    flowrate        0.01;
-    inlet           uniform ( 10 0 0 );
-    ambient         uniform ( 10 0 0 );
-    initial         uniform ( 10 0 0 );
     reference       10;
 }
 
@@ -33,18 +29,11 @@ turbulence
     initialOmega    uniform 22.36068;
     initialnuTilda  uniform 0.030618622;
     initialEpsilon  uniform 0.75467294;
-    wallFunctions
-    {
-        omega           omegaWallFunction;
-        k               kqRWallFunction;
-        epsilon         epsilonWallFunction;
-        nut             nutUSpaldingWallFunction;
-        nuSgs           nutUSpaldingWallFunction;
-    }
     constants
     {
         Ck              0.07;
         Ce              1.048;
+        Cw              0.5;
         Cmu             0.09;
         E               9.8;
         kappa           0.41;
@@ -56,15 +45,11 @@ turbulence
 pressure
 {
     reference       0;
-    ambient         uniform 0;
-    outlet          uniform 0;
 }
 
-energy
+temperature
 {
-    inletTemperature uniform 300;
-    ambientTemperature uniform 300;
-    initialTemperature uniform 300;
+    reference     300;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

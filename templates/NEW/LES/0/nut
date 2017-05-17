@@ -23,45 +23,19 @@ internalField   uniform 0;
 
 boundaryField
 {
-    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
-
-    inflowGroup
+    ".*"
     {
-        type            calculated;
-        value           uniform 0;
+        type    calculated;
+        value   $internalField;
     }
 
-    slipGroup
-    {
-        type slip;
-    }
+    #includeEtc "caseDicts/setConstraintTypes";
 
-    wallGroup
+    wall
     {
-        type            $:turbulence.wallFunctions.nut;
+        type            nutUSpaldingWallFunction;
         value           uniform 0;
         $:turbulence.constants;
-    }
-
-    movingWallGroup
-    {
-        $wallGroup;
-    }
-
-    outflowGroup
-    {
-        type            calculated;
-        value           uniform 0;
-    }
-
-    ambienceGroup
-    {
-        $outflowGroup;
-    }
-
-    farfieldGroup
-    {
-        $outflowGroup;
     }
 }
 

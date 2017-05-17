@@ -23,31 +23,21 @@ internalField   $turbulence.initialK;
 
 boundaryField
 {
-    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+    #includeEtc "caseDicts/setConstraintTypes";
 
-    inflowGroup
+    inlet
     {
         type fixedValue;
         value $internalField;
     }
 
-    wallGroup
+    wall
     {
-        type $:turbulence.wallFunctions.k;
+        type kqRWallFunction;
         value $internalField;
     }
 
-    slipGroup
-    {
-        type slip;
-    }
-
-    movingWallGroup
-    {
-        $wallGroup;
-    }
-
-    outflowGroup
+    outlet
     {
         type inletOutlet;
         inletValue $internalField;
@@ -56,7 +46,7 @@ boundaryField
 
     ambienceGroup
     {
-        $outflowGroup;
+        $outlet;
     }
 
     farfieldGroup

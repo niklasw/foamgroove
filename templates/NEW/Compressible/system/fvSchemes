@@ -45,14 +45,15 @@ divSchemes
     div(phi,omega)      $DivMethod limitedLinear 1;
     div(phi,nuTilda)    $DivMethod limitedLinear 1;
 
-    div((muEff*dev2(T(grad(U))))) $DivMethod linear;
     div(phi,e)          $DivMethod upwind;
     div(phi,e)          $DivMethod upwind;
     div(phi,K)          $DivMethod linear;
     div(phid,p)         $DivMethod upwind;
     div(phiv,p)         $DivMethod upwind;
     div(phi,Ekp)        $DivMethod upwind;
-    div((phi|interpolate(rho)),p) $DivMethod upwind;
+
+    div((rho*nuEff*dev2(T(grad(U))))) Gauss linear;
+    div((phi|interpolate(rho)),p) Gauss upwind;
 }
 
 laplacianSchemes

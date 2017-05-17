@@ -19,20 +19,18 @@ FoamFile
 
 dimensions      [ 1 -1 -2 0 0 0 0 ];
 
-internalField   $pressure.ambient;
+internalField   uniform $pressure.reference;
 
 boundaryField
 {
-#   include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
-
     ".*"
     {
         type zeroGradient;
     }
 
-    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+    #includeEtc "caseDicts/setConstraintTypes";
 
-    ambienceGroup
+    pressureInlet
     {
         type            totalPressure;
         gamma           1;
@@ -40,17 +38,16 @@ boundaryField
         p0              $internalField;
     }
 
-    outflowGroup
+    outlet
     {
         type fixedValue;
         value $internalField;
     }
 
-    farfieldGroup
+    farfield
     {
         type freestreamPressure;
     }
-
 }
 
 

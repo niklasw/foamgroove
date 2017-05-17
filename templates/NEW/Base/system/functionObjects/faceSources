@@ -5,7 +5,7 @@
         functionObjectLibs ("libfieldFunctionObjects.so");
 
         enabled         true;
-        outputControl   outputTime;
+        writeControl   outputTime;
 
         // Output to log&file (true) or to file only
         log             true;
@@ -48,7 +48,7 @@
         type            faceSource;
         functionObjectLibs ("libfieldFunctionObjects.so");
         enabled         true;
-        outputControl   outputTime;
+        writeControl   outputTime;
         log             true;
         valueOutput     true;
         source          faceZone;
@@ -68,7 +68,7 @@
         type            cellSource;
         functionObjectLibs ("libfieldFunctionObjects.so");
         enabled         true;
-        outputControl   outputTime;
+        writeControl   outputTime;
         log             true;
         valueOutput     true;
         source          cellZone;

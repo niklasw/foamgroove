@@ -15,60 +15,24 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defaultSolvers
-{
-    gamg
-    {
-        solver          GAMG;
-        tolerance       1e-08;
-        relTol          0.01;
-        smoother        GaussSeidel;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 20;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-    }
-    pcg
-    {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-06;
-        relTol          0.01;
-    }
-    smoothSolver
-    {
-        solver          smoothSolver;
-        smoother        GaussSeidel;
-        nSweeps         2;
-        tolerance       1e-07;
-        relTol          0.1;
-    }
-    pbicg
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-08;
-        relTol          0.01;
-    }
-}
-
-
+#includeEtc     "FOIDefaults/fvSolution"
+#include        "${FOAM_CASE}/setup.foam"
 
 solvers
 {
     p
     {
-        $:defaultSolvers.gamg;
+        $gamg;
     }
 
     U
     {
-        $:defaultSolvers.pbicg;
+        $pbicg;
     }
 
     "(k|epsilon|omega|nuTilda)"
     {
-        $:defaultSolvers.pbicg;
+        $pbicg;
     }
 
     /* For transient solvers */
@@ -86,7 +50,7 @@ solvers
 
     "(k|epsilon|omega|nuTilda)Final"
     {
-        $:defaultSolvers.pbicg;
+        $pbicg;
     }
 
     Phi
@@ -96,7 +60,7 @@ solvers
 
     cellDisplacement
     {
-        $:defaultSolvers.gamg;
+        $gamg;
         tolerance   1e-6;
         relTol      0;
     }
@@ -106,7 +70,7 @@ solvers
 referencePressure
 {
     pRefCell                    0;
-    pRefValue                   0;
+    pRefValue                   $:pressure.reference;
 }
 
 SIMPLE

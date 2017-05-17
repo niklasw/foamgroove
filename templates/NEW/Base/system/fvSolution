@@ -15,58 +15,24 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-defaultSolvers
-{
-    gamg
-    {
-        solver          GAMG;
-        tolerance       1e-08;
-        relTol          0.01;
-        smoother        GaussSeidel;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 20;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-    }
-    pcg
-    {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-06;
-        relTol          0.01;
-    }
-    smoothSolver
-    {
-        solver          smoothSolver;
-        smoother        GaussSeidel;
-        nSweeps         2;
-        tolerance       1e-07;
-        relTol          0.1;
-    }
-    pbicg
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-08;
-        relTol          0.01;
-    }
-}
+#includeEtc     "FOIDefaults/fvSolution"
+#include        "${FOAM_CASE}/setup.foam"
 
 solvers
 {
     p
     {
-        $:defaultSolvers.gamg;
+        $gamg;
     }
 
     U
     {
-        $:defaultSolvers.pbicg;
+        $pbicg;
     }
 
     "(k|epsilon|omega|nuTilda)"
     {
-        $:defaultSolvers.pbicg;
+        $pbicg;
     }
 
     /* For transient solvers */
@@ -84,33 +50,75 @@ solvers
 
     "(k|epsilon|omega|nuTilda)Final"
     {
-        $:defaultSolvers.pbicg;
+        $pbicg;
     }
 
     Phi
     {
         $p;
     }
+
+    cellDisplacement
+    {
+        $gamg;
+        tolerance   1e-6;
+        relTol      0;
+    }
+}
+
+// Macro variable for use in all methods below
+referencePressure
+{
+    pRefCell                    0;
+    pRefValue                   $:pressure.reference;
 }
 
 SIMPLE
 {
+    nNonOrthogonalCorrectors    1;
+    $referencePressure;
+
+    residualControl
+    {
+        p                       1e-4;
+        U                       1e-4;
+        "(k|epsilon|omega)"     1e-3;
+    }
+
 }
 
 potentialFlow
 {
+    nNonOrthogonalCorrectors    20;
+    $referencePressure;
 }
 
 PISO
 {
+    nCorrectors                 2;
+    nNonOrthogonalCorrectors    2;
+    $referencePressure;
 }
 
 PIMPLE
 {
+    nOuterCorrectors            1;
+    nCorrectors                 3;
+    nNonOrthogonalCorrectors    1;
+    $referencePressure;
 }
 
 relaxationFactors
 {
+    fields
+    {
+        p                           0.3;
+    };
+    equations
+    {
+        U                           0.7;
+        "(k|epsilon|omega|nuTilda)" 0.5;
+    }
 }
 
 // ************************************************************************* //

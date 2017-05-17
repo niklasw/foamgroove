@@ -2,8 +2,8 @@ slicePlane
 {
     type            surfaces;
     functionObjectLibs ("libsampling.so");
-    outputControl   timeStep;
-    outputInterval  100;
+    writeControl   timeStep;
+    writeInterval  100;
 
     surfaceFormat   vtk;
     fields          ( p U );

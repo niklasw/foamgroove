@@ -15,17 +15,8 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-transport
-{
-    kinematicViscosity 1e-06;
-}
-
 velocity
 {
-    flowrate        0.01;
-    inlet           uniform ( 10 0 0 );
-    ambient         uniform ( 10 0 0 );
-    initial         uniform ( 10 0 0 );
     reference       10;
 }
 
@@ -38,14 +29,6 @@ turbulence
     initialOmega    uniform 22.36068;
     initialnuTilda  uniform 0.030618622;
     initialEpsilon  uniform 0.75467294;
-    wallFunctions
-    {
-        omega           compressible::omegaWallFunction;
-        k               compressible::kqRWallFunction;
-        epsilon         compressible::epsilonWallFunction;
-        mut             mutUSpaldingWallFunction;
-        muSgs           mutUSpaldingWallFunction;
-    }
     constants
     {
         Ck              0.07;
@@ -60,61 +43,11 @@ turbulence
 pressure
 {
     reference       0;
-    ambient         uniform 0;
-    outlet          uniform 0;
 }
 
-energy
+temperature
 {
-    inletTemperature uniform 300;
-    ambientTemperature uniform 300;
-    initialTemperature uniform 300;
-}
-
-relaxation
-{
-    pressure        0.3;
-    velocity        0.7;
-    turbulence      0.3;
-    rho             0.01;
-    energy          0.5;
-}
-
-solver
-{
-    gamg
-    {
-        solver          GAMG;
-        tolerance       1e-08;
-        relTol          0.01;
-        smoother        GaussSeidel;
-        cacheAgglomeration true;
-        nCellsInCoarsestLevel 20;
-        agglomerator    faceAreaPair;
-        mergeLevels     1;
-    }
-    pcg
-    {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-06;
-        relTol          0.01;
-    }
-    smoothSolver
-    {
-        solver          smoothSolver;
-        smoother        GaussSeidel;
-        nSweeps         2;
-        tolerance       1e-07;
-        relTol          0.1;
-    }
-    pbicg
-    {
-        solver          PBiCG;
-        preconditioner  DILU;
-        tolerance       1e-08;
-        relTol          0.01;
-    }
+    reference       300;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

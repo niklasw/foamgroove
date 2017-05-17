@@ -23,32 +23,22 @@ internalField   $turbulence.initialEpsilon;
 
 boundaryField
 {
-    #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
+    #includeEtc "caseDicts/setConstraintTypes";
 
-    inflowGroup
+    inlet
     {
         type fixedValue;
         value $internalField;
     }
 
-    wallGroup
+    wall
     {
-        type $:turbulence.wallFunctions.epsilon;
+        type nutUSpaldningWallFunction;
         value $internalField;
         $:turbulence.constants;
     }
 
-    slipGroup
-    {
-        type slip;
-    }
-
-    movingWallGroup
-    {
-        $wallGroup;
-    }
-
-    outflowGroup
+    outlet
     {
         type inletOutlet;
         inletValue $internalField;

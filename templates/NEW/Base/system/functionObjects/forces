@@ -2,9 +2,9 @@
     {
         type                forces;
         functionObjectLibs  ("libforces.so");
-        outputControl       timeStep;
-        outputInterval      10;
-        patches             (".*wall.*");
+        writeControl       timeStep;
+        writeInterval      10;
+        patches             (wall);
         pName               p;
         UName               U;
         rhoName             rhoInf;

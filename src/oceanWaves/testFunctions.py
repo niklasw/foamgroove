@@ -56,7 +56,7 @@ T = arange(0,period(c,k),0.01)
 
 for wl in arange(1.0,11,1):
     h,h1,h2 = elevation(wh,wl,wd,T)
-    plot(T,h,label=str(wl))
+    plot(T,h2,label=str(wl))
 legend()
 grid()
 show()
