@@ -65,7 +65,7 @@ distributeZero()
 
     for p in processor*; do
         rm -rf $p/0
-        cp -rv 0 $p/0
+        cp -rv $sourceDir $p/0
     done
 }
 
