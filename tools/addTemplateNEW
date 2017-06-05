@@ -34,7 +34,7 @@ select T in DONE CLEAR $AVAILABLE_TEMPLATES ;
 do
   case $T in
         "DONE")
-            echo "Exiting."
+            echo "Done."
             break;
             ;;
         "CLEAR")
