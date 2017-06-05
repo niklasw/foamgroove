@@ -40,7 +40,7 @@ boundaryField
     {
         type inletOutlet;
         inletValue $internalField;
-        value uniform 0;
+        value $internalField;
     }
 
     farfield
