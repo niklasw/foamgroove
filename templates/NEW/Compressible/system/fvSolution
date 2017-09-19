@@ -102,6 +102,12 @@ solvers
         tolerance   1e-6;
         relTol      0;
     }
+
+    Phi
+    {
+        $p;
+    }
+
 }
 
 // Macro variable for use in all methods below
