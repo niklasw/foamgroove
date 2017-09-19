@@ -39,8 +39,6 @@ http://www.cfd-online.com/Forums/openfoam/81315-writing-subdict-dictionary.html
 #include "dictionary.H"
 #include "stringOps.H"
 
-using namespace Foam;
-
 
 namespace Foam
 {
@@ -80,6 +78,8 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 //  Main program:
+
+using namespace Foam;
 
 int main(int argc, char *argv[])
 {

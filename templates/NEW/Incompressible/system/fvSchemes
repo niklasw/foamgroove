@@ -38,7 +38,6 @@ divSchemes
     div(phi,epsilon)    $turbulence;
     div(phi,omega)      $turbulence;
     div(phi,nuTilda)    $turbulence;
-    div(R)                          Gauss linear;
 }
 
 laplacianSchemes

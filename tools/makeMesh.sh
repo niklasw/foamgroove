@@ -26,7 +26,7 @@ if [ -z $1 ]; then
     NP="${NP:=1}"
 fi
 
-foamClearPolyMesh
+cleanMesh
 
 runme blockMesh -dict system/blockMeshDict
 

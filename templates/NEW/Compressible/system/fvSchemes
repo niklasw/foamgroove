@@ -52,7 +52,7 @@ divSchemes
     div(phiv,p)         $DivMethod upwind;
     div(phi,Ekp)        $DivMethod upwind;
 
-    div((rho*nuEff*dev2(T(grad(U))))) Gauss linear;
+    "div(.*rho.*nuEff.*dev2.*)"  Gauss linear;
     div((phi|interpolate(rho)),p) Gauss upwind;
 }
 

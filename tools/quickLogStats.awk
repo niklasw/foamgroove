@@ -3,6 +3,8 @@ BEGIN {
     timeCounter=0;
     newTime=0;
     totalPiters = 0;
+    totalUiters = 0;
+    maxPiters = 0;
     oldClockTime = 0;
     deltaTime = 0;
     maxCourant = 1;
@@ -31,7 +33,7 @@ BEGIN {
         curUIters += $15;
     }
 
-    if ( $2 == "Solving" && $4 == "p," ){
+    if ( $2 == "Solving" && $4 == "p_rgh," || $4 == "p," ){
         curPIters += $15;
     }
 
