@@ -96,6 +96,11 @@ solvers
         relTol 0;
     }
 
+    Phi
+    {
+        $p;
+    }
+
     cellDisplacement
     {
         $:defaultSolvers.gamg;
