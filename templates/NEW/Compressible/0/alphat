@@ -21,13 +21,13 @@ internalField   uniform 0;
 
 boundaryField
 {
-    #includeEtc "caseDicts/setConstraintTypes";
-
     ".*"
     {
         type calculated;
         value $internalField;
     }
+
+    #includeEtc "caseDicts/setConstraintTypes";
 
     wall
     {
