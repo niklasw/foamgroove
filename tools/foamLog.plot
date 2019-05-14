@@ -8,7 +8,7 @@ set ytic auto
 set title "Residuals"
 set grid
 set xlabel "Iterations"
-plot "logs/p_0" using 1:2 title 'p' with lines, \
+plot "logs/p_rgh_0" using 1:2 title 'p' with lines, \
      "logs/Ux_0" using 1:2 title 'Ux' with lines, \
      "logs/Uy_0" using 1:2 title 'Uy' with lines, \
      "logs/Uz_0" using 1:2 title 'Uz' with lines, \

@@ -93,11 +93,11 @@ class SnappyDict:
 
 
     def __str__(self):
-        from fgDictTemplates import snappyHexMesh22
+        from fgDictTemplates import snappyHexMesh
 
         regionString, refString, emeshFileName, levelString  = self.composeRegions()
 
-        return snappyHexMesh22().substitute(geometry=regionString,
+        return snappyHexMesh().substitute(geometry=regionString,
                                           refinementSurfaces=refString,
                                           featuresFile=emeshFileName)
 

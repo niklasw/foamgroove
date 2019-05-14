@@ -15,24 +15,23 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-#includeEtc     "FOIDefaults/fvSolution"
-#include        "${FOAM_CASE}/setup.foam"
+#include "${FOAM_CASE}/setup.foam"
 
 solvers
 {
     p
     {
-        $gamg;
+        $:defaultSolvers.gamg;
     }
 
     U
     {
-        $pbicg;
+        $:defaultSolvers.pbicg;
     }
 
     "(k|epsilon|omega|nuTilda)"
     {
-        $pbicg;
+        $:defaultSolvers.pbicg;
     }
 
     /* For transient solvers */
@@ -50,7 +49,7 @@ solvers
 
     "(k|epsilon|omega|nuTilda)Final"
     {
-        $pbicg;
+        $:defaultSolvers.pbicg;
     }
 
     Phi
@@ -60,7 +59,7 @@ solvers
 
     cellDisplacement
     {
-        $gamg;
+        $:defaultSolvers.gamg;
         tolerance   1e-6;
         relTol      0;
     }

@@ -85,7 +85,7 @@ mergePatchPairs ();
         Template.__init__(self,self.plate)
         self.items =['vertices','resolution']
 
-class snappyHexMesh22(Template):
+class snappyHexMesh(Template):
     plate="""FoamFile
 {
     version     2.0;
@@ -155,11 +155,13 @@ castellatedMeshControls
 
     features
     (
+    /*
         {
             file "$featuresFile";
             level 2;
             // Example levels ((0 2) (0.3 1));
         }
+    */
     );
 
     refinementSurfaces

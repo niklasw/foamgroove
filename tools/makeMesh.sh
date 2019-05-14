@@ -20,6 +20,7 @@ checkLocalMakeMesh()
 checkLocalMakeMesh
 
 NP=${1:-1}
+ZERO=${2:-zero}
 
 if [ -z $1 ]; then
     read -p "How many processes? [1] " NP
@@ -42,5 +43,5 @@ runmePar $NP changeDictionary
 
 runmePar $NP checkMesh
 
-runme distributeZero zero
+runme distributeZero $ZERO
 
