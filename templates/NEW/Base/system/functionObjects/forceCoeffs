@@ -12,7 +12,7 @@ forceCoeffs1
     patches     ( ".*[Ww]all.*" );
     pName       p;
     UName       U;
-    rhoName     rhoInf;      // Indicates incompressible
+    rho         rhoInf;      // Indicates incompressible
     log         true;
     rhoInf      1000;           // Redundant for incompressible
     liftDir     (0 0 1);
