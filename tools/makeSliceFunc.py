@@ -2,6 +2,7 @@
 
 from jinja2 import Template
 import sys
+from numpy import linspace,arange
 
 
 funcStr='''
@@ -36,9 +37,9 @@ funcStr='''
 T = Template(funcStr)
 
 origin  = [80,50,5]
-X = list(range(58,112,2))
-Z = list(range(1,7,1))
-Y = list(range(29,62,2))
+X = list(arange(58.3,112,2))
+Y = list(arange(29.9,61,1))
+Z = list(arange(0.2,7,0.5))
 
 xNormal = (1,0,0)
 yNormal = (0,1,0)
