@@ -18,6 +18,7 @@ FoamFile
 velocity
 {
     reference       10;
+    ambient         ($reference 0 0);
 }
 
 turbulence

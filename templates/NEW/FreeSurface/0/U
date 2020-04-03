@@ -19,25 +19,25 @@ FoamFile
 
 dimensions      [ 0 1 -1 0 0 0 0 ];
 
-internalField   $velocity.initial;
+internalField   uniform $velocity.ambient;
 
 boundaryField
 {
     #include "${WM_PROJECT_DIR}/etc/caseDicts/setConstraintTypes";
 
-    inflowGroup
+    inlet
     {
         type fixedValue;
-        value $internalField;
+        value uniform $internalField;
     }
 
-    wallGroup
+    wall
     {
         type fixedValue;
         value uniform (0 0 0);
     }
 
-    slipGroup
+    slip
     {
         type slip;
     }
@@ -48,12 +48,12 @@ boundaryField
         value uniform (0 0 0);
     }
 
-    ambienceGroup
+    ambience
     {
         type            pressureInletOutletVelocity;
         phi             phi;
         //tangentialVelocity $:velocity.ambient;
-        value           $:velocity.ambient;
+        value           uniform $:velocity.ambient;
     }
 
     outflowGroup

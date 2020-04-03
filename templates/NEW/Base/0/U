@@ -54,7 +54,7 @@ boundaryField
         value           $internalField;
     }
 
-    farfieldGroup
+    farfield
     {
         type freestream;
         freestreamValue $internalField;

@@ -9,7 +9,7 @@ class BoundingBlockDict:
     def __init__(self,fileName='',scale = 1.0,size=0.05, offset=0.0):
         self.fileName = fileName
         self.rez = [1,1,1]
-        self.block = range(8)
+        self.block = list(range(8))
         self.scale = scale
         self.size = size
         self.offset=offset
@@ -26,10 +26,10 @@ class BoundingBlockDict:
 
     def infoRefinementLevels(self,size,level,maxLevel=8):
         if level >= maxLevel:
-            print '-'*20+'\nPress Ctrl C to abort'
+            print('-'*20+'\nPress Ctrl C to abort')
             return
         size = size/2.0
-        print 'Cell size at level %i = %f mm' % (level, size*1000)
+        print('Cell size at level %i = %f mm' % (level, size*1000))
         size = self.infoRefinementLevels(size,level+1,maxLevel)
         return size
 
@@ -65,7 +65,7 @@ class BoundingBlockDict:
         block[6] = (max[0],max[1],max[2])
         block[7] = (min[0],max[1],max[2])
 
-        self.rez = map(int,diagonal/self.size)
+        self.rez = list(map(int,diagonal/self.size))
 
     def vertsToStr(self):
         verts = ''
@@ -83,11 +83,11 @@ if __name__=='__main__':
         try:
             offFactor = float(sys.argv[1])
         except:
-            print "Argument offset must be float"
-    print "Offset factor set to ",offFactor
+            print("Argument offset must be float")
+    print("Offset factor set to ",offFactor)
 
     B = BoundingBlockDict(offset=offFactor)
     B.interactor()
     B.createBlock()
-    print B
+    print(B)
     B.write()

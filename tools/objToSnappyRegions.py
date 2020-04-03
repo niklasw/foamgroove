@@ -31,7 +31,7 @@ class SnappyDict:
         typeMap = {'wall':'wall',
                    'inlet':'patch',
                    'outlet': 'patch'}
-        for key,value in typeMap.iteritems():
+        for key,value in typeMap.items():
             pat = re.compile(".*%s.*"%key,re.IGNORECASE)
             if pat.match(name):
                 return '%sGroup' % key, value
