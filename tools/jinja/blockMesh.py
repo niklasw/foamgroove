@@ -41,7 +41,7 @@ class Block2D(object):
         from numpy import array
         bounds = array(self.boundBox())
         sides =  bounds[1] - bounds[0]
-        return [int(a) for a in sides[0:2]/dx]+[1]
+        return [max(1,int(a)) for a in sides[0:2]/dx]+[1]
 
     def boundBox(self):
         myPoints = [self.verts[i] for i in self.labels]
