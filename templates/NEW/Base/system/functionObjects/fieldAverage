@@ -1,25 +1,18 @@
     fieldAverage
     {
-        type            fieldAverage;
-        functionObjectLibs ("libfieldFunctionObjects.so");
-        enabled         true;
-        writeControl   outputTime;
+        type                fieldAverage;
+        functionObjectLibs  ("libfieldFunctionObjects.so");
+        enabled             true;
+        writeControl        writeTime;
+        restartOnRestart    no;
+        restartOnOutput     no;
+        periodicRestart     no;
+        base                time;
+        window              10;
+        windowName          w10;
+        mean                yes;
+        prime2Mean          no;
 
-        fields
-        (
-            U
-            {
-                mean        on;
-                prime2Mean  on;
-                base        time;
-            }
-
-            p
-            {
-                mean        on;
-                prime2Mean  on;
-                base        time;
-            }
-        );
+        fields              (U p);
     }
 

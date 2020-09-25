@@ -8,22 +8,22 @@ prog=$(basename $0)
 function help()
 {
     cat << EOF
-Usage: $prog [-w] -f <solverLogFile>
+Usage: $prog [-w] [-f] <solverLogFile>
 
 Parse solver log file for PID and kill it.
 Optinally send write signal instead (-w)
 
 OPTIONS:
     -h Show this help message
-    -f <logFile> Specify logfile corresponding to run
-    -w Do not kill, force a write now!
+    -f force
+    -w Do not kill, force a write now
 
 EOF
 }
 
-KILL_SIG='-1'
+KILL_SIG='-s SIGTERM'
 LOG_FILE=''
-while getopts ":hwf:" opt; do
+while getopts ":hwf" opt; do
     case $opt in
         h)
             help
@@ -46,7 +46,7 @@ while getopts ":hwf:" opt; do
     esac
 done
 
-shift $((OPTIND-1))
+shift $((OPTIND - 1))
 
 if [ -z "$LOG_FILE" ]; then
     LOG_FILE=$1
@@ -54,7 +54,7 @@ fi
 
 if [ -f "$LOG_FILE" ]; then
     PID=$(awk '$1~"PID" {print $3}' $LOG_FILE)
-    echo -e "Trying to kill process $PID"
+    echo -e "Trying \"kill $KILL_SIG $PID\""
     exec kill $KILL_SIG $PID
 else
     echo -e "Log file $LOG_FILE not found"
