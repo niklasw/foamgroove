@@ -1,0 +1,14 @@
+    forces
+    {
+        type                forces;
+        functionObjectLibs  ("libforces.so");
+        writeControl       timeStep;
+        writeInterval      10;
+        patches             (wall);
+        pName               p;
+        UName               U;
+        rho                 rhoInf;
+        log                 true;
+        rhoInf              1;
+        CofR                (0 0 0);
+    }

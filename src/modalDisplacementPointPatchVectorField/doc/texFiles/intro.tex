@@ -1,0 +1,24 @@
+\section{Introduction} \label{sec:intro}
+
+In this document we present a method for fluid-structure interaction (FSI) simulation
+(see~\cite{DH:1} for a not very good review of the research area).
+We describe both the theoretical formulation of the method, its implementation
+and its verification for test problems.
+
+The method relies on a modal description of the structure, which is performed
+as a pre-processing step. Then the actual FSI-simulation is carred out in
+an \texttt{OpenFOAM}-solver which includes functionality for the modal deformation
+of the structure and its (time-resolved) coupling to the fluid motion.
+
+The choice for structural solver for the initial test cases is \texttt{Comsol}.
+This may be revised at a later stage of developments.
+
+In section~\ref{sec:theory}, we describe the theory of the method,
+in section~\ref{sec:impl}, we describe its implementation, and, in section~\ref{sec:tests},
+we describe its verification for test cases.
+
+\begin{figure}[htbp!]
+\centering
+\includegraphics[width=0.5\linewidth]{figures/dummy}
+\caption{A dummy picture ...}
+\end{figure}

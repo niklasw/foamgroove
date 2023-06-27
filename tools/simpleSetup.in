@@ -1,0 +1,14 @@
+        characteristicVelocity                                     1.0;
+                       density                                     1.1;
+                      flowrate            constant                 0.2;
+                    initialEps                        0.00301869176962;
+                      initialK                                   0.015;
+                  initialOmega                            2.2360679775;
+                  initialnuTilda                            2.2360679775;
+               initialVelocity                           (2.0 0.0 0.0);
+                initialnuTilda                         0.0201246117975;
+            kinematicViscosity                                1.65e-05;
+                            np                                       4;
+           turbulenceIntensity                                     0.1;
+          turbulentLengthScale                                     0.1;
+           wallRoughnessHeight                                   0.001;

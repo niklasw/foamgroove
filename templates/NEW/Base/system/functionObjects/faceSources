@@ -1,0 +1,84 @@
+/*
+  faceObj1
+    {
+        type            faceSource;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+
+        enabled         true;
+        writeControl   outputTime;
+
+        // Output to log&file (true) or to file only
+        log             true;
+
+        // Output field values as well
+        valueOutput     true;
+
+        // Type of source: patch/faceZone/sampledSurface
+        source          patch;
+
+        // if patch or faceZone: name of patch or faceZone
+        sourceName      movingWall;
+
+        //// if sampledSurface: dictionary with a sampledSurface
+        //// Note: will not sample surface fields.
+        //sampledSurfaceDict
+        //{
+        //    // Sampling on triSurface
+        //    type        sampledTriSurfaceMesh;
+        //    surface     integrationPlane.stl;
+        //    source      cells;  // sample cells or boundaryFaces
+        //    interpolate true;
+        //}
+
+        // Operation: areaAverage/sum/weightedAverage ...
+        operation       areaAverage;
+
+        fields
+        (
+            p
+            phi         // surface fields not supported for sampledSurface
+            U
+        );
+    }
+*/
+
+/*
+    faceObj2
+    {
+        type            faceSource;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        enabled         true;
+        writeControl   outputTime;
+        log             true;
+        valueOutput     true;
+        source          faceZone;
+        sourceName      f0;
+        operation       sum;
+
+        fields
+        (
+            phi
+        );
+    }
+*/
+
+/*
+    cellObj1
+    {
+        type            cellSource;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        enabled         true;
+        writeControl   outputTime;
+        log             true;
+        valueOutput     true;
+        source          cellZone;
+        sourceName      c0;
+        operation       volAverage;
+
+        fields
+        (
+            p
+            U
+        );
+    }
+*/

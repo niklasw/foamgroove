@@ -1,0 +1,3 @@
+calculateModeScaleFactor.C
+
+EXE = $(FOAM_APPBIN)/calculateModeScaleFactor

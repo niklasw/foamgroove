@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+*.pyc
+*.dep
+*.swp
+processor*
+linux64GccDPOpt
+*log
+*testCases*
+*lnInclude*
+*[0-9]*.[0-9]*

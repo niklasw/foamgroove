@@ -1,0 +1,74 @@
+#!/bin/bash
+
+echo "Select template to add by entering it's number."
+echo "The order is significant and Ctrl C aborts.\n"
+
+[[ "$1" == "-v" ]] && verbose="yes" || verbose="no"
+
+FG_TEMPLATES_DIR_V=${FG_TEMPLATES_DIR}/NEW
+
+function cleanList()
+{
+    echo $@|tr " " "\n"|sort -u|tr "\n" " "
+}
+
+function checkEnv()
+{
+    if [ ! -d "$FG_TEMPLATES_DIR_V" ]; then
+        echo -e "\nCannot find templates in $FG_TEMPLATES_DIR_V. Exit"
+        exit 1
+    fi
+    echo -e "Fetching templates from $FG_TEMPLATES_DIR_V\n"
+}
+
+checkEnv
+
+PS3="Your choice: "
+
+AVAILABLE_TEMPLATES="Base RAS LES Incompressible Compressible \
+                     FreeSurface Extras"
+
+SELECTED_TEMPLATES=""
+
+select T in DONE CLEAR $AVAILABLE_TEMPLATES ;
+do
+  case $T in
+        "DONE")
+            echo "Done."
+            break;
+            ;;
+        "CLEAR")
+            SELECTED_TEMPLATES=""
+            ;;
+        *)
+            SELECTED_TEMPLATES="$SELECTED_TEMPLATES $T"
+            SELECTED_TEMPLATES=$(cleanList "$SELECTED_TEMPLATES")
+            if [[ "$verbose" == "yes" ]]; then
+                tree $FG_TEMPLATES_DIR_V/$T
+            fi
+            echo -e "Now active:\n\t$SELECTED_TEMPLATES"
+            ;;
+  esac
+done
+
+echo -e "Selected flow type is:\n\t$SELECTED_TEMPLATES"
+
+echo ""
+
+for T in $AVAILABLE_TEMPLATES; do
+    if [[ "$SELECTED_TEMPLATES" == *"$T"* ]]; then
+        echo "adding $T"
+        rsync -nv --exclude="template" -r $FG_TEMPLATES_DIR_V/$T/ .
+    fi
+done
+
+read -p "Enter to actually apply the above "
+
+echo ""
+
+for T in $AVAILABLE_TEMPLATES; do
+    if [[ "$SELECTED_TEMPLATES" == *"$T"* ]]; then
+        echo "adding $T"
+        rsync --exclude="template" -r $FG_TEMPLATES_DIR_V/$T/ .
+    fi
+done

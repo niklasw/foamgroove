@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html;charset=ANSI" />
+    <!--[if IE]>
+    <meta http-equiv="Content-type" content="text/html;charset=ANSI" />
+    <![endif]-->
+    <title>Torque logger</title>
+    <style>
+      body
+      {
+          background-color:#333333;
+          font-family: Arial, Helvetica, sans-serif;
+          margin-right: auto;
+          color:#aaa;
+      }
+
+      #content
+      {
+          width:800px;
+          margin-left: 100px;
+          margin-right: auto;
+          margin-top: 20px;
+          border: 1px solid #aaa;
+          padding:10px;
+          float: left;
+      }
+
+
+      h1
+      {
+          color: #aaa;
+      }
+
+      .result_book
+      {
+          width:700px;
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: 20px;
+          border: 3px solid #aaa;
+          padding:10px;
+          float: none;
+      }
+
+      .book_picture
+      {
+          width:300px;
+          margin-left: 10px;
+          margin-right: auto;
+          margin-top: 20px;
+          border: 1px solid #aaa;
+          padding:10px;
+          float: left;
+      }
+
+      .book_picture img
+      {
+          width:100%;
+          height:auto;
+          float:left;
+      }
+
+      a
+      {
+          color: #aaa;
+          padding: 5px;
+          margin: 5px;
+          border: 1px solid #222222;
+          text-decoration: none;
+      }
+
+      a:hover
+      {
+          background-color: #414A4A;
+      }
+
+      #menu
+      {
+        margin-top:30px;
+        margin-left:100px;
+      }
+
+      #menu ul
+      {
+        list-style-type: none;
+        margin:0;
+        padding:0;
+      }
+      #menu li
+      {
+        display:inline;
+      }
+      #menu a
+      {
+          font-weight: bold;
+      }
+
+      .book_table
+      {
+          width:100%;
+          heigth: auto;
+          margin-left: 10px;
+          margin-right: auto;
+          margin-top: 20px;
+          border: 1px solid #aaa;
+          padding:10px;
+          float: left;
+      }
+
+      .book_table table
+      {
+          border: 0px solid #000000;
+          border-collapse: collapse;
+          width:450px;
+          margin-left: auto;
+          margin-right:auto;
+      }
+
+      tr.head
+      {
+          background-color:#222222;
+          font-weight:bold;
+      }
+      tr.even
+      {
+        background-color: #414A4A;
+        text-align:right;
+      }
+      tr.odd
+      {
+        background-color: #333333;
+        text-align:right;
+      }
+
+      td
+      {
+          padding:10px;
+          margin:0px;
+          width:30%;
+      }
+
+      th
+      {
+          background-color:#222222;
+      }
+
+      .float
+      {
+        width:100px;
+        margin-left: 50px;
+        margin-right: auto;
+        margin-top: 20px;
+        border: 1px solid #aaa;
+        padding:10px;
+        float: left;
+      }
+
+      .float ul
+      {
+        list-style-type: none;
+        margin:0;
+        padding:0;
+      }
+
+      .float a
+      {
+          color: #aaa;
+          padding: 2px;
+          margin: 4px;
+          border: 0px solid #222222;
+          text-decoration: none;
+      }
+
+      .float a.current
+      {
+          font-weight: bold;
+          color: white;
+      }
+
+
+      .form0 form p
+      {
+        width:100px;
+      }
+
+    </style>
+</head>
+
+<body>
+
+  <div id="menu">
+    <ul>
+      <li><a href="index">Previous level</a></li>
+      <li><a href="user">Log files</a></li>
+    </ul>
+  </div>
+
+  <div id="content">
+      <div class="result_book">
+
+<h1>/home/soft/OpenFOAM/foamGroove/tools/myTestSuite/cavity3d/subCase_003</h1>
+
+<p>
+This is the cavity case run with different subgrid models.
+</p>
+
+<div class="book_picture">
+<img src="/home/soft/OpenFOAM/foamGroove/tools/myTestSuite/cavity3d/subCase_003/forces.png" alt="forces.png" />
+<p>Viscous force on moving wall</p>
+</div><!-- book_picture -->
+<div class="book_picture">
+<img src="/home/soft/OpenFOAM/foamGroove/tools/myTestSuite/cavity3d/subCase_003/forces.png" alt="forces.png" />
+<p>Another picture, but same</p>
+</div><!-- book_picture -->
+<div class="book_picture">
+<img src="/home/soft/OpenFOAM/foamGroove/tools/myTestSuite/cavity3d/subCase_003/forces.png" alt="forces.png" />
+<p>Viscous force on moving wall</p>
+</div><!-- book_picture -->
+<div class="book_table">
+<p>A random selection of integrated forces</p>
+
+<table>
+<tr class="head"> <td>I</td> <td>Try</td> <td>a</td> <td>data table</td> </tr>
+
+<tr class="odd"> <td>0.0525</td> <td>0.0</td> <td>9.631714e-06</td> <td>0.0</td> </tr>
+
+<tr class="even"> <td>0.055</td> <td>0.0</td> <td>9.84189e-06</td> <td>0.0</td> </tr>
+
+<tr class="odd"> <td>0.0575</td> <td>0.0</td> <td>1.013825e-05</td> <td>0.0</td> </tr>
+
+<tr class="even"> <td>0.06</td> <td>0.0</td> <td>1.074277e-05</td> <td>0.0</td> </tr>
+
+<tr class="odd"> <td>0.0625</td> <td>0.0</td> <td>1.167444e-05</td> <td>0.0</td> </tr>
+
+</table>
+</div><!-- book_table -->
+</div><!-- result_book -->
+      $content2
+      $content3
+      $content4
+  </div>
+
+</body>
+</html>
+
+

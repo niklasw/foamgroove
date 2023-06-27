@@ -1,0 +1,178 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+defaultSolvers
+{
+    gamg
+    {
+        solver          GAMG;
+        tolerance       1e-08;
+        relTol          0.01;
+        smoother        GaussSeidel;
+        cacheAgglomeration true;
+        nCellsInCoarsestLevel 20;
+        agglomerator    faceAreaPair;
+        mergeLevels     1;
+    }
+    pcg
+    {
+        solver          PCG;
+        preconditioner  DIC;
+        tolerance       1e-06;
+        relTol          0.01;
+    }
+    smoothSolver
+    {
+        solver          smoothSolver;
+        smoother        GaussSeidel;
+        nSweeps         2;
+        tolerance       1e-07;
+        relTol          0.1;
+    }
+    pbicg
+    {
+        solver          PBiCG;
+        preconditioner  DILU;
+        tolerance       1e-08;
+        relTol          0.01;
+    }
+}
+
+
+solvers
+{
+    p
+    {
+        $:defaultSolvers.gamg;
+    }
+
+    pcorr
+    {
+        $p;
+        tolerance       1e-2;
+        relTol          0;
+    }
+
+    U
+    {
+        $:defaultSolvers.pbicg;
+    }
+
+    "(rho|k|epsilon|omega|e|h)"
+    {
+        $:defaultSolvers.smoothSolver;
+    }
+
+    "(rho|k|epsilon|omega|e|h)Final"
+    {
+        $:defaultSolvers.pbicg;
+    }
+
+    /* For transient solvers */
+
+    UFinal
+    {
+        $U;
+        relTol 0;
+    }
+
+    pFinal
+    {
+        $p;
+        relTol 0;
+    }
+
+    Phi
+    {
+        $p;
+    }
+
+    cellDisplacement
+    {
+        $:defaultSolvers.gamg;
+        tolerance   1e-6;
+        relTol      0;
+    }
+
+    Phi
+    {
+        $p;
+    }
+
+}
+
+// Macro variable for use in all methods below
+referencePressure
+{
+    pRefCell                    0;
+    pRefValue                   1e5;
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors 0;
+    rhoMin          rhoMin [ 1 -3 0 0 0 ] 0.5;
+    rhoMax          rhoMax [ 1 -3 0 0 0 ] 2.0;
+    residualControl
+    {
+        p                       1e-4;
+        U                       1e-4;
+        "(k|epsilon|omega|e)"   1e-3;
+    }
+    $referencePressure;
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors    20;
+    $referencePressure;
+}
+
+PISO
+{
+    nCorrectors                 2;
+    nNonOrthogonalCorrectors    2;
+    $referencePressure;
+}
+
+PIMPLE
+{
+    nOuterCorrectors            2;
+    nCorrectors                 2;
+    nNonOrthogonalCorrectors    1;
+    rhoMin          rhoMin [ 1 -3 0 0 0 ] 0.5;
+    rhoMax          rhoMax [ 1 -3 0 0 0 ] 10.0;
+    $referencePressure;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p                   0.3;
+        rho                 0.1;
+    };
+    equations
+    {
+        U                   0.7;
+        "(k|epsilon|omega)" 0.5;
+        e                   0.5;
+    }
+}
+
+
+// ************************************************************************* //

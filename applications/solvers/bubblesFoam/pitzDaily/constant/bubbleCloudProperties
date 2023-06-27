@@ -1,0 +1,174 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      kinematicCloudProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solution
+{
+    active          true;
+    coupled         false;
+    transient       yes;
+    cellValueSourceCorrection off;
+    maxCo           0.3;
+
+    interpolationSchemes
+    {
+        rho             cell;
+        U               cellPoint;
+        mu              cell;
+        curlUcDt        cellPoint;
+        DUcDt           cellPoint;
+    }
+
+    integrationSchemes
+    {
+        U               Euler;
+    }
+}
+
+constantProperties
+{
+    rho0            1.2;
+    youngsModulus   6e8;
+    poissonsRatio   0.35;
+}
+
+subModels
+{
+    particleForces
+    {
+        sphereDrag;
+        gravity;
+        /*
+        SaffmanMeiLiftForce
+        {
+            UName       U;
+        };
+        pressureGradient
+        {
+
+        };
+        */
+    }
+
+    injectionModels
+    {
+        model1
+        {
+            //type            manualInjection;
+            type            atchInjection;
+            cellZone        injectionCells;
+            //numberDensity   1e7;
+            //massFlowRate    1;
+            massTotal         1;
+            parcelBasisType number;
+            nParticle       1;
+            SOI             0.0; //Start of injection (Time)
+            duration        0.5;
+            patchName       inlet;
+            parcelsPerSecond 5000;
+            flowRateProfile constant 1;
+
+            //positionsFile   "kinematicCloudPositions";
+            U0              ( 0 0 0 );
+            sizeDistribution
+            {
+                type        normal;
+                normalDistribution
+                {
+                    minValue    0.25e-3;
+                    maxValue    1.5e-3;
+                    expectation 0.75e-3;
+                    variance    0.25e-3;
+                }
+
+                fixedValueDistribution
+                {
+                    value   0.005;
+                }
+            }
+        }
+    }
+
+    dispersionModel none;
+
+    patchInteractionModel standardWallInteraction;
+
+    standardWallInteractionCoeffs
+    {
+        type rebound;
+        e   0.7;
+        mu  1e-7;
+    }
+
+    surfaceFilmModel none;
+
+    stochasticCollisionModel none;
+
+    collisionModel none;
+
+    pairCollisionCoeffs
+    {
+        // Maximum possible particle diameter expected at any time
+        maxInteractionDistance  0.002;
+
+        writeReferredParticleCloud no;
+
+        pairModel pairSpringSliderDashpot;
+
+        pairSpringSliderDashpotCoeffs
+        {
+            useEquivalentSize   no;
+            alpha               0.12;
+            b                   1.5;
+            mu                  0.52;
+            cohesionEnergyDensity 0;
+            collisionResolutionSteps 12;
+        };
+
+        wallModel    none;
+
+        wallLocalSpringSliderDashpotCoeffs
+        {
+            useEquivalentSize no;
+            collisionResolutionSteps 12;
+            ".*Wall"
+            {
+                youngsModulus   1e10;
+                poissonsRatio   0.23;
+                alpha           0.002;
+                b               1.5;
+                mu              1e-6;
+                cohesionEnergyDensity 0;
+            }
+            frontAndBack
+            {
+                youngsModulus   1e10;
+                poissonsRatio   0.23;
+                alpha           0.12;
+                b               1.5;
+                mu              0.1;
+                cohesionEnergyDensity 0;
+            }
+        };
+    }
+}
+
+
+cloudFunctions
+{}
+
+
+// ************************************************************************* //

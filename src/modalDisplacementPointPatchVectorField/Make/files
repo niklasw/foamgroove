@@ -1,0 +1,6 @@
+modeShape/modeShape.C
+structuralModes/structuralMode.C
+structuralModes/structuralModes.C
+modalDisplacementPointPatchVectorField.C
+
+LIB = $(FOAM_LIBBIN)/libmodalDisplacementPointPatchField

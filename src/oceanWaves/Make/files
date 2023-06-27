@@ -1,0 +1,4 @@
+oceanWaveFunctions/oceanWaveFunctions.C
+oceanWaveInletPhase/oceanWaveInletPhaseFvPatchScalarField.C
+oceanWaveInletVelocity/oceanWaveInletVelocityFvPatchVectorField.C
+LIB = $(FOAM_USER_LIBBIN)/liboceanWaves

@@ -1,0 +1,53 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.4.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "/home/soft/OpenFOAM/foamGroove/templates/NEW/Base";
+    object      setup.foam;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+velocity
+{
+    reference       10;
+}
+
+turbulence
+{
+    intensity       0.05;
+    mixingLength    0.05;
+    initialnuSgs    uniform 4e-06;
+    initialK        uniform 0.375;
+    initialOmega    uniform 22.36068;
+    initialnuTilda  uniform 0.030618622;
+    initialEpsilon  uniform 0.75467294;
+    constants
+    {
+        Ck              0.07;
+        Ce              1.048;
+        Cmu             0.09;
+        E               9.8;
+        beta1           0.075;
+        Ceps2           1.9;
+    }
+}
+
+pressure
+{
+    reference       0;
+}
+
+temperature
+{
+    reference       300;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

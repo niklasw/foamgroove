@@ -1,0 +1,34 @@
+forceCoeffs1
+{
+    type        forceCoeffs;
+
+    functionObjectLibs ( "libforces.so" );
+
+    writeControl   timeStep;
+    writeInterval  5;
+
+    log         yes;
+
+    patches     ( ".*[Ww]all.*" );
+    pName       p;
+    UName       U;
+    rho         rhoInf;      // Indicates incompressible
+    log         true;
+    rhoInf      1000;           // Redundant for incompressible
+    liftDir     (0 0 1);
+    dragDir     (1 0 0);
+    CofR        (0 0 0);  // Axle midpoint on ground
+    pitchAxis   (0 1 0);
+    magUInf     1;
+    lRef        1;        // Wheelbase length
+    Aref        0.1;        // Estimated
+
+    binData
+    {
+        nBin        20;          // output data into 20 bins
+        direction   (1 0 0);     // bin direction
+        format      gnuplot;
+        cumulative  yes;
+    }
+}
+

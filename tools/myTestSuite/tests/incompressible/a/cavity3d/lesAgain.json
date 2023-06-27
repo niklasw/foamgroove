@@ -1,0 +1,13 @@
+{
+    "parameters": {
+        "__les_model": "kEqn", 
+        "__velocity": 10, 
+        "__wall_model": "zeroGradient", 
+        "name": "test2"
+    }, 
+    "solution": {
+        "nprocs": 4, 
+        "nthreads": 8, 
+        "solver": "pimpleFoam"
+    }
+}

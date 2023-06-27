@@ -1,0 +1,87 @@
+
+/*--------------------------------*- C++ -*----------------------------------*\
+|==========                 |                                                 |
+| \      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \    /   O peration     | Version:  2.0.0                                 |
+|   \  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 1.0;
+
+vertices
+(
+	( -2.114550 -0.085725 -2.114550 )
+	( 4.440555 -0.085725 -2.114550 )
+	( 4.440555 0.085725 -2.114550 )
+	( -2.114550 0.085725 -2.114550 )
+	( -2.114550 -0.085725 2.114550 )
+	( 4.440555 -0.085725 2.114550 )
+	( 4.440555 0.085725 2.114550 )
+	( -2.114550 0.085725 2.114550 )
+
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) (19 2  12) simpleGrading (1 1 1)
+    //hex (0 1 2 3 4 5 6 7) (38 2  25) simpleGrading (1 1 1)
+    //hex (0 1 2 3 4 5 6 7) (76 2  49) simpleGrading (1 1 1)
+);
+
+edges ();
+boundary
+(
+    symmetryPlane0
+    {
+        type symmetryPlane;
+        faces
+        (
+            (3 7 6 2)
+        );
+    }
+    symmetryPlane1
+    {
+        type symmetryPlane;
+        faces
+        (
+            (1 5 4 0)
+        );
+    }
+    inlet
+    {
+        type patch;
+        faces
+        (
+            (0 4 7 3)
+        );
+    }
+    outlet
+    {
+        type patch;
+        faces
+        (
+            (2 6 5 1)
+        );
+    }
+    slipSides
+    {
+        type wall;
+        faces
+        (
+            (0 3 2 1)
+            (4 5 6 7)
+        );
+    }
+);
+
+mergePatchPairs ();
+

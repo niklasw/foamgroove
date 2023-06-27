@@ -1,0 +1,45 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    location    "0";
+    object      nut;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "../simpleSetup.in"
+
+dimensions      [0 2 -1 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    ".*"
+    {
+        type            calculated;
+    }
+    ".*[Ww]all.*"
+    {
+        type                nutURoughWallFunction;
+        roughnessHeight     $wallRoughnessHeight;
+        roughnessConstant   0.5;
+        roughnessFactor     1;
+        value               $internalField;
+    }
+    ".*[Ss]ymmetry.*"
+    {
+        type            symmetryPlane;
+    }
+}
+
+
+// ************************************************************************* //

@@ -1,0 +1,49 @@
+\section{Theoretical formulation} \label{sec:theory}
+
+We consider structures composed of an isotropic and homegeneous
+elastic material. We assume that the deformations are sufficiently
+small so that linear elasticity is a good approximation.
+Furthermore, we typicall consider constant density, $\rho_s$,
+and elasticity parameters.
+
+We want to represent the motion of the structure by a relatively
+small number of modes.
+For this purpose, we perform a modal analysis of the structure, as a
+pre-processing step before the FSI-problem is set up.
+The output of the modal analysis is a set of $N$ modes and $N$ frequencies,
+\[
+\bphi_i(\bx),\,\,\omega_i,\hspace{1cm} i=1,\ldots,N.
+\]
+We use bold letters for vector quantities and normal font for scalar
+quantities. The modes should be normalized using the density
+of the solid in the following way.
+
+\begin{equation}
+\int_{V_s} \rho_s(\bx) |\bphi(\bx)|^2\,\mbox{d}V=1
+\label{eq:volint}
+\end{equation}
+
+Here $V_S$ is the volume occupied by the structure (in the undeformed state),
+and we note that the density typically is constant and can be ``moved
+outside'' the integral.
+
+Using the modes, we can represent the displacement, $\bu$, of the structure as,
+\[
+\bu(\bx,t)=\sum_{i=1}^N\alpha_i(t)\bphi_i(\bx),
+\]
+where we have introduced the time dependent mode coefficients, $\alpha_i$.
+
+The fluid-structure coupling is obtained through the fluid forces on
+the surface of the structure. In the initial stage we only include the
+pressure forces, but at a later stage it may be useful to also include
+the viscous forces. Thus each structural coefficient satisfies an ODE,
+with a forcing term containing fluid forces.
+\[
+\frac{\mbox{d}^2\alpha_i}{\mbox{d}t^2}+
+\omega_i^2\alpha_i=Q_i
+\]
+The forcing is given by the following expression.
+\[
+Q_i=-\int_S p\bn\cdot \bphi_i\,\mbox{d}S
+\]
+Here, $\bn$, is the local  unit normal of the surface pointing into the fluid.
