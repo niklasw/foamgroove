@@ -1,0 +1,97 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      createPatchDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+pointSync false;
+
+patches
+(
+    {
+        name cyclicXmin;
+        patchInfo
+        {
+            type            cyclic;
+            neighbourPatch  cyclicXmax;
+            transform       translational;
+            separationVector (9 0 0);
+        }
+        constructFrom   set;
+        set cyclicXmin;
+    }
+    {
+        name cyclicXmax;
+        patchInfo
+        {
+            type            cyclic;
+            neighbourPatch  cyclicXmin;
+            transform       translational;
+            separationVector (-9 0 0);
+        }
+        constructFrom   set;
+        set cyclicXmax;
+    }
+
+
+
+    {
+        name cyclicZmin;
+        patchInfo
+        {
+            type            cyclic;
+            neighbourPatch  cyclicZmax;
+            transform       translational;
+            separationVector (0 0 6);
+        }
+        constructFrom   set;
+        set cyclicZmin;
+    }
+
+    {
+        name cyclicZmax;
+        patchInfo
+        {
+            type            cyclic;
+            neighbourPatch  cyclicZmin;
+            transform       translational;
+            separationVector (0 0 -6);
+        }
+        constructFrom   set;
+        set cyclicZmax;
+    }
+
+
+
+    {
+        name wallTop;
+        patchInfo
+        {
+            type            wall;
+        }
+        constructFrom   set;
+        set wallTop;
+    }
+    {
+        name wallBottom;
+        patchInfo
+        {
+            type            wall;
+        }
+        constructFrom   set;
+        set wallBottom;
+    }
+
+);
+
+// ************************************************************************* //

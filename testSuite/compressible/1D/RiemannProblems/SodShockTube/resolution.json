@@ -1,0 +1,17 @@
+{
+    "parameters":{
+        "__scheme": "MUSCL",
+        "__Vscheme": "MUSCLV",	
+        "__solver": "explicitFoam",
+	"__dt": [10e-5,5e-5,2.5e-5,1.25e-5],
+	"__cells": [100,200,400,800],
+	"__endtime": 0.007
+    },
+    "groups":
+    {
+        "resGroup": ["__dt","__cells" ]
+    },    
+    "solution": {
+        "solver": "explicitFoam"
+    }
+}

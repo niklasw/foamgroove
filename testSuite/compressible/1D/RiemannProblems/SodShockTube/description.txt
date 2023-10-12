@@ -1,0 +1,5 @@
+This test case implements the one-dimensional shock-tube problem of Sod (1978).
+
+The exact solution consists of a left-travelling rarefaction together with a 
+right-travelling contact discontinuity and shock. Numerical results for 
+pressure, density and velocity are compared to this exact solution.

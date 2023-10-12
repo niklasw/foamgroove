@@ -1,0 +1,20 @@
+{
+    "parameters":{
+        "__lesmodel": [ "SMG", "OEEVM", "FOIWALE", "LDKM", "OEEVMMIXED" ],
+        "__wallmodel": [ "SPALDING_WALL_VISCOSITY", "zeroGradient" ],
+        "__kwallmodel": ["SPALDING_WALL_TKE","zeroGradient"],
+        "__deltamodel":[
+            "cubeRootVol"
+        ],
+        "__endtime": 1,
+        "__solver":"pimpleFoam"
+    },
+    "groups":
+    {
+        "wmGroup": ["__wallmodel","__kwallmodel" ]
+    },
+    "solution": {
+        "solver": "pimpleFoam",
+        "reconstruct": false
+    }
+}

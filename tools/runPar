@@ -31,7 +31,7 @@ function checks()
 }
 
 EXEC="$1"
-EXECNAME=$EXEC
+EXECNAME=$(basename $EXEC)
 shift 1
 OPTS=$@
 

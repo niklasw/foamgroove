@@ -1,3 +1,0 @@
-setRunConditions.C
-
-EXE = $(FOAM_APPBIN)/setRunConditions

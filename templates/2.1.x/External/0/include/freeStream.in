@@ -1,5 +1,0 @@
-"(.*[Ff]ree[Ss]tream.*)"
-{
-    type            freestream;
-    freestreamValue $internalField;
-}

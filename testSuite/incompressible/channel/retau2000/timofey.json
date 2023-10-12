@@ -1,0 +1,24 @@
+{
+    "parameters":{
+        "__ubar": 1,
+        "__lesmodel": ["LDKM"],
+        "__dt": [1],
+        "__deltamodel":["cubeRootVol"],
+        "__basesize": [0.0625,0.09,0.0625],
+        "__meshtype": ["quad","tri","poly"],
+        "__wallfunction": ["LOTWWallModel"],
+        "__k_wallfunction": ["zeroGradient"],
+        "__gradlimiter": ["cellMDLimited Gauss linear 1"],
+        "__divscheme": ["LUST unlimitedGrad(U)"],
+        "__endtime": 1200,
+        "__solver":"pimpleFoam",
+        "__ncores": 56 
+    },
+    "groups":{
+        "meshsize": ["__basesize","__meshtype"],
+        "turbulence":["__lesmodel","__wallfunction","__k_wallfunction"]
+    },
+    "solution": {
+        "solver": "pimpleFoam"
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "parameters":{
+        "__lesmodel": [ "WALE" ],
+        "__wallmodel": [ "nutUSpaldingWallFunction"],
+        "__kwallmodel": ["zeroGradient"],
+        "__deltamodel":[ "cubeRootVol" ],
+        "__endtime": 0.01,
+        "__deltat": [1e-5,3e-5],
+        "__solver": "pimpleFoam",
+        "__ncores": 4,
+        "__divscheme": ["cubicUpwindFit 1",
+                        "cubicUpwindFit 2",
+                        "cubicUpwindFit 3",
+                        "linear",
+                        "LUST unlimitedGrad(U)",
+                        "LUST grad(U)"]
+    },
+    "groups":
+    {
+    },
+
+    "solution": {
+        "solver": "pimpleFoam",
+        "reconstruct": true
+    }
+}
