@@ -1,0 +1,3 @@
+#!/bin/sh
+blockMesh
+setFields

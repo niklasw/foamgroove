@@ -1,0 +1,385 @@
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      autoHexMeshDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+
+geometry
+{
+    ref0
+    {
+        type searchableBox;
+        min  (-4.000000 -2.000000 -1.7);
+        max  (16.000000 2.000000 2.3);
+    }
+
+    ref1
+    {
+        type searchableBox;
+        min  (-0.7 -1.000000 -1);
+        max  (10 1.000000 1.5);
+    }
+
+    /*
+    example.stl
+    {
+        type triSurfaceMesh;
+
+        //tolerance   1E-5;   // optional:non-default tolerance on intersections
+        //maxTreeDepth 10;    // optional:depth of octree. Decrease only in case
+                              // of memory limitations.
+
+        regions
+        {
+            secondSolid
+            {
+                name mySecondPatch;
+            }
+        }
+    }
+    cylinder.stl
+    {
+        type triSurfaceMesh;
+    }
+    */
+
+    m47M.stl
+    {
+        type triSurfaceMesh;
+        regions
+        {
+            wall_RUDDER_B_S_T
+            {
+                name wall_RUDDER_B_S_T;
+            }
+            wall_RUDDER_B_P_B
+            {
+                name wall_RUDDER_B_P_B;
+            }
+            wall_RUDDER_F_S
+            {
+                name wall_RUDDER_F_S;
+            }
+            wall_HULL
+            {
+                name wall_HULL;
+            }
+            wall_RUDDER_B_S_B
+            {
+                name wall_RUDDER_B_S_B;
+            }
+            wall_RUDDER_B_P_T
+            {
+                name wall_RUDDER_B_P_T;
+            }
+            wall_SAIL
+            {
+                name wall_SAIL;
+            }
+            wall_RUDDER_F_P
+            {
+                name wall_RUDDER_F_P;
+            }
+        }
+    }
+
+};
+
+
+
+castellatedMeshControls
+{
+    maxLocalCells 3000000;
+
+    maxGlobalCells 20000000;
+
+    minRefinementCells 0;
+
+    maxLoadUnbalance 0.10;
+
+    nCellsBetweenLevels 3;
+
+    features
+    (
+        {
+            file "m47M.eMesh";
+            level 7;
+        }
+    );
+
+    refinementSurfaces
+    {
+        /* example try to create zones
+        heater
+        {
+            level (1 1);
+            faceZone heater;
+            cellZone heater;
+            cellZoneInside inside;
+        }
+
+        example.stl
+        {
+            level (2 2);
+            regions
+            {
+                secondSolid {level (3 4);}
+            }
+            patchInfo
+            {
+                type wall;
+                inGroups (wallGroup);
+            }
+        }
+        cylinder.stl
+        {
+            level (2 2);
+            faceZone            MRF;
+            cellZone            MRF;
+            cellZoneInside      inside;
+            faceType            internal; //baffle,boundary
+        }
+        */
+
+        m47M.stl
+        {
+            level (0 0);
+            regions
+            {
+                wall_RUDDER_B_S_T
+                {
+                    level (7 7);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+                wall_RUDDER_B_P_B
+                {
+                    level (7 7);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+                wall_RUDDER_F_S
+                {
+                    level (7 7);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+                wall_HULL
+                {
+                    level (6 6);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+                wall_RUDDER_B_S_B
+                {
+                    level (7 7);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+                wall_RUDDER_B_P_T
+                {
+                    level (7 7);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+                wall_SAIL
+                {
+                    level (6 6);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+                wall_RUDDER_F_P
+                {
+                    level (7 7);
+                    patchInfo
+                    {
+                        type wall;
+                        inGroups (wallGroup);
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    resolveFeatureAngle 30;
+
+    refinementRegions
+    {
+        ref0
+        {
+            mode inside;
+            levels ((1.0 4));
+        }
+
+        ref1
+        {
+            mode inside;
+            levels ((1.0 5));
+        }
+    }
+
+    locationInMesh ( -5 0 0 );
+
+    allowFreeStandingZoneFaces true;
+}
+
+
+
+snapControls
+{
+    nSmoothPatch 3;
+
+    tolerance 2.0;
+
+    nSolveIter 30;
+
+    nRelaxIter 5;
+
+    nFeatureSnapIter 10;
+
+    implicitFeatureSnap false;
+
+    explicitFeatureSnap true;
+
+    multiRegionFeatureSnap false;
+}
+
+
+
+addLayersControls
+{
+    relativeSizes true;
+
+    // Layer thickness specification. This can be specified in one of four ways
+    // - expansionRatio and finalLayerThickness (cell nearest internal mesh)
+    // - expansionRatio and firstLayerThickness (cell on surface)
+    // - overall thickness and firstLayerThickness
+    // - overall thickness and finalLayerThickness
+
+    expansionRatio 1.2;
+    finalLayerThickness 0.4;
+        //firstLayerThickness 0.1;
+        //thickness 0.5;
+
+    minThickness 0.01;
+
+    layers
+    {
+        wallGroup
+        {
+            nSurfaceLayers 4;
+        }
+    }
+
+
+    nGrow 0;
+
+    // Advanced settings
+
+    featureAngle 90;
+
+    slipFeatureAngle 30;
+
+    nRelaxIter 5;
+
+    nSmoothSurfaceNormals 2;
+
+    nSmoothNormals 5;
+
+    nSmoothThickness 10;
+
+    maxFaceThicknessRatio 0.5;
+
+    maxThicknessToMedialRatio 0.5;
+
+    minMedianAxisAngle 90; //90;
+
+    nBufferCellsNoExtrude 0;
+
+    nLayerIter 50;
+
+    nRelaxedIter 20;
+}
+
+
+
+meshQualityControls
+{
+    maxNonOrtho 80;
+
+    maxBoundarySkewness 20;
+
+    maxInternalSkewness 4;
+
+    maxConcave 80;
+
+    minVol 1e-30;
+
+    minTetQuality -1e30; //1e-9;
+
+    minArea -1;
+
+    minTwist 0.05;
+
+    minDeterminant 0.001;
+
+    minFaceWeight 0.05;
+
+    minVolRatio 0.01;
+
+    minTriangleTwist -1;
+
+    // Advanced
+
+    nSmoothScale 4;
+
+    errorReduction 0.75;
+
+    relaxed
+    {
+        maxNonOrtho 80;
+    }
+
+}
+
+
+// Advanced
+
+debug 0;
+
+mergeTolerance 1E-6;
+
+
+// ************************************************************************* //

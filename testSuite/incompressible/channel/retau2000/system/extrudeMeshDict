@@ -1,0 +1,41 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version         2;
+    format          ascii;
+    class           dictionary;
+    object          extrudeMeshDict;
+}
+
+constructFrom   surface;
+
+surface         "gmsh/bottom.vtk";
+
+exposedPatchName outlet;
+
+flipNormals     true;
+
+extrudeModel    linearDirection;
+
+nLayers         20;
+
+expansionRatio  1.051;
+
+linearDirectionCoeffs
+{
+    direction       ( 0 1 0 );
+    thickness       1;
+}
+
+mergeFaces      false;
+
+mergeTol        0;
+
+
+// ************************************************************************* //

@@ -1,0 +1,123 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#include "${FOAM_CASE}/setup.OpenFOAM";
+#include "${FOAM_CASE}/system/include/solverDefinitions";
+
+solvers
+{
+    p
+    {
+        $gamg;
+    }
+
+    U
+    {
+        $pbicg;
+    }
+
+    "(k|epsilon|omega|nuTilda)"
+    {
+        $pbicg;
+    }
+
+    /* For transient solvers */
+
+    UFinal
+    {
+        $U;
+        relTol 0;
+    }
+
+    pFinal
+    {
+        $p;
+        relTol 0;
+    }
+
+    pcorr
+    {
+        $pFinal;
+    }
+
+    "cellDisplacement.*"
+    {
+        $gamg;
+        tolerance       1e-6;
+        relTol          0;
+    }
+
+
+}
+
+SIMPLE
+{
+    nNonOrthogonalCorrectors    0;
+    pRefCell                    0;
+    pRefValue                   0;
+
+    residualControl
+    {
+        p                       1e-4;
+        U                       1e-4;
+        "(k|epsilon|omega)"     1e-3;
+    }
+
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors    20;
+}
+
+PISO
+{
+    nCorrectors                 2;
+    nNonOrthogonalCorrectors    2;
+    pRefCell                    0;
+    pRefValue                   0;
+}
+
+PIMPLE
+{
+    nOuterCorrectors            1;
+    momentumPredictor          yes;
+    nCorrectors                 4;
+    nNonOrthogonalCorrectors    2;
+    checkMeshCourantNo        yes;
+    correctPhi                 no;
+    pRefCell                    0;
+    pRefValue                   0;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p                           $:relaxation.pressure;
+    };
+    equations
+    {
+        p                           $:relaxation.pressure;
+        U                           $:relaxation.velocity;
+        "(k|epsilon|omega|nuTilda)" $:relaxation.turbulence;
+    }
+}
+
+#includeIfPresent "include/freeSurfaceFvSotionI";
+
+// ************************************************************************* //

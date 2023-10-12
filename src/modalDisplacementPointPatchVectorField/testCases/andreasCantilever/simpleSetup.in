@@ -1,0 +1,14 @@
+        characteristicVelocity                                    43.0;
+                       density                                   1.185;
+                      flowrate            constant                 0.2;
+                    initialEps                           24000.7126528;
+                      initialK                                  27.735;
+                  initialOmega                           9615.09230325;
+               initialVelocity                         (2.875 0.0 0.0);
+                initialnuTilda                        0.00865358307292;
+            kinematicViscosity                                1.15e-06;
+                            np                                       32;
+                        solver                                pisoFoam;
+           turbulenceIntensity                                     0.1;
+          turbulentLengthScale                                   0.001;
+           wallRoughnessHeight                                  0.0001;

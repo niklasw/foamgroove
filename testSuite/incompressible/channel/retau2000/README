@@ -1,0 +1,27 @@
+
+Make sure to load gmsh and OpenFOAM modules to be able to run these channels:
+
+module add gmsh
+foam50
+
+To set up a set of cases based on a parameter file, such as meshTests.json,
+do the following:
+
+runParameterized.py --help
+
+runParameterized.py --parameterfile=meshTests.json -tests=$PWD --norun
+or
+runParameterized.py -f meshTests.json -t $PWD -R
+
+Now a number of folders are generated, with a copy of the CWD but with
+parameters replaced with values.
+
+Enter one of these folders and run the prepare script:
+
+cd subCase_000
+./prepare.sh
+
+Now, the case should be ready to simulate.
+
+
+

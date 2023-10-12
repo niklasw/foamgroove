@@ -1,0 +1,24 @@
+{
+    "parameters":{
+        "__ubar": 1,
+        "__lesmodel": ["LDKM","WALE"],
+        "__dt": [1],
+        "__deltamodel":["cubeRootVol"],
+        "__basesize": [0.0625,0.09],
+        "__meshtype": ["quad","tri"],
+        "__wallfunction": ["SPALDING_WALL_VISCOSITY","zeroGradient"],
+        "__k_wallfunction": ["SPALDING_WALL_TKE","zeroGradient"],
+        "__gradlimiter": ["cellMDLimited Gauss linear 1"],
+        "__divscheme": ["LUST unlimitedGrad(U)", "LUST gradLimiter", "linearUpwind unlimitedGrad(U)", "linearUpwind gradLimiter"],
+        "__endtime": 1200,
+        "__solver":"pimpleFoam",
+        "__ncores": 48
+    },
+    "groups":{
+        "meshsize": ["__basesize","__meshtype"],
+        "turbulence":["__lesmodel","__wallfunction","__k_wallfunction"]
+    },
+    "solution": {
+        "solver": "pimpleFoam"
+    }
+}

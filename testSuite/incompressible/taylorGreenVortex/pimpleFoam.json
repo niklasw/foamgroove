@@ -1,0 +1,19 @@
+{
+    "parameters":{
+        "__lesmodel": ["kEqn"],
+        "__casesize": [16],
+        "__dt": [0.5e-3],
+        "__deltamodel":["cubeRootVol"],
+        "__meshtype": ["hex","tet","poly"],
+        "__divscheme": ["linear","LUST unlimitedGrad(U)","linearUpwindV gradULimiter"],
+        "__endtime": 10,
+        "__solver":"pimpleFoam",
+        "__ncores": 16
+    },
+    "groups":{
+        "casesize": ["__casesize","__dt"]
+    },
+    "solution": {
+        "solver": "pimpleFoam"
+    }
+}

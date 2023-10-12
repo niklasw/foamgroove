@@ -1,0 +1,188 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      topoSetDict;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+actions
+(
+    {
+        name surfaces;
+        type faceSet;
+        action new;
+        source patchToFace;
+        sourceInfo
+        {
+            name ".*";
+        }
+    }
+    {
+        name cyclicXmin;
+        type faceSet;
+        action new;
+        source faceToFace;
+        sourceInfo
+        {
+            set surfaces;
+        }
+    }
+    {
+        name cyclicXmin;
+        type faceSet;
+        action subset;
+        source normalToFace;
+        sourceInfo
+        {
+            normal  (-1 0 0);
+            cos     0.001;
+        }
+    }
+    // - - - - - - - - - - - - - -
+    {
+        name cyclicXmax;
+        type faceSet;
+        action new;
+        source faceToFace;
+        sourceInfo
+        {
+            set surfaces;
+        }
+    }
+    {
+        name cyclicXmax;
+        type faceSet;
+        action subset;
+        source normalToFace;
+        sourceInfo
+        {
+            normal  (1 0 0);
+            cos     0.001;
+        }
+    }
+
+    // - - - - - - - - - - - - - -
+    {
+        name cyclicZmin;
+        type faceSet;
+        action new;
+        source faceToFace;
+        sourceInfo
+        {
+            set surfaces;
+        }
+    }
+    {
+        name cyclicZmin;
+        type faceSet;
+        action subset;
+        source normalToFace;
+        sourceInfo
+        {
+            normal  (0 0 -1);
+            cos     0.001;
+        }
+    }
+
+    // - - - - - - - - - - - - - -
+    {
+        name cyclicZmax;
+        type faceSet;
+        action new;
+        source faceToFace;
+        sourceInfo
+        {
+            set surfaces;
+        }
+    }
+    {
+        name cyclicZmax;
+        type faceSet;
+        action subset;
+        source normalToFace;
+        sourceInfo
+        {
+            normal  (0 0 1);
+            cos     0.001;
+        }
+    }
+
+    // - - - - - - - - - - - - - -
+    {
+        name wallTop;
+        type faceSet;
+        action new;
+        source faceToFace;
+        sourceInfo
+        {
+            set surfaces;
+        }
+    }
+    {
+        name wallTop;
+        type faceSet;
+        action subset;
+        source normalToFace;
+        sourceInfo
+        {
+            normal  (0 1 0);
+            cos     0.001;
+        }
+    }
+
+    // - - - - - - - - - - - - - -
+    {
+        name wallBottom;
+        type faceSet;
+        action new;
+        source faceToFace;
+        sourceInfo
+        {
+            set surfaces;
+        }
+    }
+    {
+        name wallBottom;
+        type faceSet;
+        action subset;
+        source normalToFace;
+        sourceInfo
+        {
+            normal  (0 -1 0);
+            cos     0.001;
+        }
+    }
+
+    // - - - - - - - - - - - - - -
+    {
+        name tripSet;
+        type cellSet;
+        action new;
+        source boxToCell;
+        sourceInfo
+        {
+            box (4.5 0 0) (4.7 2 6);
+        }
+    }
+    {
+        name tripCells;
+        source setToCellZone;
+        action new;
+        type cellZoneSet;
+        sourceInfo
+        {
+            set tripSet;
+        }
+    }
+);
+
+// ************************************************************************* //

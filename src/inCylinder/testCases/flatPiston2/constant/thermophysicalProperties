@@ -1,0 +1,77 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      thermophysicalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+gasThermoTypes
+{
+    constant
+    {
+        type            hePsiThermo;
+        mixture         pureMixture;
+        transport       const;
+        thermo          hConst;
+        equationOfState perfectGas;
+        specie          specie;
+        energy          sensibleEnthalpy; //sensibleInternalEnergy;
+    };
+
+    janaf
+    {
+        type            hePsiThermo;
+        mixture         pureMixture;
+        transport       sutherland;
+        thermo          janaf;
+        equationOfState perfectGas;
+        specie          specie;
+        energy          sensibleEnthalpy; //sensibleInternalEnergy;
+    };
+}
+
+thermoType
+{
+    ${:gasThermoTypes.constant};
+}
+
+mixture
+{
+    specie
+    {
+        nMoles      1;
+        molWeight   28.9;
+    }
+    thermodynamics
+    {
+        Cp          1005;
+        Hf          0;
+
+        // Janaf stuff (if using thermo janaf)
+        Tlow            298.15;
+        Thigh           5000;
+        Tcommon         1000;
+        highCpCoeffs    ( 19.3963 0.0488137 -1.55798e-05 2.17831e-09 -1.08391e-13 -37133.9 -78.8531 );
+        lowCpCoeffs     ( 0.429357 0.0765769 8.41306e-06 -5.86603e-08 2.79414e-11 -30446.4 25.6735 );
+    }
+    transport
+    {
+        As          1.4792e-06;
+        Ts          116;
+        mu          1e-3;
+        Pr          1.4;
+    }
+}
+
+
+// ************************************************************************* //

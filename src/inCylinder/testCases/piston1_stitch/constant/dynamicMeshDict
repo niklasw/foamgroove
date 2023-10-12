@@ -1,0 +1,36 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dynamicFvMesh   pistonTopoFvMesh;
+
+pistonTopoFvMeshCoeffs
+{
+    stroke            (0 0 0.165);  //- Vector definition of stroke
+    RPM                      1200;
+
+    growthLayerPosition      0.00;  //- Initial position at lower turn
+
+    extrusion
+    {
+        minThickness         5e-4;  //- Minimum allowed layer thickness
+        maxThickness        20e-4;  //- Maximum allowed layer thickness
+        tolerance            1e-4;
+    }
+}
+
+
+// ************************************************************************* //

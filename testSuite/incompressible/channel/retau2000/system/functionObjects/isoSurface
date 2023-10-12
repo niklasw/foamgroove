@@ -1,0 +1,22 @@
+    waterSurface
+    {
+        type            surfaces;
+        functionObjectLibs ( "libsampling.so" );
+        writeControl   timeStep;
+        writeInterval  100;
+        surfaceFormat   vtk;
+        fields          ();
+        interpolationScheme cellPoint;
+        surfaces
+        (
+                 alpha 
+                 {
+                         type isoSurfaceCell;
+                         isoField alpha1 ;
+                         isoValue 0.5;
+                         interpolate false ;
+                         regularise true;
+                 }
+        );
+    }
+

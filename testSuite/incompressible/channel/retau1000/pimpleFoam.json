@@ -1,0 +1,23 @@
+{
+    "parameters":{
+        "__ubar": 1,
+        "__lesmodel": ["LDKM"],
+        "__dt": [1],
+        "__deltamodel":["cubeRootVol"],
+        "__basesize": [0.0625,0.09],
+        "__meshtype": ["quad","tri"],
+        "__wallfunction": "SPALDING_WALL_VISCOSITY",
+        "__k_wallfunction": "SPALDING_WALL_TKE",
+        "__gradlimiter": ["cellMDLimited Gauss linear 1"],
+        "__divscheme": ["linear", "LUST unlimitedGrad(U)", "LUST gradLimiter", "linearUpwind unlimitedGrad(U)", "linearUpwind gradLimiter"],
+        "__endtime": 1200,
+        "__solver":"pimpleFoam",
+        "__ncores": 32
+    },
+    "groups":{
+        "meshsize": ["__basesize","__meshtype"]
+    },
+    "solution": {
+        "solver": "pimpleFoam"
+    }
+}

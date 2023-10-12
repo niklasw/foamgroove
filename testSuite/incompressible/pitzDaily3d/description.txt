@@ -1,0 +1,3 @@
+A 5 cell thick version of the pitzDaily run from a pre-calculated solution.
+Only turbulence is evaluated; this by setting solver tolerances above 1 and
+number of corrector loops to 0.

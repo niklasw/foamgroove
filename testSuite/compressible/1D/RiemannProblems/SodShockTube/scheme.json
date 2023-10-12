@@ -1,0 +1,21 @@
+{
+    "parameters":{
+        "__scheme": [
+            "Gamma 0.5", "vanLeer", "MUSCL", "SuperBee", "upwind"
+        ],
+        "__Vscheme": [
+            "GammaV 0.5", "vanLeerV", "MUSCLV", "SuperBeeV", "upwind"
+        ],	
+        "__solver": "explicitFoam",
+	"__dt": 5e-5,
+	"__cells": 200,
+	"__endtime": 0.007
+    },
+    "groups":
+    {
+        "schemeGroup": ["__Vscheme","__scheme" ]
+    },    
+    "solution": {
+        "solver": "explicitFoam"
+    }
+}

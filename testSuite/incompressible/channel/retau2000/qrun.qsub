@@ -1,0 +1,25 @@
+#!/bin/bash -login
+#PBS -S /bin/bash
+#PBS -N P2channel2000
+#PBS -l nodes=4:ppn=24
+#PBS -l walltime=10:00:00
+#PBS -m be
+#PBS -q merry
+##PBS -o dummy.log # NOT USED
+#PBS -l other=e60837
+
+source /remote/soft2/tools/bin/pof.rc
+
+initFOAM 5.x
+module add gmsh
+
+# --
+
+setDecomposition $NCORES
+runserial ./prepare.sh
+runserial decomposePar -force
+runpar pimpleFoam
+runserial reconstructPar -latestTime
+runserial ./finalise.sh
+
+# End of file

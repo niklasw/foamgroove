@@ -1,0 +1,46 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  4.x                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      fvOptions;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+momentumSource
+{
+    type meanVelocityForce;
+    active yes;
+    meanVelocityForceCoeffs 
+    { 
+        selectionMode all;
+        fields (U);
+        Ubar ($__ubar 0 0); }
+}
+
+tripWire
+{
+    type          randomMomentumSource;
+    active        true;
+   
+    randomMomentumSourceCoeffs
+    {
+        timeStart           0;
+        duration            100;
+        selectionMode       cellZone;
+        cellZone            tripCells;
+        fieldNames          (U);
+        Uref                Uref [0 1 -1 0 0 0 0] $__ubar;
+        turbulenceIntensity turbulenceIntensity [0 0 0 0 0 0 0] 0.25;
+        relaxationFactor    1.0;
+    } 
+}
+// ************************************************************************* //

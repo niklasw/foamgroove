@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  1.6                                   |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// * * * Scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+Correction                 limited 0.33; // corrected;
+
+ConvectionModel            Gauss;
+
+// * * * End scheme macro section  * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         Euler;
+}
+
+gradSchemes
+{
+    default         Gauss linear;
+    grad(p)         Gauss linear;
+    grad(U)         cellLimited Gauss linear 1;
+}
+
+divSchemes
+{
+    default             $ConvectionModel upwind;
+    div(phi,U)          $ConvectionModel linearUpwind grad(U);
+  //div(phi,U)          $ConvectionModel LUST unlimitedGrad(U);
+    div(phi,k)          $ConvectionModel limitedLinear 1;
+    div(phi,epsilon)    $ConvectionModel limitedLinear 1;
+    div(phi,omega)      $ConvectionModel limitedLinear 1;
+    div(phi,nuTilda)    $ConvectionModel limitedLinear 1;
+
+    div((nuEff*dev(T(grad(U))))) $ConvectionModel linear;
+    div(R)              $ConvectionModel linear;
+}
+
+laplacianSchemes
+{
+    default                 Gauss linear $Correction;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         $Correction;
+}
+
+fluxRequired
+{
+    default         no;
+    p               ;
+    pcorr           ;
+}
+#includeIfPresent "include/freeSurfaceFvSchemesI";
+
+// ************************************************************************* //

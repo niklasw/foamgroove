@@ -1,0 +1,24 @@
+#!/bin/bash -login
+#PBS -S /bin/bash
+#PBS -N P1channel1000
+#PBS -l nodes=1:ppn=48
+#PBS -l walltime=10:00:00
+#PBS -m be
+#PBS -q rosso
+##PBS -o dummy.log # NOT USED
+#PBS -l other=e60837
+
+source /remote/soft/tools/bin/pof4.rc
+
+initFOAM 4.x
+module add gmsh
+
+# --
+
+runserial ./prepare.sh
+runserial decomposePar -force
+runpar pimpleFoam
+runserial reconstructPar -latestTime
+runserial ./finalise.sh
+
+# End of file

@@ -1,0 +1,3 @@
+
+Currently, the probe data input are pressure signal files, one for each probe of interest. Two column data in "time value" rows.
+Typically named ind_probes_trunc/p0

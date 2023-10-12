@@ -1,0 +1,51 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.x                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      structuralModes_rod_wall;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+2
+(
+    a
+    {
+        modeShape
+        {
+            modeType polynomial;
+            origin  (0 0 0);
+            axis    (0 0 1);
+            coeffs  3(0 0 1);
+            amplitude (1 0 0);
+            scalingFactor 0.3569494;
+        }
+        frequency   20;
+        damping     0.01;
+    }
+
+    b
+    {
+        modeShape
+        {
+            modeType polynomial;
+            origin  (0 0 0);
+            axis    (0 0 1);
+            coeffs  3(0 0 1);
+            amplitude (0 1 0);
+            scalingFactor 0.3569494;
+        }
+        frequency  20;
+        damping    0.01;
+    }
+);
+
+// ************************************************************************* //
